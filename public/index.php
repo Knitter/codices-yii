@@ -1,5 +1,7 @@
 <?php
 
+use yii\base\InvalidConfigException;
+
 $environment = 'prod';
 $env = realpath(__DIR__ . '/../_ENV');
 if (is_file($env)) {
@@ -23,4 +25,8 @@ $config = yii\helpers\ArrayHelper::merge(
     require __DIR__ . '/../codices/config/web.php'
 );
 
-(new codices\components\Application($config))->run();
+try {
+    (new codices\components\Application($config))->run();
+} catch (InvalidConfigException $e) {
+    //TODO: Show user friendly(er) message
+}

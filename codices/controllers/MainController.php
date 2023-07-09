@@ -12,7 +12,7 @@ use yii\web\Response;
 /**
  * Site controller
  */
-class MainController extends Controller {
+final class MainController extends Controller {
 
     /**
      * {@inheritdoc}
@@ -61,7 +61,8 @@ class MainController extends Controller {
             return $this->goHome();
         }
 
-        return '//TODO: Not implemented yet';
+        $this->layout = 'login';
+        return $this->render('login');
     }
 
     /**

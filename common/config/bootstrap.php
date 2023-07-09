@@ -11,4 +11,4 @@ Yii::setAlias('@public', $parent . '/public');
 Yii::setAlias('@codices', $parent . '/codices');
 
 Yii::setAlias('@prod-assets', $parent . '/codices/assets/assets');
-Yii::setAlias('@src-assets', $parent . '/codices/assets/src');
+Yii::setAlias('@dev-assets', $parent . '/codices/assets/src');
