@@ -3,7 +3,7 @@
 $container = dirname(__DIR__, 2);
 $config = [
     'id' => 'codices',
-    'basePath' => '@app',
+    'basePath' => '@src',
     'controllerNamespace' => 'App\Controller',
     'defaultRoute' => 'app/index',
     'components' => [
@@ -29,11 +29,13 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'cache' => 'cache'
-            //            [
-            //                'class' => 'yii\caching\ApcCache',
-            //                'useApcu' => true
-            //            ]
+            'cache' => 'cache',
+            // 'rules' => [
+            //     '<controller>/<action>/<id:\d+>' => '<controller>/<action>',
+            //     '<controller>/<id:\d+>' => '<controller>/details',
+            //     '<module>/<controller>/<action>/<id:\d+>' => '<module>/<controller>/<action>',
+            //     '<controller>/<slug:[a-zAZ\-]+>/<id:\d+>/<action>' => '<controller>/<action>',
+            // ]
         ],
         'assetManager' => [
             'bundles' => [

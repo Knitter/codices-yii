@@ -33,7 +33,7 @@ use yii\data\ActiveDataProvider;
  * @license       http://www.gnu.org/licenses/agpl-3.0.txt AGPL
  * @copyright (c) 2016, Sérgio Lopes (knitter.is@gmail.com)
  */
-final class Accounts extends Model {
+final class Users extends Model {
 
     public ?string $name = null;
     public ?string $email = null;

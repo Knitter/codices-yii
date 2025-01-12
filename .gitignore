@@ -41,3 +41,4 @@ phpunit.phar
 c3.php
 resources/__pending
 .vagrant
+config.yml

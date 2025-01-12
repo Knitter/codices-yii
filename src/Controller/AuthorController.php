@@ -1,10 +1,10 @@
 <?php
 
 /*
- * SeriesController.php
+ * AuthorsController.php
  *
  * Small book management software.
- * Copyright (C) 2016 - 2025 Sérgio Lopes (knitter.is@gmail.com)
+ * Copyright (C) 2016 - 2022 Sérgio Lopes (knitter.is@gmail.com)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,46 +23,21 @@
 
 namespace App\Controller;
 
-use App\Filter\Series as Filter;
-use App\Form\Series as Form;
-use App\Model\Series;
 use App\Component\Controller;
+use App\Filter\Authors;
+use App\Form\Author as Form;
+use App\Model\Author;
+use codices\components\ApplicationController;
 use Yii;
 use yii\web\Response;
 
-final class SeriesController extends Controller {
+final class AuthorController extends Controllertroller {
 
-    //    private final SeriesService service;
-    //
-    //    public SeriesController(SeriesService service) {
-    //        this.service = service;
-    //    }
-    //
-    //    @RequestMapping("/series")
-    //    public String index(Model model) {
-    //        model.addAttribute("series", service.findAll());
-    //        return "series";
-    //    }
-    //
-    //    //@RequestMapping("/series/edit/<id>")
-    //    public void edit() {
-    //
-    //    }
-    //
-    //    //@RequestMapping("/series/delete/<id>")
-    //    public void delete() {
-    //
-    //    }
-    //
-    //    @RequestMapping("/series/create")
-    //    public void create() {
-    //
-    //    }
     //    /**
     //     * @return string
     //     */
     //    public function actionIndex(): string {
-    //        $filter = new Filter(Yii::$app->user->identity->id);
+    //        $filter = new Authors(Yii::$app->user->identity->id);
     //        $provider = $filter->search(Yii::$app->request->queryParams);
     //
     //        return $this->render('index', [
@@ -72,13 +47,14 @@ final class SeriesController extends Controller {
     //    }
     //
     //    /**
-    //     * @return string|\yii\web\Response
+    //     * @return \yii\web\Response|string
     //     */
     //    public function actionAdd(): Response|string {
     //        $form = new Form(Yii::$app->user->identity->id);
+    //
     //        if ($form->load(Yii::$app->request->post())) {
     //            if ($form->save()) {
-    //                //TODO: Yii::$app->session->setFlash('success', Yii::t('codices', 'New book series created.'));
+    //                //TODO: Yii::$app->session->setFlash('success', Yii::t('codices', 'New book created.'));
     //                return $this->redirect(['edit', 'id' => $form->id]);
     //            }
     //        }
@@ -94,11 +70,11 @@ final class SeriesController extends Controller {
     //     * @throws \yii\web\NotFoundHttpException
     //     */
     //    public function actionEdit(int $id): Response|string {
-    //        $form = new Form(Yii::$app->user->identity->id, $this->findModel(Series::class, $id));
+    //        $form = new Form(Yii::$app->user->identity->id, $this->findModel(Author::class, $id));
     //
     //        if ($form->load(Yii::$app->request->post())) {
     //            if ($form->save()) {
-    //                //TODO: Yii::$app->session->setFlash('success', Yii::t('codices', 'Book series details updated.'));
+    //                //TODO: Yii::$app->session->setFlash('success', Yii::t('codices', 'Book details updated.'));
     //                return $this->redirect(['edit', 'id' => $form->id]);
     //            }
     //        }
@@ -114,5 +90,31 @@ final class SeriesController extends Controller {
     //
     //    public function actionDelete(int $id) {
     //        throw new \Exception('Not implemented yet!');
+    //    }
+    //    private final AuthorService service;
+    //
+    //    public AuthorController(AuthorService service) {
+    //        this.service = service;
+    //    }
+    //
+    //    @RequestMapping("/authors")
+    //    public String index(Model model) {
+    //        model.addAttribute("authors", service.findAll());
+    //        return "authors";
+    //    }
+    //
+    //    //@RequestMapping("/authors/edit/<id>")
+    //    public void edit() {
+    //
+    //    }
+    //
+    //    //@RequestMapping("/authors/delete/<id>")
+    //    public void delete() {
+    //
+    //    }
+    //
+    //    @RequestMapping("/authors/create")
+    //    public void create() {
+    //
     //    }
 }

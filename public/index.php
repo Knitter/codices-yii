@@ -5,7 +5,7 @@ use Dotenv\Dotenv;
 $base = dirname(__DIR__);
 require_once $base . '/vendor/autoload.php';
 
-$dotenv = Dotenv::createImmutable($base.'/config/env');
+$dotenv = Dotenv::createImmutable($base . '/config/env');
 $dotenv->load();
 
 $_ENV['YII_ENV'] = empty($_ENV['YII_ENV']) ? null : $_ENV['YII_ENV'];
@@ -34,7 +34,7 @@ $_SERVER['YII_DEBUG'] = $_ENV['YII_DEBUG'];
 //        defined('YII_ENV') or define('YII_ENV', 'prod');
 //    }
 //}
-//
+
 require $base . '/vendor/yiisoft/yii2/Yii.php';
 require $base . '/config/common/bootstrap.php';
 
