@@ -24,6 +24,7 @@ composer.phar
 
 # Mac DS_Store Files
 .DS_Store
+._.DS_Store
 
 # phpunit itself is not needed
 phpunit.phar
@@ -38,4 +39,5 @@ phpunit.phar
 
 # Codeception
 c3.php
-_dev-support/codices
+resources/__pending
+.vagrant

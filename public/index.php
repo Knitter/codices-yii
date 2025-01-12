@@ -1,38 +1,46 @@
 <?php
 
-declare(strict_types=1);
+use Dotenv\Dotenv;
 
-use Yiisoft\Yii\Runner\Http\HttpApplicationRunner;
-if (getenv('YII_C3')) {
-    $c3 = dirname(__DIR__) . '/c3.php';
-    if (file_exists($c3)) {
-        require_once $c3;
-    }
-}
+$base = dirname(__DIR__);
+require_once $base . '/vendor/autoload.php';
 
-/**
- * @psalm-var string $_SERVER ['REQUEST_URI']
- */
-// PHP built-in server routing.
-if (PHP_SAPI === 'cli-server') {
-    // Serve static files as is.
-    /** @psalm-suppress MixedArgument */
-    $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-    if (is_file(__DIR__ . $path)) {
-        return false;
-    }
+$dotenv = Dotenv::createImmutable($base.'/config/env');
+$dotenv->load();
 
-    // Explicitly set for URLs with dot.
-    $_SERVER['SCRIPT_NAME'] = '/index.php';
-}
+$_ENV['YII_ENV'] = empty($_ENV['YII_ENV']) ? null : $_ENV['YII_ENV'];
+$_SERVER['YII_ENV'] = $_ENV['YII_ENV'];
 
-require_once dirname(__DIR__) . '/autoload.php';
+$_ENV['YII_DEBUG'] = filter_var(
+    !empty($_ENV['YII_DEBUG']) ? $_ENV['YII_DEBUG'] : true,
+    FILTER_VALIDATE_BOOLEAN,
+    FILTER_NULL_ON_FAILURE
+) ?? true;
+$_SERVER['YII_DEBUG'] = $_ENV['YII_DEBUG'];
 
-// Run HTTP application runner
-$runner = new HttpApplicationRunner(
-    rootPath: dirname(__DIR__),
-    debug: $_ENV['YII_DEBUG'],
-    checkEvents: $_ENV['YII_DEBUG'],
-    environment: $_ENV['YII_ENV'],
+//if ($environment === 'development' || $environment === 'qa') {
+//    defined('YII_DEBUG') or define('YII_DEBUG', true);
+//    defined('YII_ENV') or define('YII_ENV', 'dev');
+//
+//    if ($environment === 'qa') {
+//        defined('ERP_QA_ENV') or define('ERP_QA_ENV', true);
+//    }
+//} else {
+//    if ($environment === 'test') {
+//        defined('YII_DEBUG') or define('YII_DEBUG', true);
+//        defined('YII_ENV') or define('YII_ENV', 'test');
+//    } else {
+//        defined('YII_DEBUG') or define('YII_DEBUG', false);
+//        defined('YII_ENV') or define('YII_ENV', 'prod');
+//    }
+//}
+//
+require $base . '/vendor/yiisoft/yii2/Yii.php';
+require $base . '/config/common/bootstrap.php';
+
+$config = yii\helpers\ArrayHelper::merge(
+    require $base . '/config/common/main.php',
+    require $base . '/config/web/web.php'
 );
-$runner->run();
+
+new App\Component\Application($config)->run();

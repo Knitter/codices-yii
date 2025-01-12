@@ -1,2 +1,4 @@
-.gitignore
+*
 !.gitignore
+!index.html
+!index.php
