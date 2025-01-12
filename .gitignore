@@ -9,6 +9,10 @@ nbproject
 .project
 .settings
 
+# sublime text project / workspace files
+*.sublime-project
+*.sublime-workspace
+
 # windows thumbnail cache
 Thumbs.db
 
@@ -23,11 +27,15 @@ composer.phar
 
 # phpunit itself is not needed
 phpunit.phar
+.phpunit.result.cache
+
 # local phpunit config
 /phpunit.xml
 
-# env runtime
-/.vagrant
-/_tmp/
-/_ENV
-/public/.htaccess
+# NPM packages
+/node_modules
+/.env
+
+# Codeception
+c3.php
+_dev-support/codices

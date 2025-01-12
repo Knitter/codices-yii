@@ -1,32 +1,38 @@
 <?php
 
-use yii\base\InvalidConfigException;
+declare(strict_types=1);
 
-$environment = 'prod';
-$env = realpath(__DIR__ . '/../_ENV');
-if (is_file($env)) {
-    $environment = trim(file_get_contents($env));
+use Yiisoft\Yii\Runner\Http\HttpApplicationRunner;
+if (getenv('YII_C3')) {
+    $c3 = dirname(__DIR__) . '/c3.php';
+    if (file_exists($c3)) {
+        require_once $c3;
+    }
 }
 
-if ($environment === 'development') {
-    defined('YII_DEBUG') or define('YII_DEBUG', true);
-    defined('YII_ENV') or define('YII_ENV', 'dev');
-} else {
-    defined('YII_DEBUG') or define('YII_DEBUG', false);
-    defined('YII_ENV') or define('YII_ENV', 'prod');
+/**
+ * @psalm-var string $_SERVER ['REQUEST_URI']
+ */
+// PHP built-in server routing.
+if (PHP_SAPI === 'cli-server') {
+    // Serve static files as is.
+    /** @psalm-suppress MixedArgument */
+    $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    if (is_file(__DIR__ . $path)) {
+        return false;
+    }
+
+    // Explicitly set for URLs with dot.
+    $_SERVER['SCRIPT_NAME'] = '/index.php';
 }
 
-require __DIR__ . '/../vendor/autoload.php';
-require __DIR__ . '/../vendor/yiisoft/yii2/Yii.php';
-require __DIR__ . '/../common/config/bootstrap.php';
+require_once dirname(__DIR__) . '/autoload.php';
 
-$config = yii\helpers\ArrayHelper::merge(
-    require __DIR__ . '/../common/config/main.php',
-    require __DIR__ . '/../codices/config/web.php'
+// Run HTTP application runner
+$runner = new HttpApplicationRunner(
+    rootPath: dirname(__DIR__),
+    debug: $_ENV['YII_DEBUG'],
+    checkEvents: $_ENV['YII_DEBUG'],
+    environment: $_ENV['YII_ENV'],
 );
-
-try {
-    (new codices\components\Application($config))->run();
-} catch (InvalidConfigException $e) {
-    //TODO: Show user friendly(er) message
-}
+$runner->run();
