@@ -6,8 +6,11 @@ use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\Yii\View\Renderer\CommonParametersInjectionInterface;
 
 final class TranslatorViewInjection implements CommonParametersInjectionInterface {
-    
-    public function __construct(private TranslatorInterface $translator) {
+
+    private TranslatorInterface $translator;
+
+    public function __construct(TranslatorInterface $translator) {
+        $this->translator = $translator;
     }
 
     public function getCommonParameters(): array {

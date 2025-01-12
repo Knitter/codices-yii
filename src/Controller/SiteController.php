@@ -7,7 +7,10 @@ use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
 final class SiteController {
 
-    public function __construct(private ViewRenderer $viewRenderer) {
+    private ViewRenderer $viewRenderer;
+
+    public function __construct(ViewRenderer $viewRenderer) {
+        $this->viewRenderer = $viewRenderer;
         $this->viewRenderer = $viewRenderer->withControllerName('site');
     }
 

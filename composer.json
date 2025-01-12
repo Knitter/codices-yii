@@ -1,13 +1,13 @@
 {
-    "name": "knitter/codices",
+    "name": "knitter/codices-yii",
     "type": "project",
     "description": "",
     "keywords": [
     ],
     "license": "GNU AGPL",
     "support": {
-        "issues": "https://github.com/Knitter/codices/issues",
-        "source": "https://github.com/Knitter/codices"
+        "issues": "https://github.com/Knitter/codices-yii/issues",
+        "source": "https://github.com/Knitter/codices-yii"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -31,7 +31,7 @@
         ]
     },
     "require": {
-        "php": "^8.2",
+        "php": "^8.4",
         "ext-intl": "*",
         "httpsoft/http-message": "^1.1",
         "psr/container": "^2.0",

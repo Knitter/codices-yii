@@ -8,7 +8,12 @@ use Yiisoft\Yii\Middleware\Event\SetLocaleEvent;
 
 final class SetLocaleEventHandler {
 
-    public function __construct(private TranslatorInterface $translator, private WebView $webView) {
+    private TranslatorInterface $translator;
+    private WebView $webView;
+
+    public function __construct(TranslatorInterface $translator, WebView $webView) {
+        $this->webView = $webView;
+        $this->translator = $translator;
     }
 
     public function handle(SetLocaleEvent $event): void {

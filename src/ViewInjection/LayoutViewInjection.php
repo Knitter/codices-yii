@@ -10,8 +10,18 @@ use Yiisoft\Yii\View\Renderer\LayoutParametersInjectionInterface;
 
 final class LayoutViewInjection implements LayoutParametersInjectionInterface {
 
-    public function __construct(private Aliases $aliases, private AssetManager $assetManager,
-                                private Locale  $locale, private CurrentRoute $currentRoute) {
+    private Aliases $aliases;
+    private AssetManager $assetManager;
+    private CurrentRoute $currentRoute;
+    private Locale $locale;
+
+    public function __construct(Aliases $aliases, AssetManager $assetManager, Locale $locale,
+        CurrentRoute $currentRoute) {
+
+        $this->locale = $locale;
+        $this->currentRoute = $currentRoute;
+        $this->assetManager = $assetManager;
+        $this->aliases = $aliases;
     }
 
     public function getLayoutParameters(): array {

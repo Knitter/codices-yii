@@ -10,7 +10,7 @@ use App\ApplicationParameters;
 use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\View\WebView;
 
-$this->setTitle($applicationParameters->getName());
+$this->setTitle($applicationParameters->name);
 ?>
 
 <div class="text-center">

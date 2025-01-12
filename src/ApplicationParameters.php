@@ -5,16 +5,16 @@ namespace App;
 final class ApplicationParameters {
 
     /** @var string */
-    private string $charset = 'UTF-8';
-    /** @var string */
-    private string $name = 'Codices';
-
-    public function getCharset(): string {
-        return $this->charset;
+    public string $charset = 'UTF-8' {
+        get {
+            return $this->charset;
+        }
     }
-
-    public function getName(): string {
-        return $this->name;
+    /** @var string */
+    public string $name = 'Codices' {
+        get {
+            return $this->name;
+        }
     }
 
     public function charset(string $value): self {

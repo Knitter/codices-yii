@@ -8,8 +8,12 @@ use Yiisoft\Router\UrlGeneratorInterface;
 
 final class CommonViewInjection implements CommonParametersInjectionInterface {
 
-    public function __construct(private ApplicationParameters $applicationParameters,
-                                private UrlGeneratorInterface $urlGenerator) {
+    private ApplicationParameters $applicationParameters;
+    private UrlGeneratorInterface $urlGenerator;
+
+    public function __construct(ApplicationParameters $applicationParameters, UrlGeneratorInterface $urlGenerator) {
+        $this->urlGenerator = $urlGenerator;
+        $this->applicationParameters = $applicationParameters;
     }
 
     public function getCommonParameters(): array {
