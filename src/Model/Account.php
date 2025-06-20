@@ -1,147 +1,52 @@
 <?php
 
-/*
- * Account.php
- *
- * Small book management software.
- * Copyright (C) 2016 - 2022 Sérgio Lopes (knitter.is@gmail.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * (c) 2016 - 2022 Sérgio Lopes
- */
+declare(strict_types=1);
 
 namespace App\Model;
 
-use Yii;
-use yii\base\NotSupportedException;
-use yii\db\ActiveQuery;
-use yii\db\ActiveRecord;
-use yii\web\IdentityInterface;
+use Yiisoft\ActiveRecord\ActiveRecord;
+use Yiisoft\Security\PasswordHasher;
 
 /**
- * @property integer                     $id          PK, record ID, auto-increment
- * @property string                      $login       User login/account name, used for authentication
- * @property string                      $name        User's visible name, used for UI purposes
- * @property bool                        $active      Flag that marks this account record as being active
- * @property string|null                 $email       User's e-mail address, optional for accounts that are not used to
- *           access the application
- * @property string|null                 $password    User's password, optional, and if not set or empty will mark this
- *           account as one that can't be used to log in into the application
+ * Account model
  *
- * @property \App\Model\Author[]     $authors     List of author records that are owned by this account
- * @property \App\Model\Genre[]      $genres      List of genre records that are owned by this account
- * @property \App\Model\Publisher[]  $publishers  List of publisher records that are owned by this account
- * @property \App\Model\Series[]     $series      List of series records that are owned by this account
- * @property \App\Model\Collection[] $collections List of collection records that are owned by this account
- * @property \App\Model\Book[]       $books       List of book records that are owned by this account
- *
- * @license       http://www.gnu.org/licenses/agpl-3.0.txt AGPL
- * @copyright (c) 2016 - 2022, Sérgio Lopes (knitter.is@gmail.com)
+ * @property int $id
+ * @property string $username
+ * @property string $email
+ * @property string $name
+ * @property bool $active
+ * @property string $password
+ * @property int $createdOn
+ * @property int $updatedOn
+ * @property string|null $authKey
  */
-final class Account extends ActiveRecord implements IdentityInterface {
-
-    /** @var string|null */
-    public ?string $hash = null;
-
-    /**
-     * @inheritdoc
-     */
-    public static function tableName(): string {
-        return '{{Account}}';
+final class Account extends ActiveRecord {
+    public function tableName(): string {
+        return 'account';
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function attributeLabels(): array {
+    public function rules(): array {
         return [
-            'id' => '#',
-            'login' => Yii::t('codices', 'Login'),
-            'name' => Yii::t('codices', 'Name'),
-            'active' => Yii::t('codices', 'Active'),
-            'email' => Yii::t('codices', 'Email'),
-            'password' => Yii::t('codices', 'Password')
+            'username' => [['required'], ['string', 'max' => 255], ['unique']],
+            'email' => [['required'], ['string', 'max' => 255], ['email']],
+            'name' => [['required'], ['string', 'max' => 255]],
+            'active' => [['boolean']],
+            'password' => [['required'], ['string', 'min' => 6]],
+            'createdOn' => [['integer']],
+            'updatedOn' => [['integer']],
+            'authKey' => [['string', 'max' => 255]],
         ];
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getAuthors(): ActiveQuery {
-        return $this->hasMany(Author::class, ['ownedById' => 'id'])
-            ->inverseOf('owner');
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getGenres(): ActiveQuery {
-        return $this->hasMany(Genre::class, ['ownedById' => 'id'])
-            ->inverseOf('owner');
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPublishers(): ActiveQuery {
-        return $this->hasMany(Publisher::class, ['ownedById' => 'id'])
-            ->inverseOf('owner');
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getSeries(): ActiveQuery {
-        return $this->hasMany(Series::class, ['ownedById' => 'id'])
-            ->inverseOf('owner');
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getCollections(): ActiveQuery {
-        return $this->hasMany(Collection::class, ['ownedById' => 'id'])
-            ->inverseOf('owner');
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getBooks(): ActiveQuery {
-        return $this->hasMany(Book::class, ['ownedById' => 'id'])
-            ->inverseOf('owner');
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function afterFind() {
-        $this->hash = $this->password;
-        $this->password = null;
-
-        parent::afterFind();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function beforeSave($insert): bool {
+    public function beforeSave(bool $insert): bool {
         if (parent::beforeSave($insert)) {
-            if (!empty($this->password)) {
-                $this->password = Yii::$app->security->generatePasswordHash($this->password);
-            } else if (!empty($this->hash)) {
-                $this->password = $this->hash;
+            if ($insert) {
+                $this->createdOn = time();
+            }
+            $this->updatedOn = time();
+
+            if ($this->isAttributeChanged('password')) {
+                $this->password = (new PasswordHasher())->hash($this->password);
             }
 
             return true;
@@ -150,65 +55,40 @@ final class Account extends ActiveRecord implements IdentityInterface {
         return false;
     }
 
-    /**
-     * @inheritdoc
-     * @throws \yii\base\NotSupportedException
-     */
-    public static function findIdentityByAccessToken($token, $type = null): ?IdentityInterface {
-        throw new NotSupportedException();
+    public function validatePassword(string $password): bool {
+        return (new PasswordHasher())->validate($password, $this->password);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getAuthKey(): ?string {
-        return md5($this->id . $this->login . $this->hash);
+    public function generateAuthKey(): void {
+        $this->authKey = \Yiisoft\Security\Random::string(32);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getId(): int|string {
-        return $this->id;
+    // Relationships
+    public function getPublishers() {
+        return $this->hasMany(Publisher::class, ['ownedById' => 'id']);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function validateAuthKey($authKey): ?bool {
-        return $authKey === $this->getAuthKey();
+    public function getSeries() {
+        return $this->hasMany(Series::class, ['ownedById' => 'id']);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public static function findIdentity($id): Account|IdentityInterface|null {
-        //TODO: Proper account validation and access
-        return self::findOne((int)$id);
+    public function getCollections() {
+        return $this->hasMany(Collection::class, ['ownedById' => 'id']);
     }
 
-    /**
-     * @param string $password
-     * @return boolean
-     * @throws \yii\base\InvalidParamException
-     */
-    public function isPasswordValid(string $password): bool {
-        return Yii::$app->security->validatePassword($password, $this->hash);
+    public function getAuthors() {
+        return $this->hasMany(Author::class, ['ownedById' => 'id']);
     }
 
-    /**
-     * @return string
-     * @throws \yii\base\Exception
-     */
-    public static function generateRandomPassword(): string {
-        return Yii::$app->security->generateRandomString(8);
+    public function getGenres() {
+        return $this->hasMany(Genre::class, ['ownedById' => 'id']);
     }
 
-    /**
-     * @return string
-     */
-    public function generateSessionToken() {
-        return sha1($this->hash . $this->email . time() . $this->name);
+    public function getFormats() {
+        return $this->hasMany(Format::class, ['ownedById' => 'id']);
     }
 
+    public function getItems() {
+        return $this->hasMany(Item::class, ['ownedById' => 'id']);
+    }
 }

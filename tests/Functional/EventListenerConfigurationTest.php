@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Functional;
+namespace tests\Functional;
 
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Yii\Event\ListenerConfigurationChecker;
 use Yiisoft\Yii\Runner\Console\ConsoleApplicationRunner;
-
 use function dirname;
 
 final class EventListenerConfigurationTest extends TestCase

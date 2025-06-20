@@ -2,18 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit;
+namespace tests\Unit;
 
-use App\Tests\Support\UnitTester;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\CommandLoader\ContainerCommandLoader;
 use Symfony\Component\Console\Tester\CommandTester;
+use tests\Support\UnitTester;
 use Yiisoft\Config\ConfigInterface;
 use Yiisoft\Yii\Console\ExitCode;
-
 use Yiisoft\Yii\Runner\Console\ConsoleApplicationRunner;
-
 use function dirname;
 
 final class HelloCest

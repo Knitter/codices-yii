@@ -1,0 +1,66 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Migration;
+
+use Yiisoft\Db\Migration\MigrationBuilder;
+use Yiisoft\Db\Migration\RevertibleMigrationInterface;
+use Yiisoft\Db\Schema\Column\ColumnBuilder;
+
+final class M250619224209Item implements RevertibleMigrationInterface {
+    public function up(MigrationBuilder $b): void {
+        $b->createTable('item', [
+            'id' => ColumnBuilder::primaryKey(),
+            'title' => ColumnBuilder::string()->notNull(),
+            'ownedById' => ColumnBuilder::integer()->notNull(),
+            'type' => ColumnBuilder::string()->notNull(), // "ebook", "audio", "paper"
+            'translated' => ColumnBuilder::boolean()->notNull()->defaultValue(false),
+            'read' => ColumnBuilder::boolean()->notNull()->defaultValue(false),
+            'copies' => ColumnBuilder::integer()->notNull()->defaultValue(1),
+            'subtitle' => ColumnBuilder::string(),
+            'originalTitle' => ColumnBuilder::string(),
+            'plot' => ColumnBuilder::text(),
+            'isbn' => ColumnBuilder::string(),
+            'format' => ColumnBuilder::string(),
+            'pageCount' => ColumnBuilder::integer(),
+            'publishDate' => ColumnBuilder::date(),
+            'publishYear' => ColumnBuilder::integer(),
+            'addedOn' => ColumnBuilder::date(),
+            'language' => ColumnBuilder::string(),
+            'edition' => ColumnBuilder::string(),
+            'volume' => ColumnBuilder::string(),
+            'rating' => ColumnBuilder::integer(),
+            'url' => ColumnBuilder::string(),
+            'review' => ColumnBuilder::text(),
+            'cover' => ColumnBuilder::string(),
+            'filename' => ColumnBuilder::string(),
+            'fileLocation' => ColumnBuilder::string(),
+            'narrator' => ColumnBuilder::string(),
+            'bitrate' => ColumnBuilder::string(),
+            'boughtFrom' => ColumnBuilder::string(),
+            'duration' => ColumnBuilder::integer(), // in minutes
+            'sizeBytes' => ColumnBuilder::integer(), // in KB
+            'orderInSeries' => ColumnBuilder::integer(),
+            'publisherId' => ColumnBuilder::integer(),
+            'seriesId' => ColumnBuilder::integer(),
+            'collectionId' => ColumnBuilder::integer(),
+            'duplicatesId' => ColumnBuilder::integer(),
+        ]);
+
+        $b->addForeignKey('fk-item-ownedById', 'item', 'ownedById', 'account', 'id');
+        $b->addForeignKey('fk-item-publisherId', 'item', 'publisherId', 'publisher', 'id');
+        $b->addForeignKey('fk-item-seriesId', 'item', 'seriesId', 'series', 'id');
+        $b->addForeignKey('fk-item-collectionId', 'item', 'collectionId', 'collection', 'id');
+        $b->addForeignKey('fk-item-duplicatesId', 'item', 'duplicatesId', 'item', 'id');
+    }
+
+    public function down(MigrationBuilder $b): void {
+        $b->dropForeignKey('fk-item-ownedById', 'item');
+        $b->dropForeignKey('fk-item-publisherId', 'item');
+        $b->dropForeignKey('fk-item-seriesId', 'item');
+        $b->dropForeignKey('fk-item-collectionId', 'item');
+        $b->dropForeignKey('fk-item-duplicatesId', 'item');
+        $b->dropTable('item');
+    }
+}

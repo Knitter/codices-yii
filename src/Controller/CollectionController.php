@@ -1,121 +1,121 @@
 <?php
 
-/*
- * CollectionsController.php
- *
- * Small book management software.
- * Copyright (C) 2016 - 2022 Sérgio Lopes (knitter.is@gmail.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * (c) 2016 - 2022 Sérgio Lopes
- */
+declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Filter\Collections;
-use App\Form\Collection as Form;
 use App\Model\Collection;
-use codices\components\ApplicationController;
-use Yii;
-use yii\web\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Yiisoft\Data\Paginator\OffsetPaginator;
+use Yiisoft\Data\Reader\Sort;
+use Yiisoft\Http\Method;
+use Yiisoft\Router\CurrentRoute;
+use Yiisoft\Validator\ValidatorInterface;
+use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
-/**
- * @license       http://www.gnu.org/licenses/agpl-3.0.txt AGPL
- * @copyright (c) 2016 - 2022, Sérgio Lopes (knitter.is@gmail.com)
- */
-final class CollectionController extends ApplicationController {
+final class CollectionController {
 
-//    public function actionIndex(): string {
-//        $filter = new Collections(Yii::$app->user->identity->id);
-//        $provider = $filter->search(Yii::$app->request->queryParams);
-//
-//        return $this->render('index', [
-//            'filter' => $filter,
-//            'provider' => $provider
-//        ]);
-//    }
-//
-//    /**
-//     * @return string|\yii\web\Response
-//     */
-//    public function actionAdd(): Response|string {
-//        $form = new Form(Yii::$app->user->identity->id);
-//
-//        if ($form->load(Yii::$app->request->post())) {
-//            if ($form->save()) {
-//                //TODO: Yii::$app->session->setFlash('success', Yii::t('codices', 'New collection created.'));
-//                return $this->redirect(['edit', 'id' => $form->id]);
-//            }
-//        }
-//
-//        return $this->render('add', [
-//            'model' => $form,
-//        ]);
-//    }
-//
-//    /**
-//     * @param int $id
-//     * @return \yii\web\Response|string
-//     * @throws \yii\web\NotFoundHttpException
-//     */
-//    public function actionEdit(int $id): Response|string {
-//        $form = new Form(Yii::$app->user->identity->id, $this->findModel(Collection::class, $id));
-//
-//        if ($form->load(Yii::$app->request->post())) {
-//            if ($form->save()) {
-//                //TODO: Yii::$app->session->setFlash('success', Yii::t('codices', 'Collection details updated.'));
-//                return $this->redirect(['edit', 'id' => $form->id]);
-//            }
-//        }
-//
-//        return $this->render('edit', [
-//            'model' => $form,
-//        ]);
-//    }
-//
-//    public function actionDetails(int $id) {
-//        throw new \Exception('Not implemented yet!');
-//    }
-//
-//    public function actionDelete(int $id) {
-//        throw new \Exception('Not implemented yet!');
-//    }
-    //    private final CollectionService service;
-    //
-    //    public CollectionController(CollectionService service) {
-    //        this.service = service;
-    //    }
-    //
-    //    @RequestMapping("/collections")
-    //    public String index(Model model) {
-    //        model.addAttribute("collections", service.findAll());
-    //        return "collections";
-    //    }
-    //
-    //    //@RequestMapping("/collections/edit/<id>")
-    //    public void edit() {
-    //
-    //    }
-    //
-    //    //@RequestMapping("/collections/delete/<id>")
-    //    public void delete() {
-    //
-    //    }
-    //
-    //    @RequestMapping("/collections/create")
-    //    public void create() {
-    //
-    //    }
+    private ServerRequestInterface $request;
+    private ResponseInterface $response;
 
+    public function __construct(
+        private ViewRenderer   $viewRenderer,
+        ServerRequestInterface $request,
+        ResponseInterface      $response
+    ) {
+        $this->viewRenderer = $viewRenderer->withControllerName('collection');
+        $this->request = $request;
+        $this->response = $response;
+    }
+
+    public function index(CurrentRoute $currentRoute): ResponseInterface {
+        $query = Collection::find()->orderBy(['name' => Sort::SORT_ASC]);
+        $paginator = (new OffsetPaginator($query))
+            ->withPageSize(10)
+            ->withCurrentPage((int)$currentRoute->getArgument('page', '1'));
+
+        return $this->viewRenderer->render('index', [
+            'paginator' => $paginator,
+        ]);
+    }
+
+    public function view(CurrentRoute $currentRoute): ResponseInterface {
+        $id = $currentRoute->getArgument('id');
+        $collection = Collection::findOne(['id' => $id]);
+
+        if ($collection === null) {
+            return $this->viewRenderer->renderWithStatus('_404', [], 404);
+        }
+
+        return $this->viewRenderer->render('view', [
+            'collection' => $collection,
+        ]);
+    }
+
+    public function create(ValidatorInterface $validator): ResponseInterface {
+        $collection = new Collection();
+        $method = $this->request->getMethod();
+        $errors = [];
+
+        if ($method === Method::POST) {
+            $body = $this->request->getParsedBody();
+            $collection->setAttributes($body);
+
+            // Set the owner ID to the current user
+            $collection->ownedById = 1; // This should be replaced with the current user ID
+
+            $errors = $validator->validate($collection);
+            if (empty($errors)) {
+                if ($collection->save()) {
+                    return $this->response->withStatus(302)->withHeader('Location', '/collection/view/' . $collection->id);
+                }
+            }
+        }
+
+        return $this->viewRenderer->render('create', [
+            'collection' => $collection,
+            'errors' => $errors,
+        ]);
+    }
+
+    public function update(CurrentRoute $currentRoute, ValidatorInterface $validator): ResponseInterface {
+        $id = $currentRoute->getArgument('id');
+        $collection = Collection::findOne(['id' => $id]);
+
+        if ($collection === null) {
+            return $this->viewRenderer->renderWithStatus('_404', [], 404);
+        }
+
+        $method = $this->request->getMethod();
+        $errors = [];
+
+        if ($method === Method::POST) {
+            $body = $this->request->getParsedBody();
+            $collection->setAttributes($body);
+
+            $errors = $validator->validate($collection);
+            if (empty($errors)) {
+                if ($collection->save()) {
+                    return $this->response->withStatus(302)->withHeader('Location', '/collection/view/' . $collection->id);
+                }
+            }
+        }
+
+        return $this->viewRenderer->render('update', [
+            'collection' => $collection,
+            'errors' => $errors,
+        ]);
+    }
+
+    public function delete(CurrentRoute $currentRoute): ResponseInterface {
+        $id = $currentRoute->getArgument('id');
+        $collection = Collection::findOne(['id' => $id]);
+
+        if ($collection !== null) {
+            $collection->delete();
+        }
+
+        return $this->response->withStatus(302)->withHeader('Location', '/collection');
+    }
 }

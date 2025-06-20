@@ -10,47 +10,51 @@ end
 options = YAML.load_file 'config.yml'
 
 # check github token
-#if options['github_token'].nil? || options['github_token'].to_s.length != 40
-#  puts "You must place REAL GitHub token into configuration:\config-local.yml"
-#  exit
-#end
+if options['github_token'].nil?
+  puts "You must place REAL GitHub token into configuration:\config-local.yml"
+  exit
+end
+
+defaultSettings = {
+  timezone: "Europe/London",
+  box_check_update: true,
+  machine_name: "codices",
+  ip: "192.168.83.10",
+  cpus: 1,
+  memory: 1024,
+  box: 'debian/bookworm64'
+}
+
+options.transform_keys!(&:to_sym) rescue {}
+settings = defaultSettings.merge(options)
+#puts "#{settings}"
 
 # vagrant configurate
 Vagrant.configure(2) do |config|
-  #config.vm.box = 'debian/bookworm64'
-  config.vm.box = 'php-box'
+  config.vm.box = settings[:box]
 
-  # should we ask about box updates?
-  config.vm.box_check_update = options['box_check_update']
-
+  config.vm.box_check_update = settings[:box_check_update]
   config.vm.provider 'virtualbox' do |vb|
-    # machine cpus count
-    vb.cpus = options['cpus']
-    # machine memory size
-    vb.memory = options['memory']
-    # machine name (for VirtualBox UI)
-    vb.name = options['machine_name']
+    vb.cpus = settings[:cpus]
+    vb.memory = settings[:memory]
+    vb.name = settings[:machine_name]
 	vb.customize ["modifyvm", :id, "--natdnsproxy1", "off"]
   end
 
-  # machine name (for vagrant console)
-  config.vm.define options['machine_name']
-
-  # machine name (for guest machine console)
-  config.vm.hostname = options['machine_name']
-
-  # network settings
-  config.vm.network 'private_network', ip: options['ip']
+  config.vm.define settings[:machine_name]
+  config.vm.hostname = settings[:machine_name]
+  config.vm.network 'private_network', ip: settings[:ip]
 
   # sync: folder 'xyz' (host machine) -> folder '/app' (guest machine)
-    config.vm.synced_folder './', '/app', owner: 'vagrant', group: 'vagrant'
+  config.vm.synced_folder './', '/codices', owner: 'vagrant', group: 'vagrant'
+  # config.vm.synced_folder './src/', '/rsrc', type: 'rsync'
 
   config.vm.provider 'virtualbox' do |vb|
     vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate//app", "1"]
   end
-
+  
   # disable folder '/provision' (guest machine)
-  config.vm.synced_folder '.', '/config/env/vagrant', disabled: true
+  config.vm.synced_folder '.', '/env/vagrant-provision', disabled: true
 
   # hosts settings (host machine)
   config.vm.provision :hostmanager
@@ -61,9 +65,9 @@ Vagrant.configure(2) do |config|
   config.hostmanager.aliases            = %w(codices.app)
 
   # provisioners
-  config.vm.provision 'shell', path: './config/env/provision/once-as-root.sh', args: [options['timezone']]
-  config.vm.provision 'shell', path: './config/env/provision/once-as-vagrant.sh', args: [options['github_token']], privileged: false
-  config.vm.provision 'shell', path: './config/env/provision/always-as-root.sh', run: 'always'
+  config.vm.provision 'shell', path: './env/vagrant-provision/once-as-root.sh', args: [settings[:timezone]]
+  config.vm.provision 'shell', path: './env/vagrant-provision/once-as-vagrant.sh', args: [settings[:github_token]], privileged: false
+  config.vm.provision 'shell', path: './env/vagrant-provision/always-as-root.sh', run: 'always'
 
   # post-install message (vagrant console)
   config.vm.post_up_message = "Codices Server Ready"

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Acceptance;
+namespace tests\Acceptance;
 
-use App\Tests\Support\AcceptanceTester;
+use tests\Support\AcceptanceTester;
 
 final class HomeCest
 {
@@ -14,13 +14,5 @@ final class HomeCest
         $I->amOnPage('/');
         $I->expectTo('see page home.');
         $I->see('Hello!');
-    }
-
-    public function testIndexPageRu(AcceptanceTester $I): void
-    {
-        $I->wantTo('home page works.');
-        $I->amOnPage('/ru/');
-        $I->expectTo('see page home.');
-        $I->see('Привет!');
     }
 }

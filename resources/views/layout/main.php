@@ -1,11 +1,11 @@
 <?php
 
-use App\Asset\AppAsset;
-use Yiisoft\Html\Html;
-use Yiisoft\I18n\Locale;
+declare(strict_types=1);
+
+use App\Asset\AppAsset;use Yiisoft\Html\Html;use Yiisoft\I18n\Locale;
 
 /**
- * @var App\ApplicationParameters $applicationParameters
+ * @var \App\ApplicationParameters $applicationParameters
  * @var Yiisoft\Aliases\Aliases $aliases
  * @var Yiisoft\Assets\AssetManager $assetManager
  * @var string $content
@@ -28,7 +28,7 @@ $this->beginPage()
 ?><!DOCTYPE html>
 <html lang="<?= Html::encode($locale->language()) ?>">
 <head>
-    <meta charset="<?= Html::encode($applicationParameters->charset) ?>">
+    <meta charset="<?= Html::encode($applicationParameters->getCharset()) ?>">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= Html::encode($this->getTitle()) ?></title>
@@ -75,7 +75,7 @@ $this->beginPage()
 <div class="footer">
     <div class="footer_copyright">
         <a href="https://www.yiiframework.com/" target="_blank" rel="noopener">
-            © <?= date('Y') ?>  <?= Html::encode($applicationParameters->name) ?>
+            © <?= date('Y') ?>  <?= Html::encode($applicationParameters->getName()) ?>
         </a>
     </div>
     <div class="footer_icons">

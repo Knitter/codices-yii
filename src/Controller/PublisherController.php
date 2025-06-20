@@ -1,120 +1,122 @@
 <?php
 
-/*
- * SeriesController.php
- *
- * Small book management software.
- * Copyright (C) 2016 - 2022 Sérgio Lopes (knitter.is@gmail.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * (c) 2016 - 2022 Sérgio Lopes
- */
+declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Filter\Publishers;
-use App\Form\Publisher as Form;
 use App\Model\Publisher;
-use codices\components\ApplicationController;
-use Yii;
-use yii\web\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Yiisoft\Data\Paginator\OffsetPaginator;
+use Yiisoft\Data\Reader\Sort;
+use Yiisoft\Http\Method;
+use Yiisoft\Router\CurrentRoute;
+use Yiisoft\Validator\ValidatorInterface;
+use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
-/**
- * @license       http://www.gnu.org/licenses/agpl-3.0.txt AGPL
- * @copyright (c) 2016 - 2022, Sérgio Lopes (knitter.is@gmail.com)
- */
-final class PublisherController extends ApplicationController {
+final class PublisherController {
 
-//    public function actionIndex(): string {
-//        $filter = new Publishers(Yii::$app->user->identity->id);
-//        $provider = $filter->search(Yii::$app->request->queryParams);
-//
-//        return $this->render('index', [
-//            'filter' => $filter,
-//            'provider' => $provider
-//        ]);
-//    }
-//
-//    /**
-//     * @return string|\yii\web\Response
-//     */
-//    public function actionAdd(): Response|string {
-//        $form = new Form(Yii::$app->user->identity->id);
-//
-//        if ($form->load(Yii::$app->request->post())) {
-//            if ($form->save()) {
-//                //TODO: Yii::$app->session->setFlash('success', Yii::t('codices', 'New book created.'));
-//                return $this->redirect(['edit', 'id' => $form->id]);
-//            }
-//        }
-//
-//        return $this->render('add', [
-//            'model' => $form,
-//        ]);
-//    }
-//
-//    /**
-//     * @param int $id
-//     * @return string|\yii\web\Response
-//     * @throws \yii\web\NotFoundHttpException
-//     */
-//    public function actionEdit(int $id): Response|string {
-//        $form = new Form(Yii::$app->user->identity->id, $this->findModel(Publisher::class, $id));
-//
-//        if ($form->load(Yii::$app->request->post())) {
-//            if ($form->save()) {
-//                //TODO: Yii::$app->session->setFlash('success', Yii::t('codices', 'Book details updated.'));
-//                return $this->redirect(['edit', 'id' => $form->id]);
-//            }
-//        }
-//
-//        return $this->render('edit', [
-//            'model' => $form,
-//        ]);
-//    }
-//
-//    public function actionDetails(int $id) {
-//        throw new \Exception('Not implemented yet!');
-//    }
-//
-//    public function actionDelete(int $id) {
-//        throw new \Exception('Not implemented yet!');
-//    }
-    // private final PublisherService service;
-    //
-    //    public PublisherController(PublisherService service) {
-    //        this.service = service;
-    //    }
-    //
-    //    @GetMapping("/publishers")
-    //    public String index(Model model) {
-    //        model.addAttribute("publishers", service.findAll());
-    //        return "publishers";
-    //    }
-    //
-    //    //@RequestMapping("/publishers/edit/<id>")
-    //    public void edit() {
-    //
-    //    }
-    //
-    //    //@RequestMapping("/publishers/delete/<id>")
-    //    public void delete() {
-    //
-    //    }
-    //
-    //    @RequestMapping("/publishers/create")
-    //    public void create() {
-    //
-    //    }
+    private ServerRequestInterface $request;
+    private ResponseInterface $response;
+
+    public function __construct(
+        private ViewRenderer   $viewRenderer,
+        ServerRequestInterface $request,
+        ResponseInterface      $response
+    ) {
+        $this->viewRenderer = $viewRenderer->withControllerName('publisher');
+        $this->request = $request;
+        $this->response = $response;
+    }
+
+    public function index(CurrentRoute $currentRoute): ResponseInterface {
+        $query = Publisher::find()->orderBy(['name' => Sort::SORT_ASC]);
+        $paginator = (new OffsetPaginator($query))
+            ->withPageSize(10)
+            ->withCurrentPage((int)$currentRoute->getArgument('page', '1'));
+
+        return $this->viewRenderer->render('index', [
+            'paginator' => $paginator,
+            'currentRoute' => $currentRoute,
+        ]);
+    }
+
+    public function view(CurrentRoute $currentRoute): ResponseInterface {
+        $id = $currentRoute->getArgument('id');
+        $publisher = Publisher::findOne(['id' => $id]);
+
+        if ($publisher === null) {
+            return $this->viewRenderer->renderWithStatus('_404', [], 404);
+        }
+
+        return $this->viewRenderer->render('view', [
+            'publisher' => $publisher,
+        ]);
+    }
+
+    public function create(ValidatorInterface $validator): ResponseInterface {
+        $publisher = new Publisher();
+        $method = $this->request->getMethod();
+        $errors = [];
+
+        if ($method === Method::POST) {
+            $body = $this->request->getParsedBody();
+            $publisher->setAttributes($body);
+
+            // Set the owner ID to the current user
+            $publisher->ownedById = 1; // This should be replaced with the current user ID
+
+            $errors = $validator->validate($publisher);
+            if (empty($errors)) {
+                if ($publisher->save()) {
+                    return $this->response->withStatus(302)->withHeader('Location', '/publisher/view/' . $publisher->id);
+                }
+            }
+        }
+
+        return $this->viewRenderer->render('create', [
+            'publisher' => $publisher,
+            'errors' => $errors,
+        ]);
+    }
+
+    public function update(CurrentRoute $currentRoute, ValidatorInterface $validator): ResponseInterface {
+        $id = $currentRoute->getArgument('id');
+        $publisher = Publisher::findOne(['id' => $id]);
+
+        if ($publisher === null) {
+            return $this->viewRenderer->renderWithStatus('_404', [], 404);
+        }
+
+        $method = $this->request->getMethod();
+        $errors = [];
+
+        if ($method === Method::POST) {
+            $body = $this->request->getParsedBody();
+            $publisher->setAttributes($body);
+
+            $errors = $validator->validate($publisher);
+            if (empty($errors)) {
+                if ($publisher->save()) {
+                    return $this->response->withStatus(302)->withHeader('Location', '/publisher/view/' . $publisher->id);
+                }
+            }
+        }
+
+        return $this->viewRenderer->render('update', [
+            'publisher' => $publisher,
+            'errors' => $errors,
+        ]);
+    }
+
+    public function delete(CurrentRoute $currentRoute): ResponseInterface {
+        $id = $currentRoute->getArgument('id');
+        $publisher = Publisher::findOne(['id' => $id]);
+
+        if ($publisher !== null) {
+            $publisher->delete();
+        }
+
+        return $this->response->withStatus(302)->withHeader('Location', '/publisher');
+    }
 }
