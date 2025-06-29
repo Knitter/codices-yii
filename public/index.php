@@ -12,7 +12,7 @@ if (getenv('YII_C3')) {
 }
 
 /**
- * @psalm-var string $_SERVER['REQUEST_URI']
+ * @psalm-var string $_SERVER ['REQUEST_URI']
  */
 // PHP built-in server routing.
 if (PHP_SAPI === 'cli-server') {
