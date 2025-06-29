@@ -33,11 +33,9 @@ use Yiisoft\ActiveRecord\ActiveDataReader;
  */
 final class BookController {
 
-    public function __construct(
-        private ViewRenderer $viewRenderer,
-        private ServerRequestInterface $request,
-        private ResponseInterface $response
-    ) {
+    public function __construct(private ViewRenderer      $viewRenderer, private ServerRequestInterface $request,
+                                private ResponseInterface $response) {
+
         $this->viewRenderer = $viewRenderer->withControllerName('book');
     }
 
@@ -46,13 +44,10 @@ final class BookController {
      */
     public function index(CurrentRoute $currentRoute): ResponseInterface {
         $queryParams = $this->request->getQueryParams();
-
-        // Create base query for books only
         $query = Item::find()->where(['type' => Item::TYPE_PAPER]);
 
         // Apply filters
         $filters = [];
-
         if (!empty($queryParams['title'])) {
             $filters[] = new Like('title', $queryParams['title']);
         }
@@ -90,10 +85,11 @@ final class BookController {
         }
 
         // Create data reader
-        $dataReader = new ActiveDataReader($query);
+        //$dataReader = new ActiveDataReader($query);
+        //TODO: FIX THIS! $dataReader = new QueryData($query);
 
         // Apply sorting
-        $sort = new Sort([
+        $sort = Sort::only([
             'title' => [
                 'asc' => ['title' => SORT_ASC],
                 'desc' => ['title' => SORT_DESC],
@@ -115,9 +111,9 @@ final class BookController {
         $sortOrder = $queryParams['sort'] ?? 'title';
         $sortDirection = $queryParams['sort_dir'] ?? 'asc';
 
-        if ($sort->hasAttribute($sortOrder)) {
-            $dataReader = $dataReader->withSort($sort->withOrder([$sortOrder => $sortDirection === 'desc' ? SORT_DESC : SORT_ASC]));
-        }
+        //if ($sort->hasAttribute($sortOrder)) {
+        //    $dataReader = $dataReader->withSort($sort->withOrder([$sortOrder => $sortDirection === 'desc' ? SORT_DESC : SORT_ASC]));
+        //}
 
         // Create paginator
         $paginator = new OffsetPaginator($dataReader);
