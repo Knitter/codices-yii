@@ -44,8 +44,11 @@ use Yiisoft\ActiveRecord\ActiveRecord;
  * @property int|null $seriesId
  * @property int|null $collectionId
  * @property int|null $duplicatesId
+ *
+ * @since 2025.1
  */
 final class Item extends ActiveRecord {
+
     public const TYPE_PAPER = 'paper';
     public const TYPE_EBOOK = 'ebook';
     public const TYPE_AUDIO = 'audio';

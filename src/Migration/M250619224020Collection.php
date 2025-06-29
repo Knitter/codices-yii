@@ -19,12 +19,9 @@ final class M250619224020Collection implements RevertibleMigrationInterface {
             'publishYear' => ColumnBuilder::integer(),
             'description' => ColumnBuilder::text(),
         ]);
-
-        $b->addForeignKey('fk-collection-ownedById', 'collection', 'ownedById', 'account', 'id');
     }
 
     public function down(MigrationBuilder $b): void {
-        $b->dropForeignKey('fk-collection-ownedById', 'collection');
         $b->dropTable('collection');
     }
 }

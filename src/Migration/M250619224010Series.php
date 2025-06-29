@@ -20,12 +20,9 @@ final class M250619224010Series implements RevertibleMigrationInterface {
             'bookCount' => ColumnBuilder::integer(),
             'ownedCount' => ColumnBuilder::integer(),
         ]);
-
-        $b->addForeignKey('fk-series-ownedById', 'series', 'ownedById', 'account', 'id');
     }
 
     public function down(MigrationBuilder $b): void {
-        $b->dropForeignKey('fk-series-ownedById', 'series');
         $b->dropTable('series');
     }
 }

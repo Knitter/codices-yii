@@ -22,16 +22,17 @@ use Yiisoft\Router\CurrentRoute;
 use Yiisoft\Validator\ValidatorInterface;
 use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
+/**
+ * @since 2025.1
+ */
 final class ItemController {
 
     private ServerRequestInterface $request;
     private ResponseInterface $response;
 
-    public function __construct(
-        private ViewRenderer   $viewRenderer,
-        ServerRequestInterface $request,
-        ResponseInterface      $response
-    ) {
+    public function __construct(private ViewRenderer $viewRenderer, ServerRequestInterface $request,
+                                ResponseInterface    $response) {
+
         $this->viewRenderer = $viewRenderer->withControllerName('item');
         $this->request = $request;
         $this->response = $response;

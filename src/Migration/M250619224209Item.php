@@ -47,20 +47,9 @@ final class M250619224209Item implements RevertibleMigrationInterface {
             'collectionId' => ColumnBuilder::integer(),
             'duplicatesId' => ColumnBuilder::integer(),
         ]);
-
-        $b->addForeignKey('fk-item-ownedById', 'item', 'ownedById', 'account', 'id');
-        $b->addForeignKey('fk-item-publisherId', 'item', 'publisherId', 'publisher', 'id');
-        $b->addForeignKey('fk-item-seriesId', 'item', 'seriesId', 'series', 'id');
-        $b->addForeignKey('fk-item-collectionId', 'item', 'collectionId', 'collection', 'id');
-        $b->addForeignKey('fk-item-duplicatesId', 'item', 'duplicatesId', 'item', 'id');
     }
 
     public function down(MigrationBuilder $b): void {
-        $b->dropForeignKey('fk-item-ownedById', 'item');
-        $b->dropForeignKey('fk-item-publisherId', 'item');
-        $b->dropForeignKey('fk-item-seriesId', 'item');
-        $b->dropForeignKey('fk-item-collectionId', 'item');
-        $b->dropForeignKey('fk-item-duplicatesId', 'item');
         $b->dropTable('item');
     }
 }

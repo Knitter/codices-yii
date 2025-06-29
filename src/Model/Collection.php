@@ -15,8 +15,11 @@ use Yiisoft\ActiveRecord\ActiveRecord;
  * @property string|null $publishDate
  * @property int|null $publishYear
  * @property string|null $description
+ *
+ * @since 2025.1
  */
 final class Collection extends ActiveRecord {
+
     public function tableName(): string {
         return 'collection';
     }

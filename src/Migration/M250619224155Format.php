@@ -18,11 +18,9 @@ final class M250619224155Format implements RevertibleMigrationInterface {
         ]);
 
         $b->addPrimaryKey('pk-format', 'format', ['type', 'name', 'ownedById']);
-        $b->addForeignKey('fk-format-ownedById', 'format', 'ownedById', 'account', 'id');
     }
 
     public function down(MigrationBuilder $b): void {
-        $b->dropForeignKey('fk-format-ownedById', 'format');
         $b->dropPrimaryKey('pk-format', 'format');
         $b->dropTable('format');
     }

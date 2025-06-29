@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Model;
 
+use Yiisoft\ActiveRecord\ActiveQueryInterface;
 use Yiisoft\ActiveRecord\ActiveRecord;
 use Yiisoft\Security\PasswordHasher;
+use Yiisoft\Security\Random;
 
 /**
  * Account model
@@ -19,8 +21,11 @@ use Yiisoft\Security\PasswordHasher;
  * @property int $createdOn
  * @property int $updatedOn
  * @property string|null $authKey
+ *
+ * @since 2025.1
  */
 final class Account extends ActiveRecord {
+
     public function tableName(): string {
         return 'account';
     }
@@ -44,9 +49,8 @@ final class Account extends ActiveRecord {
                 $this->createdOn = time();
             }
             $this->updatedOn = time();
-
             if ($this->isAttributeChanged('password')) {
-                $this->password = (new PasswordHasher())->hash($this->password);
+                $this->password = new PasswordHasher()->hash($this->password);
             }
 
             return true;
@@ -56,39 +60,39 @@ final class Account extends ActiveRecord {
     }
 
     public function validatePassword(string $password): bool {
-        return (new PasswordHasher())->validate($password, $this->password);
+        return new PasswordHasher()->validate($password, $this->password);
     }
 
     public function generateAuthKey(): void {
-        $this->authKey = \Yiisoft\Security\Random::string(32);
+        $this->authKey = Random::string(32);
     }
 
     // Relationships
-    public function getPublishers() {
+    public function getPublishers(): ActiveQueryInterface {
         return $this->hasMany(Publisher::class, ['ownedById' => 'id']);
     }
 
-    public function getSeries() {
+    public function getSeries(): ActiveQueryInterface {
         return $this->hasMany(Series::class, ['ownedById' => 'id']);
     }
 
-    public function getCollections() {
+    public function getCollections(): ActiveQueryInterface {
         return $this->hasMany(Collection::class, ['ownedById' => 'id']);
     }
 
-    public function getAuthors() {
+    public function getAuthors(): ActiveQueryInterface {
         return $this->hasMany(Author::class, ['ownedById' => 'id']);
     }
 
-    public function getGenres() {
+    public function getGenres(): ActiveQueryInterface {
         return $this->hasMany(Genre::class, ['ownedById' => 'id']);
     }
 
-    public function getFormats() {
+    public function getFormats(): ActiveQueryInterface {
         return $this->hasMany(Format::class, ['ownedById' => 'id']);
     }
 
-    public function getItems() {
+    public function getItems(): ActiveQueryInterface {
         return $this->hasMany(Item::class, ['ownedById' => 'id']);
     }
 }

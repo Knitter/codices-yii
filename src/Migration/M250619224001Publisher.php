@@ -18,12 +18,9 @@ final class M250619224001Publisher implements RevertibleMigrationInterface {
             'summary' => ColumnBuilder::text(),
             'website' => ColumnBuilder::string(),
         ]);
-
-        $b->addForeignKey('fk-publisher-ownedById', 'publisher', 'ownedById', 'account', 'id');
     }
 
     public function down(MigrationBuilder $b): void {
-        $b->dropForeignKey('fk-publisher-ownedById', 'publisher');
         $b->dropTable('publisher');
     }
 }

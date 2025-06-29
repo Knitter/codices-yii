@@ -13,6 +13,9 @@ use Yiisoft\Router\CurrentRoute;
 use Yiisoft\Validator\ValidatorInterface;
 use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
+/**
+ * @since 2025.1
+ */
 final class AccountController {
 
     public function __construct(private ViewRenderer $viewRenderer) {

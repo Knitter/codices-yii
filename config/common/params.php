@@ -17,7 +17,7 @@ return [
     'app' => [
         'charset' => 'UTF-8',
         'locale' => 'en',
-        'name' => 'My Project',
+        'name' => 'Codices',
     ],
     'yiisoft/aliases' => [
         'aliases' => require __DIR__ . '/aliases.php',

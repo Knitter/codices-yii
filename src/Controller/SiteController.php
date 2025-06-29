@@ -7,6 +7,9 @@ namespace App\Controller;
 use Psr\Http\Message\ResponseInterface;
 use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
+/**
+ * @since 2025.1
+ */
 final class SiteController {
 
     public function __construct(private ViewRenderer $viewRenderer) {

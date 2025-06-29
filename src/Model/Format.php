@@ -12,8 +12,11 @@ use Yiisoft\ActiveRecord\ActiveRecord;
  * @property string $type
  * @property string $name
  * @property int $ownedById
+ *
+ * @since 2025.1
  */
 final class Format extends ActiveRecord {
+
     public function tableName(): string {
         return 'format';
     }

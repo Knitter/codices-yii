@@ -16,8 +16,11 @@ use Yiisoft\ActiveRecord\ActiveRecord;
  * @property string|null $biography
  * @property string|null $website
  * @property string|null $photo
+ *
+ * @since 2025.1
  */
 final class Author extends ActiveRecord {
+
     public function tableName(): string {
         return 'author';
     }

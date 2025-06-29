@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Model;
 
+use Yiisoft\ActiveRecord\ActiveQueryInterface;
 use Yiisoft\ActiveRecord\ActiveRecord;
 
 /**
@@ -14,8 +15,11 @@ use Yiisoft\ActiveRecord\ActiveRecord;
  * @property int $ownedById
  * @property string|null $summary
  * @property string|null $website
+ *
+ * @since 2025.1
  */
 final class Publisher extends ActiveRecord {
+
     public function tableName(): string {
         return 'publisher';
     }
@@ -30,11 +34,11 @@ final class Publisher extends ActiveRecord {
     }
 
     // Relationships
-    public function getOwner() {
+    public function getOwner(): ActiveQueryInterface {
         return $this->hasOne(Account::class, ['id' => 'ownedById']);
     }
 
-    public function getItems() {
+    public function getItems(): ActiveQueryInterface {
         return $this->hasMany(Item::class, ['publisherId' => 'id']);
     }
 }

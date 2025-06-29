@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Model;
 
+use Yiisoft\ActiveRecord\ActiveQueryInterface;
 use Yiisoft\ActiveRecord\ActiveRecord;
 
 /**
@@ -11,6 +12,8 @@ use Yiisoft\ActiveRecord\ActiveRecord;
  *
  * @property int $itemId
  * @property int $genreId
+ *
+ * @since 2025.1
  */
 final class ItemGenre extends ActiveRecord {
     public function tableName(): string {
@@ -29,11 +32,11 @@ final class ItemGenre extends ActiveRecord {
     }
 
     // Relationships
-    public function getItem() {
+    public function getItem(): ActiveQueryInterface {
         return $this->hasOne(Item::class, ['id' => 'itemId']);
     }
 
-    public function getGenre() {
+    public function getGenre(): ActiveQueryInterface {
         return $this->hasOne(Genre::class, ['id' => 'genreId']);
     }
 }

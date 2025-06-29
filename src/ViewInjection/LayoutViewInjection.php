@@ -10,14 +10,13 @@ use Yiisoft\I18n\Locale;
 use Yiisoft\Router\CurrentRoute;
 use Yiisoft\Yii\View\Renderer\LayoutParametersInjectionInterface;
 
+/**
+ * @since 2025.1
+ */
 final class LayoutViewInjection implements LayoutParametersInjectionInterface {
 
-    public function __construct(
-        private Aliases      $aliases,
-        private AssetManager $assetManager,
-        private Locale       $locale,
-        private CurrentRoute $currentRoute,
-    ) {
+    public function __construct(private Aliases $aliases, private AssetManager $assetManager,
+                                private Locale  $locale, private CurrentRoute $currentRoute) {
     }
 
     public function getLayoutParameters(): array {

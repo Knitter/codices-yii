@@ -12,8 +12,11 @@ use Yiisoft\ActiveRecord\ActiveRecord;
  * @property int $id
  * @property string $name
  * @property int $ownedById
+ *
+ * @since 2025.1
  */
 final class Genre extends ActiveRecord {
+
     public function tableName(): string {
         return 'genre';
     }

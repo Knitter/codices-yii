@@ -16,12 +16,9 @@ final class M250619224148Genre implements RevertibleMigrationInterface {
             'name' => ColumnBuilder::string()->notNull(),
             'ownedById' => ColumnBuilder::integer()->notNull(),
         ]);
-
-        $b->addForeignKey('fk-genre-ownedById', 'genre', 'ownedById', 'account', 'id');
     }
 
     public function down(MigrationBuilder $b): void {
-        $b->dropForeignKey('fk-genre-ownedById', 'genre');
         $b->dropTable('genre');
     }
 }

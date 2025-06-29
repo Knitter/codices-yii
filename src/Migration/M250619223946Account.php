@@ -8,6 +8,9 @@ use Yiisoft\Db\Migration\MigrationBuilder;
 use Yiisoft\Db\Migration\RevertibleMigrationInterface;
 use Yiisoft\Db\Schema\Column\ColumnBuilder;
 
+/**
+ * @since 2025.1
+ */
 final class M250619223946Account implements RevertibleMigrationInterface {
 
     public function up(MigrationBuilder $b): void {
