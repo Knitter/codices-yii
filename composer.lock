@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "28e5c6a64a4b16bc1cbdd29d1354bb3f",
+    "content-hash": "d5bc9e5afb4dd40d7505acf93b37c007",
     "packages": [
         {
             "name": "alexkart/curl-builder",
@@ -2599,30 +2599,32 @@
         },
         {
             "name": "yiisoft/data",
-            "version": "1.0.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/data.git",
-                "reference": "ac1b7726cdc04164d625e42376551ae31cfd4d61"
+                "reference": "a737b94e8646d86cc45033809ba82c26d40f4fbd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/data/zipball/ac1b7726cdc04164d625e42376551ae31cfd4d61",
-                "reference": "ac1b7726cdc04164d625e42376551ae31cfd4d61",
+                "url": "https://api.github.com/repos/yiisoft/data/zipball/a737b94e8646d86cc45033809ba82c26d40f4fbd",
+                "reference": "a737b94e8646d86cc45033809ba82c26d40f4fbd",
                 "shasum": ""
             },
             "require": {
-                "php": "^8.0",
+                "ext-mbstring": "*",
+                "php": "8.1 - 8.4",
                 "yiisoft/arrays": "^3.0"
             },
             "require-dev": {
-                "maglnet/composer-require-checker": "^4.2",
-                "phpunit/phpunit": "^9.5",
-                "rector/rector": "^0.15.0",
-                "roave/infection-static-analysis-plugin": "^1.25",
-                "spatie/phpunit-watcher": "^1.23",
-                "vimeo/psalm": "^4.26|^5.4"
+                "maglnet/composer-require-checker": "^4.7.1",
+                "phpunit/phpunit": "^10.5.46",
+                "rector/rector": "^2.0.18",
+                "roave/infection-static-analysis-plugin": "^1.35",
+                "spatie/phpunit-watcher": "^1.24",
+                "vimeo/psalm": "^5.26.1 || ^6.10.3"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -2646,7 +2648,7 @@
             "support": {
                 "chat": "https://t.me/yii3en",
                 "forum": "https://www.yiiframework.com/forum/",
-                "irc": "irc://irc.freenode.net/yii",
+                "irc": "ircs://irc.libera.chat:6697/yii",
                 "issues": "https://github.com/yiisoft/data/issues?state=open",
                 "source": "https://github.com/yiisoft/data",
                 "wiki": "https://www.yiiframework.com/wiki/"
@@ -2661,7 +2663,83 @@
                     "type": "opencollective"
                 }
             ],
-            "time": "2023-01-25T17:12:56+00:00"
+            "time": "2025-06-13T02:49:34+00:00"
+        },
+        {
+            "name": "yiisoft/data-db",
+            "version": "dev-db2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yiisoft/data-db.git",
+                "reference": "e0c242e4c5d3a28a5318eae9cf23b648527be9a0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yiisoft/data-db/zipball/e0c242e4c5d3a28a5318eae9cf23b648527be9a0",
+                "reference": "e0c242e4c5d3a28a5318eae9cf23b648527be9a0",
+                "shasum": ""
+            },
+            "require": {
+                "php": "8.1 - 8.4",
+                "yiisoft/data": "dev-master",
+                "yiisoft/db": "dev-master"
+            },
+            "require-dev": {
+                "maglnet/composer-require-checker": "^4.7.1",
+                "phpunit/phpunit": "^10.5.45",
+                "rector/rector": "^2.0.10",
+                "roave/infection-static-analysis-plugin": "^1.35",
+                "spatie/phpunit-watcher": "^1.24",
+                "vimeo/psalm": "^5.26.1 || ^6.9.1",
+                "vlucas/phpdotenv": "^5.6.1",
+                "yiisoft/cache": "^3.0",
+                "yiisoft/db-mssql": "dev-master",
+                "yiisoft/db-mysql": "dev-master",
+                "yiisoft/db-oracle": "dev-master",
+                "yiisoft/db-pgsql": "dev-master",
+                "yiisoft/db-sqlite": "dev-master"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Yiisoft\\Data\\Db\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Database query adapter for yiisoft/data data providers",
+            "homepage": "https://www.yiiframework.com/",
+            "keywords": [
+                "data provider",
+                "database",
+                "db"
+            ],
+            "support": {
+                "chat": "https://t.me/yii3en",
+                "forum": "https://www.yiiframework.com/forum/",
+                "irc": "ircs://irc.libera.chat:6697/yii",
+                "issues": "https://github.com/yiisoft/data-db/issues?state=open",
+                "source": "https://github.com/yiisoft/data-db",
+                "wiki": "https://www.yiiframework.com/wiki/"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/yiisoft",
+                    "type": "github"
+                },
+                {
+                    "url": "https://opencollective.com/yiisoft",
+                    "type": "opencollective"
+                }
+            ],
+            "time": "2025-04-09T12:15:36+00:00"
         },
         {
             "name": "yiisoft/data-response",
@@ -14548,6 +14626,8 @@
     "stability-flags": {
         "roave/security-advisories": 20,
         "yiisoft/active-record": 20,
+        "yiisoft/data": 20,
+        "yiisoft/data-db": 20,
         "yiisoft/db-migration": 20,
         "yiisoft/db-sqlite": 20,
         "yiisoft/yii-debug": 20,
