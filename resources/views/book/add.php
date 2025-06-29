@@ -6,12 +6,12 @@ declare(strict_types=1);
  * @var WebView $this
  * @var Yiisoft\Router\UrlGeneratorInterface $urlGenerator
  * @var App\Model\Item $item
- * @var array $authors
- * @var array $genres
- * @var array $publishers
- * @var array $series
- * @var array $collections
- * @var array $formats
+ * //@var array $ authors
+ * //@var array $ genres
+ * //@var array $ publishers
+ * //@var array $ series
+ * //@var array $ collections
+ * //@var array $ formats
  * @var string|null $csrf
  */
 
@@ -41,7 +41,9 @@ $this->setTitle('Add New Book');
         <div class="row text-center">
             <div class="col-md-4">
                 <div class="d-flex align-items-center justify-content-center">
-                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 30px; height: 30px;">
+                    <div
+                        class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2"
+                        style="width: 30px; height: 30px;">
                         <small class="fw-bold">1</small>
                     </div>
                     <span class="text-primary fw-semibold">Basic Information</span>
@@ -49,7 +51,9 @@ $this->setTitle('Add New Book');
             </div>
             <div class="col-md-4">
                 <div class="d-flex align-items-center justify-content-center">
-                    <div class="bg-light text-muted rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 30px; height: 30px;">
+                    <div
+                        class="bg-light text-muted rounded-circle d-flex align-items-center justify-content-center me-2"
+                        style="width: 30px; height: 30px;">
                         <small class="fw-bold">2</small>
                     </div>
                     <span class="text-muted">Publication Details</span>
@@ -57,7 +61,9 @@ $this->setTitle('Add New Book');
             </div>
             <div class="col-md-4">
                 <div class="d-flex align-items-center justify-content-center">
-                    <div class="bg-light text-muted rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 30px; height: 30px;">
+                    <div
+                        class="bg-light text-muted rounded-circle d-flex align-items-center justify-content-center me-2"
+                        style="width: 30px; height: 30px;">
                         <small class="fw-bold">3</small>
                     </div>
                     <span class="text-muted">Additional Details</span>
@@ -89,7 +95,8 @@ $this->setTitle('Add New Book');
                                 Title <span class="text-danger">*</span>
                             </label>
                             <input type="text" class="form-control form-control-lg" id="title" name="title"
-                                   placeholder="Enter the book title" value="<?= Html::encode($item->title ?? '') ?>" required>
+                                   placeholder="Enter the book title" value="<?= Html::encode($item->title ?? '') ?>"
+                                   required>
                             <div class="invalid-feedback">
                                 Please provide a valid title.
                             </div>
@@ -100,12 +107,12 @@ $this->setTitle('Add New Book');
                             </label>
                             <select class="form-select" id="format" name="format">
                                 <option value="">Choose format...</option>
-                                <?php foreach ($formats as $format): ?>
+                                <?php /*foreach ($formats as $format): ?>
                                     <option value="<?= Html::encode($format->name) ?>"
                                             <?= ($item->format ?? '') === $format->name ? 'selected' : '' ?>>
                                         <?= Html::encode($format->name) ?>
                                     </option>
-                                <?php endforeach; ?>
+                                <?php endforeach;*/ ?>
                             </select>
                         </div>
                     </div>
@@ -122,11 +129,11 @@ $this->setTitle('Add New Book');
                                 Authors <span class="text-danger">*</span>
                             </label>
                             <select class="form-select" id="authors" name="authors[]" multiple required>
-                                <?php foreach ($authors as $author): ?>
+                                <?php /*foreach ($authors as $author): ?>
                                     <option value="<?= $author->id ?>">
                                         <?= Html::encode($author->name) ?>
                                     </option>
-                                <?php endforeach; ?>
+                                <?php endforeach;*/ ?>
                             </select>
                             <div class="form-text">
                                 <i class="bi bi-info-circle me-1"></i>
@@ -169,18 +176,18 @@ $this->setTitle('Add New Book');
                             <label for="publisherId" class="form-label fw-semibold">Publisher</label>
                             <select class="form-select" id="publisherId" name="publisherId">
                                 <option value="">Choose publisher...</option>
-                                <?php foreach ($publishers as $publisher): ?>
+                                <?php /*foreach ($publishers as $publisher): ?>
                                     <option value="<?= $publisher->id ?>"
                                             <?= ($item->publisherId ?? '') == $publisher->id ? 'selected' : '' ?>>
                                         <?= Html::encode($publisher->name) ?>
                                     </option>
-                                <?php endforeach; ?>
+                                <?php endforeach;*/ ?>
                             </select>
                         </div>
                         <div class="col-md-3 mb-3">
                             <label for="publishYear" class="form-label fw-semibold">Publication Year</label>
                             <input type="number" class="form-control" id="publishYear" name="publishYear"
-                                   min="1000" max="<?= date('Y') + 1 ?>" placeholder="<?= date('Y') ?>"
+                                   min="1000" max="<?= 1 + (int)date('Y') ?>" placeholder="<?= date('Y') ?>"
                                    value="<?= Html::encode($item->publishYear ?? '') ?>">
                         </div>
                         <div class="col-md-3 mb-3">
@@ -199,16 +206,27 @@ $this->setTitle('Add New Book');
                         <div class="col-md-6 mb-3">
                             <label for="language" class="form-label fw-semibold">Language</label>
                             <select class="form-select" id="language" name="language">
-                                <option value="en" <?= ($item->language ?? 'en') === 'en' ? 'selected' : '' ?>>English</option>
-                                <option value="es" <?= ($item->language ?? '') === 'es' ? 'selected' : '' ?>>Spanish</option>
-                                <option value="fr" <?= ($item->language ?? '') === 'fr' ? 'selected' : '' ?>>French</option>
-                                <option value="de" <?= ($item->language ?? '') === 'de' ? 'selected' : '' ?>>German</option>
-                                <option value="it" <?= ($item->language ?? '') === 'it' ? 'selected' : '' ?>>Italian</option>
-                                <option value="pt" <?= ($item->language ?? '') === 'pt' ? 'selected' : '' ?>>Portuguese</option>
-                                <option value="ru" <?= ($item->language ?? '') === 'ru' ? 'selected' : '' ?>>Russian</option>
-                                <option value="zh" <?= ($item->language ?? '') === 'zh' ? 'selected' : '' ?>>Chinese</option>
-                                <option value="ja" <?= ($item->language ?? '') === 'ja' ? 'selected' : '' ?>>Japanese</option>
-                                <option value="ko" <?= ($item->language ?? '') === 'ko' ? 'selected' : '' ?>>Korean</option>
+                                <option value="en" <?= ($item->language ?? 'en') === 'en' ? 'selected' : '' ?>>English
+                                </option>
+                                <option value="es" <?= ($item->language ?? '') === 'es' ? 'selected' : '' ?>>Spanish
+                                </option>
+                                <option value="fr" <?= ($item->language ?? '') === 'fr' ? 'selected' : '' ?>>French
+                                </option>
+                                <option value="de" <?= ($item->language ?? '') === 'de' ? 'selected' : '' ?>>German
+                                </option>
+                                <option value="it" <?= ($item->language ?? '') === 'it' ? 'selected' : '' ?>>Italian
+                                </option>
+                                <option value="pt" <?= ($item->language ?? '') === 'pt' ? 'selected' : '' ?>>
+                                    Portuguese
+                                </option>
+                                <option value="ru" <?= ($item->language ?? '') === 'ru' ? 'selected' : '' ?>>Russian
+                                </option>
+                                <option value="zh" <?= ($item->language ?? '') === 'zh' ? 'selected' : '' ?>>Chinese
+                                </option>
+                                <option value="ja" <?= ($item->language ?? '') === 'ja' ? 'selected' : '' ?>>Japanese
+                                </option>
+                                <option value="ko" <?= ($item->language ?? '') === 'ko' ? 'selected' : '' ?>>Korean
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -217,12 +235,14 @@ $this->setTitle('Add New Book');
                         <div class="col-md-6 mb-3">
                             <label for="edition" class="form-label fw-semibold">Edition</label>
                             <input type="text" class="form-control" id="edition" name="edition"
-                                   placeholder="e.g., 1st Edition, Revised Edition" value="<?= Html::encode($item->edition ?? '') ?>">
+                                   placeholder="e.g., 1st Edition, Revised Edition"
+                                   value="<?= Html::encode($item->edition ?? '') ?>">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="volume" class="form-label fw-semibold">Volume</label>
                             <input type="text" class="form-control" id="volume" name="volume"
-                                   placeholder="e.g., Volume 1, Part A" value="<?= Html::encode($item->volume ?? '') ?>">
+                                   placeholder="e.g., Volume 1, Part A"
+                                   value="<?= Html::encode($item->volume ?? '') ?>">
                         </div>
                     </div>
                 </div>
@@ -241,11 +261,11 @@ $this->setTitle('Add New Book');
                         <div class="col-md-6 mb-3">
                             <label for="genres" class="form-label fw-semibold">Genres</label>
                             <select class="form-select" id="genres" name="genres[]" multiple>
-                                <?php foreach ($genres as $genre): ?>
+                                <?php /* foreach ($genres as $genre): ?>
                                     <option value="<?= $genre->id ?>">
                                         <?= Html::encode($genre->name) ?>
                                     </option>
-                                <?php endforeach; ?>
+                                <?php endforeach;*/ ?>
                             </select>
                             <div class="form-text">
                                 <i class="bi bi-info-circle me-1"></i>
@@ -256,12 +276,12 @@ $this->setTitle('Add New Book');
                             <label for="seriesId" class="form-label fw-semibold">Series</label>
                             <select class="form-select" id="seriesId" name="seriesId">
                                 <option value="">Not part of a series</option>
-                                <?php foreach ($series as $serie): ?>
+                                <?php /*foreach ($series as $serie): ?>
                                     <option value="<?= $serie->id ?>"
-                                            <?= ($item->seriesId ?? '') == $serie->id ? 'selected' : '' ?>>
+                                        <?= ($item->seriesId ?? '') == $serie->id ? 'selected' : '' ?>>
                                         <?= Html::encode($serie->name) ?>
                                     </option>
-                                <?php endforeach; ?>
+                                <?php endforeach;*/ ?>
                             </select>
                         </div>
                     </div>
@@ -280,12 +300,12 @@ $this->setTitle('Add New Book');
                             <label for="collectionId" class="form-label fw-semibold">Collection</label>
                             <select class="form-select" id="collectionId" name="collectionId">
                                 <option value="">No collection</option>
-                                <?php foreach ($collections as $collection): ?>
+                                <?php /*foreach ($collections as $collection): ?>
                                     <option value="<?= $collection->id ?>"
-                                            <?= ($item->collectionId ?? '') == $collection->id ? 'selected' : '' ?>>
+                                        <?= ($item->collectionId ?? '') == $collection->id ? 'selected' : '' ?>>
                                         <?= Html::encode($collection->name) ?>
                                     </option>
-                                <?php endforeach; ?>
+                                <?php endforeach;*/ ?>
                             </select>
                         </div>
                     </div>
@@ -301,8 +321,9 @@ $this->setTitle('Add New Book');
                             <div class="rating-input">
                                 <div class="btn-group" role="group" aria-label="Rating">
                                     <?php for ($i = 1; $i <= 5; $i++): ?>
-                                        <input type="radio" class="btn-check" name="rating" id="rating<?= $i ?>" value="<?= $i ?>"
-                                               <?= ($item->rating ?? 0) == $i ? 'checked' : '' ?>>
+                                        <input type="radio" class="btn-check" name="rating" id="rating<?= $i ?>"
+                                               value="<?= $i ?>"
+                                            <?= ($item->rating ?? 0) == $i ? 'checked' : '' ?>>
                                         <label class="btn btn-outline-warning" for="rating<?= $i ?>">
                                             <i class="bi bi-star"></i>
                                         </label>
@@ -315,14 +336,15 @@ $this->setTitle('Add New Book');
                             <div class="d-flex gap-3">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="read" name="read" value="1"
-                                           <?= ($item->read ?? false) ? 'checked' : '' ?>>
+                                        <?= ($item->read ?? false) ? 'checked' : '' ?>>
                                     <label class="form-check-label" for="read">
                                         Read
                                     </label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="translated" name="translated" value="1"
-                                           <?= ($item->translated ?? false) ? 'checked' : '' ?>>
+                                    <input class="form-check-input" type="checkbox" id="translated" name="translated"
+                                           value="1"
+                                        <?= ($item->translated ?? false) ? 'checked' : '' ?>>
                                     <label class="form-check-label" for="translated">
                                         Translated
                                     </label>
@@ -335,7 +357,8 @@ $this->setTitle('Add New Book');
                         <div class="col-md-6 mb-3">
                             <label for="originalTitle" class="form-label fw-semibold">Original Title</label>
                             <input type="text" class="form-control" id="originalTitle" name="originalTitle"
-                                   placeholder="Original title (if translated)" value="<?= Html::encode($item->originalTitle ?? '') ?>">
+                                   placeholder="Original title (if translated)"
+                                   value="<?= Html::encode($item->originalTitle ?? '') ?>">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="url" class="form-label fw-semibold">URL</label>
@@ -365,7 +388,8 @@ $this->setTitle('Add New Book');
                 </div>
                 <div class="card-body text-center">
                     <div class="cover-upload-area border border-2 border-dashed rounded p-4 mb-3"
-                         style="min-height: 200px; cursor: pointer;" onclick="document.getElementById('cover').click();">
+                         style="min-height: 200px; cursor: pointer;"
+                         onclick="document.getElementById('cover').click();">
                         <div class="d-flex flex-column align-items-center justify-content-center h-100">
                             <i class="bi bi-cloud-upload display-4 text-muted mb-2"></i>
                             <p class="text-muted mb-1">Click to upload cover image</p>
@@ -454,121 +478,121 @@ $this->setTitle('Add New Book');
 </form>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Form validation
-    const form = document.getElementById('bookForm');
-    form.addEventListener('submit', function(event) {
-        if (!form.checkValidity()) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
-        form.classList.add('was-validated');
-    });
+    document.addEventListener('DOMContentLoaded', function () {
+        // Form validation
+        const form = document.getElementById('bookForm');
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        });
 
-    // Cover image preview
-    document.getElementById('cover').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const uploadArea = document.querySelector('.cover-upload-area');
-                uploadArea.innerHTML = `
+        // Cover image preview
+        document.getElementById('cover').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const uploadArea = document.querySelector('.cover-upload-area');
+                    uploadArea.innerHTML = `
                     <img src="${e.target.result}" class="img-fluid rounded" style="max-height: 200px;">
                     <div class="mt-2">
                         <small class="text-muted">${file.name}</small>
                     </div>
                 `;
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    // Rating stars
-    const ratingInputs = document.querySelectorAll('input[name="rating"]');
-    ratingInputs.forEach(input => {
-        input.addEventListener('change', function() {
-            updateRatingDisplay(this.value);
+                };
+                reader.readAsDataURL(file);
+            }
         });
-    });
 
-    // Initialize rating display
-    const checkedRating = document.querySelector('input[name="rating"]:checked');
-    if (checkedRating) {
-        updateRatingDisplay(checkedRating.value);
-    }
-});
+        // Rating stars
+        const ratingInputs = document.querySelectorAll('input[name="rating"]');
+        ratingInputs.forEach(input => {
+            input.addEventListener('change', function () {
+                updateRatingDisplay(this.value);
+            });
+        });
 
-function updateRatingDisplay(rating) {
-    const labels = document.querySelectorAll('.rating-input label');
-    labels.forEach((label, index) => {
-        const icon = label.querySelector('i');
-        if (index < rating) {
-            icon.className = 'bi bi-star-fill';
-            label.classList.remove('btn-outline-warning');
-            label.classList.add('btn-warning');
-        } else {
-            icon.className = 'bi bi-star';
-            label.classList.remove('btn-warning');
-            label.classList.add('btn-outline-warning');
+        // Initialize rating display
+        const checkedRating = document.querySelector('input[name="rating"]:checked');
+        if (checkedRating) {
+            updateRatingDisplay(checkedRating.value);
         }
     });
-}
 
-function fillSampleData() {
-    document.getElementById('title').value = 'The Great Gatsby';
-    document.getElementById('subtitle').value = 'A Classic American Novel';
-    document.getElementById('plot').value = 'A classic American novel set in the Jazz Age, exploring themes of wealth, love, and the American Dream through the eyes of narrator Nick Carraway.';
-    document.getElementById('isbn').value = '978-0-7432-7356-5';
-    document.getElementById('publishYear').value = '1925';
-    document.getElementById('pageCount').value = '180';
-    document.getElementById('language').value = 'en';
-    document.getElementById('edition').value = '1st Edition';
-    document.getElementById('copies').value = '1';
-    document.getElementById('rating3').checked = true;
-    updateRatingDisplay(3);
-}
+    function updateRatingDisplay(rating) {
+        const labels = document.querySelectorAll('.rating-input label');
+        labels.forEach((label, index) => {
+            const icon = label.querySelector('i');
+            if (index < rating) {
+                icon.className = 'bi bi-star-fill';
+                label.classList.remove('btn-outline-warning');
+                label.classList.add('btn-warning');
+            } else {
+                icon.className = 'bi bi-star';
+                label.classList.remove('btn-warning');
+                label.classList.add('btn-outline-warning');
+            }
+        });
+    }
 
-function clearForm() {
-    if (confirm('Are you sure you want to clear all form data?')) {
-        document.getElementById('bookForm').reset();
-        document.querySelector('.cover-upload-area').innerHTML = `
+    function fillSampleData() {
+        document.getElementById('title').value = 'The Great Gatsby';
+        document.getElementById('subtitle').value = 'A Classic American Novel';
+        document.getElementById('plot').value = 'A classic American novel set in the Jazz Age, exploring themes of wealth, love, and the American Dream through the eyes of narrator Nick Carraway.';
+        document.getElementById('isbn').value = '978-0-7432-7356-5';
+        document.getElementById('publishYear').value = '1925';
+        document.getElementById('pageCount').value = '180';
+        document.getElementById('language').value = 'en';
+        document.getElementById('edition').value = '1st Edition';
+        document.getElementById('copies').value = '1';
+        document.getElementById('rating3').checked = true;
+        updateRatingDisplay(3);
+    }
+
+    function clearForm() {
+        if (confirm('Are you sure you want to clear all form data?')) {
+            document.getElementById('bookForm').reset();
+            document.querySelector('.cover-upload-area').innerHTML = `
             <div class="d-flex flex-column align-items-center justify-content-center h-100">
                 <i class="bi bi-cloud-upload display-4 text-muted mb-2"></i>
                 <p class="text-muted mb-1">Click to upload cover image</p>
                 <small class="text-muted">JPG, PNG up to 5MB</small>
             </div>
         `;
-        updateRatingDisplay(0);
+            updateRatingDisplay(0);
+        }
     }
-}
 
-function importFromISBN() {
-    const isbn = document.getElementById('isbn').value;
-    if (!isbn) {
-        alert('Please enter an ISBN first.');
-        return;
+    function importFromISBN() {
+        const isbn = document.getElementById('isbn').value;
+        if (!isbn) {
+            alert('Please enter an ISBN first.');
+            return;
+        }
+        alert('ISBN import functionality would be implemented here.');
     }
-    alert('ISBN import functionality would be implemented here.');
-}
 </script>
 
 <style>
-.cover-upload-area:hover {
-    background-color: #f8f9fa;
-    border-color: #0d6efd !important;
-}
+    .cover-upload-area:hover {
+        background-color: #f8f9fa;
+        border-color: #0d6efd !important;
+    }
 
-.rating-input .btn {
-    border-radius: 0;
-}
+    .rating-input .btn {
+        border-radius: 0;
+    }
 
-.rating-input .btn:first-child {
-    border-top-left-radius: 0.375rem;
-    border-bottom-left-radius: 0.375rem;
-}
+    .rating-input .btn:first-child {
+        border-top-left-radius: 0.375rem;
+        border-bottom-left-radius: 0.375rem;
+    }
 
-.rating-input .btn:last-child {
-    border-top-right-radius: 0.375rem;
-    border-bottom-right-radius: 0.375rem;
-}
+    .rating-input .btn:last-child {
+        border-top-right-radius: 0.375rem;
+        border-bottom-right-radius: 0.375rem;
+    }
 </style>

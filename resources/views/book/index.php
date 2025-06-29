@@ -59,9 +59,11 @@ $this->setTitle('Books Management');
             <div class="col-md-2">
                 <select class="form-select" name="sort">
                     <option value="title" <?= ($currentSort === 'title') ? 'selected' : '' ?>>Sort by Title</option>
-                    <option value="publishYear" <?= ($currentSort === 'publishYear') ? 'selected' : '' ?>>Sort by Year</option>
+                    <option value="publishYear" <?= ($currentSort === 'publishYear') ? 'selected' : '' ?>>Sort by Year
+                    </option>
                     <option value="rating" <?= ($currentSort === 'rating') ? 'selected' : '' ?>>Sort by Rating</option>
-                    <option value="addedOn" <?= ($currentSort === 'addedOn') ? 'selected' : '' ?>>Sort by Date Added</option>
+                    <option value="addedOn" <?= ($currentSort === 'addedOn') ? 'selected' : '' ?>>Sort by Date Added
+                    </option>
                 </select>
             </div>
             <div class="col-md-2">
@@ -88,49 +90,50 @@ $this->setTitle('Books Management');
 
 <!-- Active Filters -->
 <?php if (!empty(array_filter($queryParams))): ?>
-<div class="mb-3">
-    <div class="d-flex align-items-center gap-2 flex-wrap">
-        <span class="text-muted small">Active filters:</span>
-        <?php if (!empty($queryParams['title'])): ?>
-            <span class="badge bg-primary">
+    <div class="mb-3">
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <span class="text-muted small">Active filters:</span>
+            <?php if (!empty($queryParams['title'])): ?>
+                <span class="badge bg-primary">
                 Title: <?= Html::encode($queryParams['title']) ?>
                 <a href="<?= $urlGenerator->generate('book/index', array_diff_key($queryParams, ['title' => ''])) ?>"
                    class="text-white ms-1">×</a>
             </span>
-        <?php endif; ?>
-        <?php if (!empty($queryParams['author'])): ?>
-            <span class="badge bg-success">
+            <?php endif; ?>
+            <?php if (!empty($queryParams['author'])): ?>
+                <span class="badge bg-success">
                 Author: <?= Html::encode($queryParams['author']) ?>
                 <a href="<?= $urlGenerator->generate('book/index', array_diff_key($queryParams, ['author' => ''])) ?>"
                    class="text-white ms-1">×</a>
             </span>
-        <?php endif; ?>
-        <?php if (!empty($queryParams['genre_id'])): ?>
-            <span class="badge bg-info">
+            <?php endif; ?>
+            <?php if (!empty($queryParams['genre_id'])): ?>
+                <span class="badge bg-info">
                 Genre: <?= Html::encode($queryParams['genre_id']) ?>
                 <a href="<?= $urlGenerator->generate('book/index', array_diff_key($queryParams, ['genre_id' => ''])) ?>"
                    class="text-white ms-1">×</a>
             </span>
-        <?php endif; ?>
-        <?php if (!empty($queryParams['publisher_id'])): ?>
-            <span class="badge bg-warning">
+            <?php endif; ?>
+            <?php if (!empty($queryParams['publisher_id'])): ?>
+                <span class="badge bg-warning">
                 Publisher: <?= Html::encode($queryParams['publisher_id']) ?>
                 <a href="<?= $urlGenerator->generate('book/index', array_diff_key($queryParams, ['publisher_id' => ''])) ?>"
                    class="text-white ms-1">×</a>
             </span>
-        <?php endif; ?>
-        <a href="<?= $urlGenerator->generate('book/index') ?>" class="btn btn-outline-secondary btn-sm">
-            <i class="bi bi-x-circle me-1"></i>Clear All
-        </a>
+            <?php endif; ?>
+            <a href="<?= $urlGenerator->generate('book/index') ?>" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-x-circle me-1"></i>Clear All
+            </a>
+        </div>
     </div>
-</div>
 <?php endif; ?>
 
 <!-- Results Info -->
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div class="text-muted">
         <small>
-            Showing <?= $paginator->getOffset() + 1 ?> to <?= min($paginator->getOffset() + $paginator->getPageSize(), $paginator->getTotalItems()) ?>
+            Showing <?= $paginator->getOffset() + 1 ?>
+            to <?= min($paginator->getOffset() + $paginator->getPageSize(), $paginator->getTotalItems()) ?>
             of <?= $paginator->getTotalItems() ?> books
         </small>
     </div>
@@ -158,125 +161,127 @@ $this->setTitle('Books Management');
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
-                        <tr>
-                            <th>Cover</th>
-                            <th>
-                                <a href="<?= $urlGenerator->generate('book/index', array_merge($queryParams, ['sort' => 'title', 'sort_dir' => $currentSort === 'title' && $currentDirection === 'asc' ? 'desc' : 'asc'])) ?>"
-                                   class="text-decoration-none">
-                                    Title
-                                    <?php if ($currentSort === 'title'): ?>
-                                        <i class="bi bi-chevron-<?= $currentDirection === 'asc' ? 'up' : 'down' ?>"></i>
-                                    <?php endif; ?>
-                                </a>
-                            </th>
-                            <th>Authors</th>
-                            <th>Publisher</th>
-                            <th>
-                                <a href="<?= $urlGenerator->generate('book/index', array_merge($queryParams, ['sort' => 'publishYear', 'sort_dir' => $currentSort === 'publishYear' && $currentDirection === 'asc' ? 'desc' : 'asc'])) ?>"
-                                   class="text-decoration-none">
-                                    Year
-                                    <?php if ($currentSort === 'publishYear'): ?>
-                                        <i class="bi bi-chevron-<?= $currentDirection === 'asc' ? 'up' : 'down' ?>"></i>
-                                    <?php endif; ?>
-                                </a>
-                            </th>
-                            <th>
-                                <a href="<?= $urlGenerator->generate('book/index', array_merge($queryParams, ['sort' => 'rating', 'sort_dir' => $currentSort === 'rating' && $currentDirection === 'asc' ? 'desc' : 'asc'])) ?>"
-                                   class="text-decoration-none">
-                                    Rating
-                                    <?php if ($currentSort === 'rating'): ?>
-                                        <i class="bi bi-chevron-<?= $currentDirection === 'asc' ? 'up' : 'down' ?>"></i>
-                                    <?php endif; ?>
-                                </a>
-                            </th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
+                    <tr>
+                        <th>Cover</th>
+                        <th>
+                            <a href="<?= $urlGenerator->generate('book/index', array_merge($queryParams, ['sort' => 'title', 'sort_dir' => $currentSort === 'title' && $currentDirection === 'asc' ? 'desc' : 'asc'])) ?>"
+                               class="text-decoration-none">
+                                Title
+                                <?php if ($currentSort === 'title'): ?>
+                                    <i class="bi bi-chevron-<?= $currentDirection === 'asc' ? 'up' : 'down' ?>"></i>
+                                <?php endif; ?>
+                            </a>
+                        </th>
+                        <th>Authors</th>
+                        <th>Publisher</th>
+                        <th>
+                            <a href="<?= $urlGenerator->generate('book/index', array_merge($queryParams, ['sort' => 'publishYear', 'sort_dir' => $currentSort === 'publishYear' && $currentDirection === 'asc' ? 'desc' : 'asc'])) ?>"
+                               class="text-decoration-none">
+                                Year
+                                <?php if ($currentSort === 'publishYear'): ?>
+                                    <i class="bi bi-chevron-<?= $currentDirection === 'asc' ? 'up' : 'down' ?>"></i>
+                                <?php endif; ?>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="<?= $urlGenerator->generate('book/index', array_merge($queryParams, ['sort' => 'rating', 'sort_dir' => $currentSort === 'rating' && $currentDirection === 'asc' ? 'desc' : 'asc'])) ?>"
+                               class="text-decoration-none">
+                                Rating
+                                <?php if ($currentSort === 'rating'): ?>
+                                    <i class="bi bi-chevron-<?= $currentDirection === 'asc' ? 'up' : 'down' ?>"></i>
+                                <?php endif; ?>
+                            </a>
+                        </th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($paginator->read() as $book): ?>
-                            <tr>
-                                <td>
-                                    <div class="book-cover-small">
-                                        <?php if ($book->cover): ?>
-                                            <img src="<?= Html::encode($book->cover) ?>" alt="Cover" class="img-thumbnail" style="width: 40px; height: 60px; object-fit: cover;">
-                                        <?php else: ?>
-                                            <div class="bg-light border d-flex align-items-center justify-content-center" style="width: 40px; height: 60px;">
-                                                <i class="bi bi-book text-muted"></i>
-                                            </div>
-                                        <?php endif; ?>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div>
-                                        <strong><?= Html::encode($book->title) ?></strong>
-                                        <?php if ($book->subtitle): ?>
-                                            <br><small class="text-muted"><?= Html::encode($book->subtitle) ?></small>
-                                        <?php endif; ?>
-                                        <?php if ($book->isbn): ?>
-                                            <br><small class="text-muted">ISBN: <?= Html::encode($book->isbn) ?></small>
-                                        <?php endif; ?>
-                                    </div>
-                                </td>
-                                <td>
-                                    <?php $authors = $book->getAuthors()->all(); ?>
-                                    <?php if (!empty($authors)): ?>
-                                        <?= Html::encode(implode(', ', array_map(fn($author) => $author->name, $authors))) ?>
+                    <?php foreach ($paginator->read() as $book): ?>
+                        <tr>
+                            <td>
+                                <div class="book-cover-small">
+                                    <?php if ($book->cover): ?>
+                                        <img src="<?= Html::encode($book->cover) ?>" alt="Cover" class="img-thumbnail"
+                                             style="width: 40px; height: 60px; object-fit: cover;">
                                     <?php else: ?>
-                                        <span class="text-muted">Unknown</span>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <?php if ($book->publisher): ?>
-                                        <?= Html::encode($book->publisher->name) ?>
-                                    <?php else: ?>
-                                        <span class="text-muted">Unknown</span>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <?= $book->publishYear ? Html::encode($book->publishYear) : '<span class="text-muted">Unknown</span>' ?>
-                                </td>
-                                <td>
-                                    <?php if ($book->rating): ?>
-                                        <div class="text-warning">
-                                            <?php for ($i = 1; $i <= 5; $i++): ?>
-                                                <i class="bi bi-star<?= $i <= $book->rating ? '-fill' : '' ?>"></i>
-                                            <?php endfor; ?>
+                                        <div class="bg-light border d-flex align-items-center justify-content-center"
+                                             style="width: 40px; height: 60px;">
+                                            <i class="bi bi-book text-muted"></i>
                                         </div>
-                                    <?php else: ?>
-                                        <span class="text-muted">Not rated</span>
                                     <?php endif; ?>
-                                </td>
-                                <td>
-                                    <div class="d-flex gap-1">
-                                        <?php if ($book->read): ?>
-                                            <span class="badge bg-success">Read</span>
-                                        <?php else: ?>
-                                            <span class="badge bg-secondary">Unread</span>
-                                        <?php endif; ?>
-                                        <?php if ($book->translated): ?>
-                                            <span class="badge bg-info">Translated</span>
-                                        <?php endif; ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    <strong><?= Html::encode($book->title) ?></strong>
+                                    <?php if ($book->subtitle): ?>
+                                        <br><small class="text-muted"><?= Html::encode($book->subtitle) ?></small>
+                                    <?php endif; ?>
+                                    <?php if ($book->isbn): ?>
+                                        <br><small class="text-muted">ISBN: <?= Html::encode($book->isbn) ?></small>
+                                    <?php endif; ?>
+                                </div>
+                            </td>
+                            <td>
+                                <?php $authors = $book->getAuthors()->all(); ?>
+                                <?php if (!empty($authors)): ?>
+                                    <?= Html::encode(implode(', ', array_map(fn($author) => $author->name, $authors))) ?>
+                                <?php else: ?>
+                                    <span class="text-muted">Unknown</span>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <?php if ($book->publisher): ?>
+                                    <?= Html::encode($book->publisher->name) ?>
+                                <?php else: ?>
+                                    <span class="text-muted">Unknown</span>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <?= $book->publishYear ? Html::encode($book->publishYear) : '<span class="text-muted">Unknown</span>' ?>
+                            </td>
+                            <td>
+                                <?php if ($book->rating): ?>
+                                    <div class="text-warning">
+                                        <?php for ($i = 1; $i <= 5; $i++): ?>
+                                            <i class="bi bi-star<?= $i <= $book->rating ? '-fill' : '' ?>"></i>
+                                        <?php endfor; ?>
                                     </div>
-                                </td>
-                                <td>
-                                    <div class="btn-group btn-group-sm">
-                                        <a href="<?= $urlGenerator->generate('book/edit', ['id' => $book->id]) ?>"
-                                           class="btn btn-outline-primary" title="Edit">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
-                                        <button type="button" class="btn btn-outline-info" title="View Details"
-                                                data-bs-toggle="modal" data-bs-target="#bookModal<?= $book->id ?>">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-outline-danger" title="Delete"
-                                                onclick="confirmDelete(<?= $book->id ?>, '<?= Html::encode($book->title) ?>')">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
+                                <?php else: ?>
+                                    <span class="text-muted">Not rated</span>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <div class="d-flex gap-1">
+                                    <?php if ($book->read): ?>
+                                        <span class="badge bg-success">Read</span>
+                                    <?php else: ?>
+                                        <span class="badge bg-secondary">Unread</span>
+                                    <?php endif; ?>
+                                    <?php if ($book->translated): ?>
+                                        <span class="badge bg-info">Translated</span>
+                                    <?php endif; ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="<?= $urlGenerator->generate('book/edit', ['id' => $book->id]) ?>"
+                                       class="btn btn-outline-primary" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-outline-info" title="View Details"
+                                            data-bs-toggle="modal" data-bs-target="#bookModal<?= $book->id ?>">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger" title="Delete"
+                                            onclick="confirmDelete(<?= $book->id ?>, '<?= Html::encode($book->title) ?>')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
@@ -288,7 +293,8 @@ $this->setTitle('Books Management');
                 <h3 class="text-muted mb-3">No books found</h3>
                 <p class="text-muted mb-4">
                     <?php if (!empty(array_filter($queryParams))): ?>
-                        Try adjusting your search criteria or <a href="<?= $urlGenerator->generate('book/index') ?>">clear all filters</a>.
+                        Try adjusting your search criteria or <a href="<?= $urlGenerator->generate('book/index') ?>">clear
+                            all filters</a>.
                     <?php else: ?>
                         Start building your book collection by adding your first book.
                     <?php endif; ?>
@@ -303,54 +309,59 @@ $this->setTitle('Books Management');
 
 <!-- Pagination -->
 <?php if ($paginator->getTotalItems() > $paginator->getPageSize()): ?>
-<nav aria-label="Books pagination" class="mt-4">
-    <ul class="pagination justify-content-center">
-        <?php if ($paginator->getCurrentPage() > 1): ?>
-            <li class="page-item">
-                <a class="page-link" href="<?= $urlGenerator->generate('book/index', array_merge($queryParams, ['page' => $paginator->getCurrentPage() - 1])) ?>">
-                    <i class="bi bi-chevron-left"></i> Previous
-                </a>
-            </li>
-        <?php endif; ?>
-
-        <?php
-        $startPage = max(1, $paginator->getCurrentPage() - 2);
-        $endPage = min($paginator->getTotalPages(), $paginator->getCurrentPage() + 2);
-        ?>
-
-        <?php if ($startPage > 1): ?>
-            <li class="page-item">
-                <a class="page-link" href="<?= $urlGenerator->generate('book/index', array_merge($queryParams, ['page' => 1])) ?>">1</a>
-            </li>
-            <?php if ($startPage > 2): ?>
-                <li class="page-item disabled"><span class="page-link">...</span></li>
+    <nav aria-label="Books pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <?php if ($paginator->getCurrentPage() > 1): ?>
+                <li class="page-item">
+                    <a class="page-link"
+                       href="<?= $urlGenerator->generate('book/index', array_merge($queryParams, ['page' => $paginator->getCurrentPage() - 1])) ?>">
+                        <i class="bi bi-chevron-left"></i> Previous
+                    </a>
+                </li>
             <?php endif; ?>
-        <?php endif; ?>
 
-        <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
-            <li class="page-item <?= $i === $paginator->getCurrentPage() ? 'active' : '' ?>">
-                <a class="page-link" href="<?= $urlGenerator->generate('book/index', array_merge($queryParams, ['page' => $i])) ?>"><?= $i ?></a>
-            </li>
-        <?php endfor; ?>
+            <?php
+            $startPage = max(1, $paginator->getCurrentPage() - 2);
+            $endPage = min($paginator->getTotalPages(), $paginator->getCurrentPage() + 2);
+            ?>
 
-        <?php if ($endPage < $paginator->getTotalPages()): ?>
-            <?php if ($endPage < $paginator->getTotalPages() - 1): ?>
-                <li class="page-item disabled"><span class="page-link">...</span></li>
+            <?php if ($startPage > 1): ?>
+                <li class="page-item">
+                    <a class="page-link"
+                       href="<?= $urlGenerator->generate('book/index', array_merge($queryParams, ['page' => 1])) ?>">1</a>
+                </li>
+                <?php if ($startPage > 2): ?>
+                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                <?php endif; ?>
             <?php endif; ?>
-            <li class="page-item">
-                <a class="page-link" href="<?= $urlGenerator->generate('book/index', array_merge($queryParams, ['page' => $paginator->getTotalPages()])) ?>"><?= $paginator->getTotalPages() ?></a>
-            </li>
-        <?php endif; ?>
 
-        <?php if ($paginator->getCurrentPage() < $paginator->getTotalPages()): ?>
-            <li class="page-item">
-                <a class="page-link" href="<?= $urlGenerator->generate('book/index', array_merge($queryParams, ['page' => $paginator->getCurrentPage() + 1])) ?>">
-                    Next <i class="bi bi-chevron-right"></i>
-                </a>
-            </li>
-        <?php endif; ?>
-    </ul>
-</nav>
+            <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
+                <li class="page-item <?= $i === $paginator->getCurrentPage() ? 'active' : '' ?>">
+                    <a class="page-link"
+                       href="<?= $urlGenerator->generate('book/index', array_merge($queryParams, ['page' => $i])) ?>"><?= $i ?></a>
+                </li>
+            <?php endfor; ?>
+
+            <?php if ($endPage < $paginator->getTotalPages()): ?>
+                <?php if ($endPage < $paginator->getTotalPages() - 1): ?>
+                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                <?php endif; ?>
+                <li class="page-item">
+                    <a class="page-link"
+                       href="<?= $urlGenerator->generate('book/index', array_merge($queryParams, ['page' => $paginator->getTotalPages()])) ?>"><?= $paginator->getTotalPages() ?></a>
+                </li>
+            <?php endif; ?>
+
+            <?php if ($paginator->getCurrentPage() < $paginator->getTotalPages()): ?>
+                <li class="page-item">
+                    <a class="page-link"
+                       href="<?= $urlGenerator->generate('book/index', array_merge($queryParams, ['page' => $paginator->getCurrentPage() + 1])) ?>">
+                        Next <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+            <?php endif; ?>
+        </ul>
+    </nav>
 <?php endif; ?>
 
 <!-- Advanced Filter Modal -->
@@ -370,43 +381,57 @@ $this->setTitle('Books Management');
                             <label for="genre_id" class="form-label">Genre</label>
                             <select class="form-select" name="genre_id" id="genre_id">
                                 <option value="">All Genres</option>
-                                <?php foreach ($genres as $genre): ?>
-                                    <option value="<?= $genre->id ?>" <?= ($queryParams['genre_id'] ?? '') == $genre->id ? 'selected' : '' ?>>
+                                <?php /*foreach ($genres as $genre): ?>
+                                    <option
+                                        value="<?= $genre->id ?>" <?= ($queryParams['genre_id'] ?? '') == $genre->id ? 'selected' : '' ?>>
                                         <?= Html::encode($genre->name) ?>
                                     </option>
-                                <?php endforeach; ?>
+                                <?php endforeach;*/ ?>
                             </select>
                         </div>
                         <div class="col-md-6">
                             <label for="publisher_id" class="form-label">Publisher</label>
                             <select class="form-select" name="publisher_id" id="publisher_id">
                                 <option value="">All Publishers</option>
-                                <?php foreach ($publishers as $publisher): ?>
-                                    <option value="<?= $publisher->id ?>" <?= ($queryParams['publisher_id'] ?? '') == $publisher->id ? 'selected' : '' ?>>
+                                <?php /*foreach ($publishers as $publisher): ?>
+                                    <option
+                                        value="<?= $publisher->id ?>" <?= ($queryParams['publisher_id'] ?? '') == $publisher->id ? 'selected' : '' ?>>
                                         <?= Html::encode($publisher->name) ?>
                                     </option>
-                                <?php endforeach; ?>
+                                <?php endforeach;*/ ?>
                             </select>
                         </div>
                         <div class="col-md-6">
                             <label for="year_from" class="form-label">Publication Year From</label>
                             <input type="number" class="form-control" name="year_from" id="year_from"
-                                   min="1000" max="<?= date('Y') ?>" value="<?= Html::encode($queryParams['year_from'] ?? '') ?>">
+                                   min="1000" max="<?= date('Y') ?>"
+                                   value="<?= Html::encode($queryParams['year_from'] ?? '') ?>">
                         </div>
                         <div class="col-md-6">
                             <label for="year_to" class="form-label">Publication Year To</label>
                             <input type="number" class="form-control" name="year_to" id="year_to"
-                                   min="1000" max="<?= date('Y') ?>" value="<?= Html::encode($queryParams['year_to'] ?? '') ?>">
+                                   min="1000" max="<?= date('Y') ?>"
+                                   value="<?= Html::encode($queryParams['year_to'] ?? '') ?>">
                         </div>
                         <div class="col-md-6">
                             <label for="rating" class="form-label">Minimum Rating</label>
                             <select class="form-select" name="rating" id="rating">
                                 <option value="">Any Rating</option>
-                                <option value="1" <?= ($queryParams['rating'] ?? '') == '1' ? 'selected' : '' ?>>1 Star & Up</option>
-                                <option value="2" <?= ($queryParams['rating'] ?? '') == '2' ? 'selected' : '' ?>>2 Stars & Up</option>
-                                <option value="3" <?= ($queryParams['rating'] ?? '') == '3' ? 'selected' : '' ?>>3 Stars & Up</option>
-                                <option value="4" <?= ($queryParams['rating'] ?? '') == '4' ? 'selected' : '' ?>>4 Stars & Up</option>
-                                <option value="5" <?= ($queryParams['rating'] ?? '') == '5' ? 'selected' : '' ?>>5 Stars Only</option>
+                                <option value="1" <?= ($queryParams['rating'] ?? '') == '1' ? 'selected' : '' ?>>1 Star
+                                    & Up
+                                </option>
+                                <option value="2" <?= ($queryParams['rating'] ?? '') == '2' ? 'selected' : '' ?>>2 Stars
+                                    & Up
+                                </option>
+                                <option value="3" <?= ($queryParams['rating'] ?? '') == '3' ? 'selected' : '' ?>>3 Stars
+                                    & Up
+                                </option>
+                                <option value="4" <?= ($queryParams['rating'] ?? '') == '4' ? 'selected' : '' ?>>4 Stars
+                                    & Up
+                                </option>
+                                <option value="5" <?= ($queryParams['rating'] ?? '') == '5' ? 'selected' : '' ?>>5 Stars
+                                    Only
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -420,7 +445,8 @@ $this->setTitle('Books Management');
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <a href="<?= $urlGenerator->generate('book/index') ?>" class="btn btn-outline-secondary">Clear All</a>
+                    <a href="<?= $urlGenerator->generate('book/index') ?>" class="btn btn-outline-secondary">Clear
+                        All</a>
                     <button type="submit" class="btn btn-primary">Apply Filters</button>
                 </div>
             </form>
@@ -429,21 +455,21 @@ $this->setTitle('Books Management');
 </div>
 
 <script>
-function confirmDelete(id, title) {
-    if (confirm(`Are you sure you want to delete "${title}"?`)) {
-        // Create a form and submit it for deletion
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = `/book/delete/${id}`;
+    function confirmDelete(id, title) {
+        if (confirm(`Are you sure you want to delete "${title}"?`)) {
+            // Create a form and submit it for deletion
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/book/delete/${id}`;
 
-        const csrfInput = document.createElement('input');
-        csrfInput.type = 'hidden';
-        csrfInput.name = '_csrf';
-        csrfInput.value = '<?= $csrf ?? '' ?>';
-        form.appendChild(csrfInput);
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = '_csrf';
+            csrfInput.value = '<?= $csrf ?? '' ?>';
+            form.appendChild(csrfInput);
 
-        document.body.appendChild(form);
-        form.submit();
+            document.body.appendChild(form);
+            form.submit();
+        }
     }
-}
 </script>

@@ -15,7 +15,11 @@ use App\Model\ItemAuthor;
 use App\Model\ItemGenre;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Yiisoft\ActiveRecord\ActiveQuery;
+use Yiisoft\Data\Db\QueryDataReader;
 use Yiisoft\Data\Paginator\OffsetPaginator;
+use Yiisoft\Data\Reader\Filter\GreaterThanOrEqual;
+use Yiisoft\Data\Reader\Filter\LessThanOrEqual;
 use Yiisoft\Data\Reader\Sort;
 use Yiisoft\Data\Reader\Filter\All;
 use Yiisoft\Data\Reader\Filter\Like;
@@ -24,36 +28,30 @@ use Yiisoft\Http\Method;
 use Yiisoft\Router\CurrentRoute;
 use Yiisoft\Validator\ValidatorInterface;
 use Yiisoft\Yii\View\Renderer\ViewRenderer;
-use Yiisoft\ActiveRecord\ActiveDataReader;
 
 /**
- * BookController handles book-specific operations
- *
  * @since 2025.1
  */
 final class BookController {
 
-    public function __construct(private ViewRenderer      $viewRenderer, private ServerRequestInterface $request,
-                                private ResponseInterface $response) {
+    public function __construct(private ViewRenderer                    $viewRenderer,
+                                private readonly ServerRequestInterface $request,
+                                private readonly ResponseInterface      $response) {
 
         $this->viewRenderer = $viewRenderer->withControllerName('book');
     }
 
-    /**
-     * Display books index with GridView and filtering
-     */
     public function index(CurrentRoute $currentRoute): ResponseInterface {
+        //TODO: Move filters to BookFilter class as soon as I understand the all Yii3 structure, packages, etc..
         $queryParams = $this->request->getQueryParams();
-        $query = Item::find()->where(['type' => Item::TYPE_PAPER]);
+        $query = new ActiveQuery(Item::class)->where(['type' => Item::TYPE_PAPER]);
 
-        // Apply filters
         $filters = [];
         if (!empty($queryParams['title'])) {
             $filters[] = new Like('title', $queryParams['title']);
         }
 
         if (!empty($queryParams['author'])) {
-            // Join with authors table for author filtering
             $query = $query->joinWith('authors');
             $filters[] = new Like('author.name', $queryParams['author']);
         }
@@ -68,27 +66,22 @@ final class BookController {
         }
 
         if (!empty($queryParams['year_from'])) {
-            $filters[] = new \Yiisoft\Data\Reader\Filter\GreaterThanOrEqual('publishYear', (int)$queryParams['year_from']);
+            $filters[] = new GreaterThanOrEqual('publishYear', (int)$queryParams['year_from']);
         }
 
         if (!empty($queryParams['year_to'])) {
-            $filters[] = new \Yiisoft\Data\Reader\Filter\LessThanOrEqual('publishYear', (int)$queryParams['year_to']);
+            $filters[] = new LessThanOrEqual('publishYear', (int)$queryParams['year_to']);
         }
 
         if (!empty($queryParams['rating'])) {
             $filters[] = new Equals('rating', (int)$queryParams['rating']);
         }
 
-        // Apply all filters
+        $dataReader = new QueryDataReader($query);
         if (!empty($filters)) {
-            $query = $query->andWhere(new All(...$filters));
+            $dataReader = $dataReader->withFilter(new All(...$filters));
         }
 
-        // Create data reader
-        //$dataReader = new ActiveDataReader($query);
-        //TODO: FIX THIS! $dataReader = new QueryData($query);
-
-        // Apply sorting
         $sort = Sort::only([
             'title' => [
                 'asc' => ['title' => SORT_ASC],
@@ -110,37 +103,33 @@ final class BookController {
 
         $sortOrder = $queryParams['sort'] ?? 'title';
         $sortDirection = $queryParams['sort_dir'] ?? 'asc';
+        //$dataReader = $dataReader->withSort($sort->withOrder([$sortOrder => $sortDirection === 'desc' ? SORT_DESC : SORT_ASC]));
 
-        //if ($sort->hasAttribute($sortOrder)) {
-        //    $dataReader = $dataReader->withSort($sort->withOrder([$sortOrder => $sortDirection === 'desc' ? SORT_DESC : SORT_ASC]));
-        //}
-
-        // Create paginator
         $paginator = new OffsetPaginator($dataReader);
         $paginator = $paginator->withPageSize((int)($queryParams['per_page'] ?? 20));
         $paginator = $paginator->withCurrentPage((int)($queryParams['page'] ?? 1));
 
-        // Get filter options
-        $genres = Genre::find()->orderBy('name')->all();
-        $publishers = Publisher::find()->orderBy('name')->all();
+        //TODO: Fix this... Yii2 was so much simpler :(
+        $genres = [];//Genre::find()->orderBy('name')->all();
+        $publishers = [];//Publisher::find()->orderBy('name')->all();
 
         return $this->viewRenderer->render('index', [
             'paginator' => $paginator,
             'queryParams' => $queryParams,
-            'genres' => $genres,
-            'publishers' => $publishers,
+            //'genres' => $genres,
+            //'publishers' => $publishers,
             'sort' => $sort,
             'currentSort' => $sortOrder,
             'currentDirection' => $sortDirection,
         ]);
     }
 
-    /**
-     * Add new book
-     */
     public function add(ValidatorInterface $validator): ResponseInterface {
+        //TODO: Move filters to BookForm class as soon as I understand the all Yii3 structure, packages, etc..
         $item = new Item();
-        $item->type = Item::TYPE_PAPER; // Set type to paper book
+        //TODO: use public property approach since we consider AR models to be simple DB-to-APP connectors/DTO and all
+        //logic should go into form models, filter models and possible repositories.
+        $item->type = Item::TYPE_PAPER;
 
         if ($this->request->getMethod() === Method::POST) {
             $body = $this->request->getParsedBody();
@@ -173,7 +162,6 @@ final class BookController {
             $item->ownedById = 1; // TODO: Get from authenticated user
 
             $result = $validator->validate($item);
-
             if ($result->isValid() && $item->save()) {
                 // Handle authors
                 if (!empty($body['authors'])) {
@@ -190,29 +178,25 @@ final class BookController {
             }
         }
 
-        // Get form data
-        $authors = Author::find()->orderBy('name')->all();
-        $genres = Genre::find()->orderBy('name')->all();
-        $publishers = Publisher::find()->orderBy('name')->all();
-        $series = Series::find()->orderBy('name')->all();
-        $collections = Collection::find()->orderBy('name')->all();
-        $formats = Format::find()->orderBy('name')->all();
-
+        //$authors = Author::find()->orderBy('name')->all();
+        //$genres = Genre::find()->orderBy('name')->all();
+        //$publishers = Publisher::find()->orderBy('name')->all();
+        //$series = Series::find()->orderBy('name')->all();
+        //$collections = Collection::find()->orderBy('name')->all();
+        //$formats = Format::find()->orderBy('name')->all();
         return $this->viewRenderer->render('add', [
             'item' => $item,
-            'authors' => $authors,
-            'genres' => $genres,
-            'publishers' => $publishers,
-            'series' => $series,
-            'collections' => $collections,
-            'formats' => $formats,
+//            'authors' => $authors,
+//            'genres' => $genres,
+//            'publishers' => $publishers,
+//            'series' => $series,
+//            'collections' => $collections,
+//            'formats' => $formats,
         ]);
     }
 
-    /**
-     * Edit existing book
-     */
     public function edit(CurrentRoute $currentRoute, ValidatorInterface $validator): ResponseInterface {
+        //TODO: Move filters to BookForm class as soon as I understand the all Yii3 structure, packages, etc..
         $id = (int)$currentRoute->getArgument('id');
         $item = Item::findOne(['id' => $id, 'type' => Item::TYPE_PAPER]);
 
@@ -290,36 +274,25 @@ final class BookController {
         ]);
     }
 
-    /**
-     * Delete existing book
-     */
     public function delete(CurrentRoute $currentRoute): ResponseInterface {
         $id = (int)$currentRoute->getArgument('id');
         $item = Item::findOne(['id' => $id, 'type' => Item::TYPE_PAPER]);
-
         if ($item === null) {
             return $this->response->withStatus(404);
         }
 
         if ($this->request->getMethod() === Method::POST) {
-            // Delete related records first
-            ItemAuthor::deleteAll(['itemId' => $item->id]);
-            ItemGenre::deleteAll(['itemId' => $item->id]);
+            //ItemAuthor::deleteAll(['itemId' => $item->id]);
+            //ItemGenre::deleteAll(['itemId' => $item->id]);
 
-            // Delete the item
             if ($item->delete()) {
-                // Redirect to index with success message
                 return $this->response->withHeader('Location', '/book')->withStatus(302);
             }
         }
 
-        // If not POST or delete failed, redirect back
         return $this->response->withHeader('Location', '/book')->withStatus(302);
     }
 
-    /**
-     * Save authors for an item
-     */
     private function saveAuthors(Item $item, array $authorIds): void {
         // Delete existing associations
         ItemAuthor::deleteAll(['itemId' => $item->id]);
@@ -335,9 +308,6 @@ final class BookController {
         }
     }
 
-    /**
-     * Save genres for an item
-     */
     private function saveGenres(Item $item, array $genreIds): void {
         // Delete existing associations
         ItemGenre::deleteAll(['itemId' => $item->id]);
