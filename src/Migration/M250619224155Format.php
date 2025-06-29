@@ -15,13 +15,11 @@ final class M250619224155Format implements RevertibleMigrationInterface {
             'type' => ColumnBuilder::string()->notNull(),
             'name' => ColumnBuilder::string()->notNull(),
             'ownedById' => ColumnBuilder::integer()->notNull(),
+            'PRIMARY KEY (`type`, `name`, `ownedById`)'
         ]);
-
-        $b->addPrimaryKey('pk-format', 'format', ['type', 'name', 'ownedById']);
     }
 
     public function down(MigrationBuilder $b): void {
-        $b->dropPrimaryKey('pk-format', 'format');
         $b->dropTable('format');
     }
 }

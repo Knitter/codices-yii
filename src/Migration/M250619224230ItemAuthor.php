@@ -14,12 +14,11 @@ final class M250619224230ItemAuthor implements RevertibleMigrationInterface {
         $b->createTable('item_author', [
             'itemId' => ColumnBuilder::integer()->notNull(),
             'authorId' => ColumnBuilder::integer()->notNull(),
+            'PRIMARY KEY (`itemId`, `authorId`)'
         ]);
-        $b->addPrimaryKey('pk-item_author', 'item_author', ['itemId', 'authorId']);
     }
 
     public function down(MigrationBuilder $b): void {
-        $b->dropPrimaryKey('pk-item_author', 'item_author');
         $b->dropTable('item_author');
     }
 }
