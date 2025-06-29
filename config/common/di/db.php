@@ -13,6 +13,6 @@ return [
         'class' => Connection::class,
         '__construct()' => [
             'driver' => new Driver($params['yiisoft/db-sqlite']['dsn']),
-        ]
+        ],
     ]
 ];

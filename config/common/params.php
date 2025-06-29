@@ -47,7 +47,7 @@ return [
         ],
     ],
     'yiisoft/db-sqlite' => [
-        'dsn' => new Dsn('sqlite', dirname(__DIR__, 2) . '/data/books.sq3')->__toString(),
+        'dsn' => new Dsn('sqlite', dirname(__DIR__, 2) . '/resources/books.sq3')->__toString(),
     ],
     'yiisoft/db-migration' => [
         'newMigrationNamespace' => 'App\\Migration',
