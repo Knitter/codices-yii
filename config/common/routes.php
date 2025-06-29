@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Controller\AccountController;
 use App\Controller\AuthorController;
+use App\Controller\BookController;
 use App\Controller\CollectionController;
 use App\Controller\FormatController;
 use App\Controller\GenreController;
@@ -35,6 +36,12 @@ return [
             Route::methods(['GET', 'POST'], '/author/create')->action([AuthorController::class, 'create'])->name('author/create'),
             Route::methods(['GET', 'POST'], '/author/update/{id:\d+}')->action([AuthorController::class, 'update'])->name('author/update'),
             Route::post('/author/delete/{id:\d+}')->action([AuthorController::class, 'delete'])->name('author/delete'),
+
+            // Book routes
+            Route::get('/book')->action([BookController::class, 'index'])->name('book/index'),
+            Route::methods(['GET', 'POST'], '/book/add')->action([BookController::class, 'add'])->name('book/add'),
+            Route::methods(['GET', 'POST'], '/book/edit/{id:\d+}')->action([BookController::class, 'edit'])->name('book/edit'),
+            Route::post('/book/delete/{id:\d+}')->action([BookController::class, 'delete'])->name('book/delete'),
 
             // Collection routes
             Route::get('/collection')->action([CollectionController::class, 'index'])->name('collection/index'),
