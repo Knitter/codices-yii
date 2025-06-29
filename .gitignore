@@ -19,8 +19,11 @@ phpunit.phar
 .phpunit.result.cache
 /phpunit.xml
 
-#
+# Development files
 .env
 c3.php
 .vagrant
 config.yml
+
+# Data file
+resources/books.sq3
