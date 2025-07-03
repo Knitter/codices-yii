@@ -27,3 +27,4 @@ config.yml
 
 # Data file
 resources/books.sq3
+/docs/ignore/
