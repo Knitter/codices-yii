@@ -27,7 +27,7 @@ return [
             Route::methods(['GET', 'POST'], '/account/create')->action([AccountController::class, 'create'])->name('account/create'),
             Route::methods(['GET', 'POST'], '/account/update/{id:\d+}')->action([AccountController::class, 'update'])->name('account/update'),
             Route::post('/account/delete/{id:\d+}')->action([AccountController::class, 'delete'])->name('account/delete'),
-            Route::get('/account/login')->action([AccountController::class, 'login'])->name('account/login'),
+            Route::methods(['GET', 'POST'], '/account/login')->action([AccountController::class, 'login'])->name('account/login'),
             Route::get('/account/profile')->action([AccountController::class, 'profile'])->name('account/profile'),
 
             // Author routes
