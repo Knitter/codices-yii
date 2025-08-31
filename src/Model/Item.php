@@ -34,10 +34,10 @@ use Yiisoft\ActiveRecord\ActiveRecord;
  * @property string|null $cover
  * @property string|null $filename
  * @property string|null $fileLocation
- * @property string|null $narrator
+ * @property string|null $narrator For audiobooks, the narrator's name
  * @property string|null $bitrate
  * @property string|null $boughtFrom
- * @property int|null $duration
+ * @property int|null $duration For audiobooks, in minutes
  * @property int|null $sizeBytes
  * @property int|null $orderInSeries
  * @property int|null $publisherId
@@ -49,9 +49,9 @@ use Yiisoft\ActiveRecord\ActiveRecord;
  */
 final class Item extends ActiveRecord {
 
-    public const TYPE_PAPER = 'paper';
-    public const TYPE_EBOOK = 'ebook';
-    public const TYPE_AUDIO = 'audio';
+    public final const string TYPE_PAPER = 'paper';
+    public final const string TYPE_EBOOK = 'ebook';
+    public final const string TYPE_AUDIO = 'audio';
 
     public function tableName(): string {
         return 'item';
