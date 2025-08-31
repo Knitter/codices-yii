@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source /codices/env/vagrant-provision/common.sh
+source /project/env/vagrant-provision/common.sh
 
 #== Import script args ==
 

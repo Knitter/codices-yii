@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source /codices/env/vagrant-provision/common.sh
+source /project/env/vagrant-provision/common.sh
 PHP_VERSION=8.4
 
 #== Import script args ==
@@ -46,16 +46,13 @@ sed -i 's/user = www-data/user = vagrant/g' /etc/php/${PHP_VERSION}/fpm/pool.d/w
 sed -i 's/group = www-data/group = vagrant/g' /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
 sed -i 's/owner = www-data/owner = vagrant/g' /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
 sed -i 's/display_errors = Off/display_errors = On/g' /etc/php/${PHP_VERSION}/fpm/php.ini
-sed -i 's/memory_limit = 128M/memory_limit = 512M/g' /etc/php/${PHP_VERSION}/fpm/php.ini
-sed -i 's/post_max_size = 8M/post_max_size = 256M/g' /etc/php/${PHP_VERSION}/fpm/php.ini
-sed -i 's/;max_input_vars = 1000/max_input_vars = 7500/g' /etc/php/${PHP_VERSION}/fpm/php.ini
 sed -i 's/;date.timezone = /date.timezone = "Europe/Lisbon"/g' /etc/php/${PHP_VERSION}/fpm/php.ini
-ln -s /codices/env/php/fpm-php.ini /etc/php/${PHP_VERSION}/fpm/php.ini
+# ln -s /project/env/php/fpm-php.ini /etc/php/${PHP_VERSION}/fpm/php.ini
 echo "Done!"
 
 echo "Configure xdebug and AST"
 rm /etc/php/${PHP_VERSION}/mods-available/xdebug.ini
-ln -s /codices/env/php/xdebug.ini /etc/php/${PHP_VERSION}/mods-available/xdebug.ini
+ln -s /project/env/php/xdebug.ini /etc/php/${PHP_VERSION}/mods-available/xdebug.ini
 
 #pecl install ast
 #sed -i '/^;extension=zip/a extension=ast.so' /etc/php/${PHP_VERSION}/cli/php.ini
@@ -66,7 +63,7 @@ sed -i 's/user www-data/user vagrant/g' /etc/nginx/nginx.conf
 echo "Done!"
 
 echo "Enabling site configuration"
-ln -s /codices/env/nginx/app.conf /etc/nginx/sites-enabled/app.conf
+ln -s /project/env/nginx/app.conf /etc/nginx/sites-enabled/app.conf
 rm /etc/nginx/sites-enabled/default
 echo "Done!"
 

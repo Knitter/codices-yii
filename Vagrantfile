@@ -46,7 +46,8 @@ Vagrant.configure(2) do |config|
   config.vm.network 'private_network', ip: settings[:ip]
 
   # sync: folder 'xyz' (host machine) -> folder '/app' (guest machine)
-  config.vm.synced_folder './', '/codices', owner: 'vagrant', group: 'vagrant'
+  config.vm.synced_folder './', '/project', owner: 'vagrant', group: 'vagrant'
+  config.vm.synced_folder './codices-app', '/codices', owner: 'vagrant', group: 'vagrant'
   # config.vm.synced_folder './src/', '/rsrc', type: 'rsync'
 
   config.vm.provider 'virtualbox' do |vb|

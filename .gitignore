@@ -6,6 +6,8 @@ nbproject
 .settings
 *.sublime-project
 *.sublime-workspace
+.vscode/launch.json
+.vscode/settings.json
 
 # OS files
 Thumbs.db
@@ -13,18 +15,23 @@ Thumbs.db
 ._.DS_Store
 
 # composer vendor dir
-/vendor
-composer.phar
-phpunit.phar
+/app/vendor
+/app/composer.phar
+/app/phpunit.phar
+/app/phpunit.xml
 .phpunit.result.cache
-/phpunit.xml
+.php-cs-fixer.cache
 
 # Development files
 .env
-c3.php
 .vagrant
 config.yml
-
-# Data file
-resources/books.sq3
 /docs/ignore/
+
+# Env files
+/codices-app/codices/config/app/app.dev.php
+/codices-app/codices/config/app/app.prod.php
+/codices-app/codices/config/common/config.dev.php
+/codices-app/codices/config/common/config.prod.php
+/codices-app/codices/config/console/config.dev.php
+/codices-app/codices/config/console/config.prod.php
