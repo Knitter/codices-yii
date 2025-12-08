@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source /project/env/vagrant-provision/common.sh
+source /codices/env/vagrant-provision/common.sh
 
 PHP_VERSION=8.4
 
