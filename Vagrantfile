@@ -54,7 +54,7 @@ Vagrant.configure(2) do |config|
   end
   
   # disable folder '/provision' (guest machine)
-  config.vm.synced_folder '.', '/env/vagrant-provision', disabled: true
+  config.vm.synced_folder '.', '/dev/vagrant/provision', disabled: true
 
   # hosts settings (host machine)
   config.vm.provision :hostmanager
@@ -65,9 +65,9 @@ Vagrant.configure(2) do |config|
   config.hostmanager.aliases            = %w(codices.app)
 
   # provisioners
-  config.vm.provision 'shell', path: './env/vagrant-provision/once-as-root.sh', args: [settings[:timezone]]
-  config.vm.provision 'shell', path: './env/vagrant-provision/once-as-vagrant.sh', args: [settings[:github_token]], privileged: false
-  config.vm.provision 'shell', path: './env/vagrant-provision/always-as-root.sh', run: 'always'
+  config.vm.provision 'shell', path: './dev/vagrant/provision/once-as-root.sh', args: [settings[:timezone]]
+  config.vm.provision 'shell', path: './dev/vagrant/provision/once-as-vagrant.sh', args: [settings[:github_token]], privileged: false
+  config.vm.provision 'shell', path: './dev/vagrant/provision/always-as-root.sh', run: 'always'
 
   # post-install message (vagrant console)
   config.vm.post_up_message = "Codices Server Ready"
