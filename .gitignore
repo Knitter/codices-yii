@@ -26,5 +26,6 @@ c3.php
 config.yml
 
 # Data file
-resources/books.sq3
+src/resources/books.sq3
 /docs/ignore/
+_out

@@ -1,13 +1,13 @@
 {
-    "name": "knitter/codices",
+    "name": "knitter/codices-yii",
     "type": "project",
-    "description": "Book management application",
+    "description": "Book, ebook and audiobook management application",
     "keywords": [
         "yii3",
         "books",
         "ebooks",
         "audiobooks",
-        "library management"
+        "personal library management"
     ],
     "license": "MIT",
     "support": {

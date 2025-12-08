@@ -17,13 +17,13 @@
 
     <testsuites>
         <testsuite name="Tests">
-            <directory>./tests</directory>
+            <directory>./src/tests</directory>
         </testsuite>
     </testsuites>
 
     <coverage>
         <include>
-            <directory>./src</directory>
+            <directory>./src/app</directory>
         </include>
     </coverage>
 </phpunit>
