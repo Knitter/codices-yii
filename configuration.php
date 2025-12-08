@@ -40,7 +40,8 @@ return [
         'bootstrap-console' => '$bootstrap',
     ],
     'config-plugin-options' => [
-        'source-directory' => 'config',
+        'source-directory' => 'src/config',
+        'output-directory' => 'src/config',
     ],
     'config-plugin-environments' => [
         'dev' => [
