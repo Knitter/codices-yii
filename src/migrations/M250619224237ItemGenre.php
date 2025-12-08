@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace App\app\Migration;
+namespace src\Migration;
 
 use Yiisoft\Db\Migration\MigrationBuilder;
 use Yiisoft\Db\Migration\RevertibleMigrationInterface;
 use Yiisoft\Db\Schema\Column\ColumnBuilder;
 
-final class M250619224230ItemAuthor implements RevertibleMigrationInterface {
+final class M250619224237ItemGenre implements RevertibleMigrationInterface {
 
     public function up(MigrationBuilder $b): void {
-        $b->createTable('item_author', [
+        $b->createTable('item_genre', [
             'itemId' => ColumnBuilder::integer()->notNull(),
-            'authorId' => ColumnBuilder::integer()->notNull(),
-            'PRIMARY KEY (`itemId`, `authorId`)'
+            'genreId' => ColumnBuilder::integer()->notNull(),
+            'PRIMARY KEY (`itemId`, `genreId`)'
         ]);
     }
 
     public function down(MigrationBuilder $b): void {
-        $b->dropTable('item_author');
+        $b->dropTable('item_genre');
     }
 }

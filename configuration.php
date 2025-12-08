@@ -39,24 +39,24 @@ return [
         'bootstrap-web' => '$bootstrap',
         'bootstrap-console' => '$bootstrap',
     ],
+    'config-plugin-options' => [
+        'source-directory' => 'config',
+    ],
     'config-plugin-environments' => [
         'dev' => [
             'params' => [
-                'environments/dev/params.php',
+                'envs/dev/params.php',
             ],
         ],
         'prod' => [
             'params' => [
-                'environments/prod/params.php',
+                'envs/prod/params.php',
             ],
         ],
         'test' => [
             'params' => [
-                'environments/test/params.php',
+                'envs/test/params.php',
             ],
         ],
-    ],
-    'config-plugin-options' => [
-        'source-directory' => 'config',
     ],
 ];
