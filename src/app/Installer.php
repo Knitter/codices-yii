@@ -8,9 +8,6 @@ use FilesystemIterator as FSIterator;
 use RecursiveDirectoryIterator as DirIterator;
 use RecursiveIteratorIterator as RIterator;
 
-/**
- * @since 2025.1
- */
 final class Installer {
 
     /**

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\app\Controller;
+namespace Codices\Controller;
 
-use App\app\Model\Publisher;
+use Codices\Model\Publisher;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Yiisoft\Data\Paginator\OffsetPaginator;

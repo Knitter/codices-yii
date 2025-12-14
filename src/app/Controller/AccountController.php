@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\app\Controller;
+namespace Codices\Controller;
 
-use App\app\Model\Account;
+use Codices\Model\Account;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Yiisoft\Data\Paginator\OffsetPaginator;
@@ -12,14 +12,10 @@ use Yiisoft\Data\Reader\OrderHelper;
 use Yiisoft\Data\Reader\Sort;
 use Yiisoft\Http\Method;
 use Yiisoft\Router\CurrentRoute;
-use Yiisoft\Session\SessionInterface;
-use Yiisoft\User\CurrentUser;
+
 use Yiisoft\Validator\ValidatorInterface;
 use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
-/**
- * @since 2025.1
- */
 final class AccountController {
 
     private ServerRequestInterface $request;
@@ -122,38 +118,6 @@ final class AccountController {
         }
 
         return $this->response->withStatus(302)->withHeader('Location', '/account');
-    }
-
-    public function login(): ResponseInterface {
-        $this->viewRenderer = $this->viewRenderer->withLayout('@layout/auth');
-        $method = $this->request->getMethod();
-        $errors = [];
-        $username = '';
-
-        if ($method === Method::POST) {
-            $body = $this->request->getParsedBody();
-            $username = $body['username'] ?? '';
-            $password = $body['password'] ?? '';
-
-            if (empty($username) || empty($password)) {
-                $errors[] = 'Username and password are required.';
-            } else {
-                // Find user by username
-                $account = Account::findOne(['username' => $username]);
-
-                if ($account && $account->validatePassword($password)) {
-                    // Login successful - redirect to dashboard
-                    return $this->response->withStatus(302)->withHeader('Location', '/');
-                } else {
-                    $errors[] = 'Invalid username or password.';
-                }
-            }
-        }
-
-        return $this->viewRenderer->render('login', [
-            'errors' => $errors,
-            'username' => $username,
-        ]);
     }
 
     public function profile(): ResponseInterface {

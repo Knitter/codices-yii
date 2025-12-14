@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\app\Handler\NotFoundHandler;
+use Codices\Handler\NotFoundHandler;
 use Yiisoft\Definitions\DynamicReference;
 use Yiisoft\Definitions\Reference;
 use Yiisoft\Injector\Injector;

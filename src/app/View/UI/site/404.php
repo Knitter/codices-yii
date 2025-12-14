@@ -6,7 +6,7 @@ use Yiisoft\Html\Html;
 
 /**
  * @var Yiisoft\View\WebView $this
- * @var \App\app\ApplicationParameters $applicationParameters
+ * @var \Codices\ApplicationParameters $applicationParameters
  * @var Yiisoft\Router\UrlGeneratorInterface $urlGenerator
  * @var Yiisoft\Router\CurrentRoute $currentRoute
  */

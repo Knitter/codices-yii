@@ -2,21 +2,23 @@
 
 declare(strict_types=1);
 
-use App\app\Asset\AppAsset;use Yiisoft\Html\Html;use Yiisoft\I18n\Locale;
+use Codices\Asset\CodicesAsset;
+use Yiisoft\Html\Html;
+//use Yiisoft\I18n\Locale;
 
 /**
- * @var \App\app\ApplicationParameters $applicationParameters
+ * @var \Codices\ApplicationParameters $applicationParameters
  * @var Yiisoft\Aliases\Aliases $aliases
  * @var Yiisoft\Assets\AssetManager $assetManager
  * @var string $content
  * @var string|null $csrf
- * @var Locale $locale
+ * //* @var Locale $locale
  * @var Yiisoft\View\WebView $this
  * @var Yiisoft\Router\CurrentRoute $currentRoute
  * @var Yiisoft\Router\UrlGeneratorInterface $urlGenerator
  */
 
-$assetManager->register(AppAsset::class);
+$assetManager->register(CodicesAsset::class);
 
 $this->addCssFiles($assetManager->getCssFiles());
 $this->addCssStrings($assetManager->getCssStrings());
@@ -26,7 +28,7 @@ $this->addJsVars($assetManager->getJsVars());
 
 $this->beginPage()
 ?><!DOCTYPE html>
-<html lang="<?= Html::encode($locale->language()) ?>" data-bs-theme="light">
+<html lang="<?php //= Html::encode($locale->language()) ?>" data-bs-theme="light">
 <head>
     <meta charset="<?= Html::encode($applicationParameters->getCharset()) ?>">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -34,6 +36,7 @@ $this->beginPage()
     <title><?= Html::encode($this->getTitle()) ?></title>
     <?php $this->head() ?>
 </head>
+
 <body class="d-flex flex-column min-vh-100">
 <?php $this->beginBody() ?>
 
@@ -44,11 +47,11 @@ $this->beginPage()
 
 <!-- Theme Toggle Script -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Load saved theme or default to light
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-bs-theme', savedTheme);
-});
+    document.addEventListener('DOMContentLoaded', function () {
+        // Load saved theme or default to light
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-bs-theme', savedTheme);
+    });
 </script>
 
 <?php $this->endBody() ?>

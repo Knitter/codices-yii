@@ -2,21 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\app\Model;
+namespace Codices\Model;
 
 use Yiisoft\ActiveRecord\ActiveQueryInterface;
 use Yiisoft\ActiveRecord\ActiveRecord;
 
 /**
- * Publisher model
- *
  * @property int $id
  * @property string $name
  * @property int $ownedById
  * @property string|null $summary
  * @property string|null $website
- *
- * @since 2025.1
  */
 final class Publisher extends ActiveRecord {
 

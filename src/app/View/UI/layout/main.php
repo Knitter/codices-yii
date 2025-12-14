@@ -2,21 +2,23 @@
 
 declare(strict_types=1);
 
-use App\app\Asset\AppAsset;use Yiisoft\Html\Html;use Yiisoft\I18n\Locale;
+use Codices\Asset\CodicesAsset;
+use Yiisoft\Html\Html;
+//use Yiisoft\I18n\Locale;
 
 /**
- * @var \App\app\ApplicationParameters $applicationParameters
+ * @var \Codices\ApplicationParameters $applicationParameters
  * @var Yiisoft\Aliases\Aliases $aliases
  * @var Yiisoft\Assets\AssetManager $assetManager
  * @var string $content
  * @var string|null $csrf
- * @var Locale $locale
+ //* @var Locale $locale
  * @var Yiisoft\View\WebView $this
  * @var Yiisoft\Router\CurrentRoute $currentRoute
  * @var Yiisoft\Router\UrlGeneratorInterface $urlGenerator
  */
 
-$assetManager->register(AppAsset::class);
+$assetManager->register(CodicesAsset::class);
 
 $this->addCssFiles($assetManager->getCssFiles());
 $this->addCssStrings($assetManager->getCssStrings());
@@ -26,7 +28,7 @@ $this->addJsVars($assetManager->getJsVars());
 
 $this->beginPage()
 ?><!DOCTYPE html>
-<html lang="<?= Html::encode($locale->language()) ?>" data-bs-theme="light">
+<html lang="<?php //= Html::encode($locale->language()) ?>" data-bs-theme="light">
 <head>
     <meta charset="<?= Html::encode($applicationParameters->getCharset()) ?>">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -58,48 +60,52 @@ $this->beginPage()
                     </a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                       aria-expanded="false">
                         <i class="bi bi-collection-fill me-1"></i>Library
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="<?= $urlGenerator->generate('item/index') ?>">
-                            <i class="bi bi-grid-3x3-gap-fill me-2"></i>All Items
-                        </a></li>
-                        <li><hr class="dropdown-divider"></li>
+                                <i class="bi bi-grid-3x3-gap-fill me-2"></i>All Items
+                            </a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         <li><a class="dropdown-item" href="<?= $urlGenerator->generate('item/books') ?>">
-                            <i class="bi bi-book me-2"></i>Books
-                        </a></li>
+                                <i class="bi bi-book me-2"></i>Books
+                            </a></li>
                         <li><a class="dropdown-item" href="<?= $urlGenerator->generate('item/ebooks') ?>">
-                            <i class="bi bi-tablet me-2"></i>E-books
-                        </a></li>
+                                <i class="bi bi-tablet me-2"></i>E-books
+                            </a></li>
                         <li><a class="dropdown-item" href="<?= $urlGenerator->generate('item/audiobooks') ?>">
-                            <i class="bi bi-headphones me-2"></i>Audiobooks
-                        </a></li>
+                                <i class="bi bi-headphones me-2"></i>Audiobooks
+                            </a></li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                       aria-expanded="false">
                         <i class="bi bi-gear-fill me-1"></i>Manage
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="<?= $urlGenerator->generate('author/index') ?>">
-                            <i class="bi bi-person-fill me-2"></i>Authors
-                        </a></li>
+                                <i class="bi bi-person-fill me-2"></i>Authors
+                            </a></li>
                         <li><a class="dropdown-item" href="<?= $urlGenerator->generate('publisher/index') ?>">
-                            <i class="bi bi-building me-2"></i>Publishers
-                        </a></li>
+                                <i class="bi bi-building me-2"></i>Publishers
+                            </a></li>
                         <li><a class="dropdown-item" href="<?= $urlGenerator->generate('genre/index') ?>">
-                            <i class="bi bi-tags-fill me-2"></i>Genres
-                        </a></li>
+                                <i class="bi bi-tags-fill me-2"></i>Genres
+                            </a></li>
                         <li><a class="dropdown-item" href="<?= $urlGenerator->generate('series/index') ?>">
-                            <i class="bi bi-collection me-2"></i>Series
-                        </a></li>
+                                <i class="bi bi-collection me-2"></i>Series
+                            </a></li>
                         <li><a class="dropdown-item" href="<?= $urlGenerator->generate('collection/index') ?>">
-                            <i class="bi bi-folder-fill me-2"></i>Collections
-                        </a></li>
+                                <i class="bi bi-folder-fill me-2"></i>Collections
+                            </a></li>
                         <li><a class="dropdown-item" href="<?= $urlGenerator->generate('format/index') ?>">
-                            <i class="bi bi-file-earmark-fill me-2"></i>Formats
-                        </a></li>
+                                <i class="bi bi-file-earmark-fill me-2"></i>Formats
+                            </a></li>
                     </ul>
                 </li>
             </ul>
@@ -107,7 +113,8 @@ $this->beginPage()
             <!-- Search Form -->
             <form class="d-flex me-3" role="search" action="<?= $urlGenerator->generate('item/search') ?>" method="get">
                 <div class="input-group">
-                    <input class="form-control" type="search" name="q" placeholder="Search books..." aria-label="Search">
+                    <input class="form-control" type="search" name="q" placeholder="Search books..."
+                           aria-label="Search">
                     <button class="btn btn-outline-light" type="submit">
                         <i class="bi bi-search"></i>
                     </button>
@@ -117,17 +124,20 @@ $this->beginPage()
             <!-- User Menu -->
             <ul class="navbar-nav">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                       aria-expanded="false">
                         <i class="bi bi-person-circle me-1"></i>Account
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="<?= $urlGenerator->generate('account/index') ?>">
-                            <i class="bi bi-person-gear me-2"></i>Profile
-                        </a></li>
-                        <li><hr class="dropdown-divider"></li>
+                                <i class="bi bi-person-gear me-2"></i>Profile
+                            </a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         <li><a class="dropdown-item" href="#">
-                            <i class="bi bi-box-arrow-right me-2"></i>Logout
-                        </a></li>
+                                <i class="bi bi-box-arrow-right me-2"></i>Logout
+                            </a></li>
                     </ul>
                 </li>
             </ul>
@@ -185,30 +195,30 @@ $this->beginPage()
 
 <!-- Theme Toggle Script -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const themeToggle = document.getElementById('themeToggle');
-    const html = document.documentElement;
-    const icon = themeToggle.querySelector('i');
+    document.addEventListener('DOMContentLoaded', function () {
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+        const icon = themeToggle.querySelector('i');
 
-    // Load saved theme or default to light
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    html.setAttribute('data-bs-theme', savedTheme);
-    updateIcon(savedTheme);
+        // Load saved theme or default to light
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        html.setAttribute('data-bs-theme', savedTheme);
+        updateIcon(savedTheme);
 
-    themeToggle.addEventListener('click', function() {
-        const currentTheme = html.getAttribute('data-bs-theme');
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        themeToggle.addEventListener('click', function () {
+            const currentTheme = html.getAttribute('data-bs-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
 
-        html.setAttribute('data-bs-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        updateIcon(newTheme);
+            html.setAttribute('data-bs-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateIcon(newTheme);
+        });
+
+        function updateIcon(theme) {
+            icon.className = theme === 'light' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+            themeToggle.title = theme === 'light' ? 'Switch to dark theme' : 'Switch to light theme';
+        }
     });
-
-    function updateIcon(theme) {
-        icon.className = theme === 'light' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
-        themeToggle.title = theme === 'light' ? 'Switch to dark theme' : 'Switch to light theme';
-    }
-});
 </script>
 
 <?php $this->endBody() ?>

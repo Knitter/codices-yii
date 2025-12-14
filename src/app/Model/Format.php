@@ -2,18 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\app\Model;
+namespace Codices\Model;
 
 use Yiisoft\ActiveRecord\ActiveRecord;
 
 /**
- * Format model
- *
  * @property string $type
  * @property string $name
  * @property int $ownedById
- *
- * @since 2025.1
  */
 final class Format extends ActiveRecord {
 

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\app\Controller;
+namespace Codices\Controller;
 
-use App\app\Model\Author;
+use Codices\Model\Author;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Yiisoft\Data\Paginator\OffsetPaginator;
@@ -14,9 +14,6 @@ use Yiisoft\Router\CurrentRoute;
 use Yiisoft\Validator\ValidatorInterface;
 use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
-/**
- * @since 2025.1
- */
 final class AuthorController {
 
     private ServerRequestInterface $request;

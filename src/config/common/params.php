@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use App\app\ViewInjection\CommonViewInjection;
-use App\app\ViewInjection\LayoutViewInjection;
-use App\app\ViewInjection\TranslatorViewInjection;
+use Codices\ViewInjection\CommonViewInjection;
+use Codices\ViewInjection\LayoutViewInjection;
+use Codices\ViewInjection\TranslatorViewInjection;
 use Yiisoft\Assets\AssetManager;
 
 //use Yiisoft\Db\Sqlite\Dsn;
@@ -29,15 +29,15 @@ return [
 //        'fallbackLocale' => 'en',
 //        'defaultCategory' => 'app',
 //    ],
-//    'yiisoft/view' => [
-//        'basePath' => '@views',
-//        'parameters' => [
-//            'assetManager' => Reference::to(AssetManager::class),
-//            'urlGenerator' => Reference::to(UrlGeneratorInterface::class),
-//            'currentRoute' => Reference::to(CurrentRoute::class),
+    'yiisoft/view' => [
+        'basePath' => '@views',
+        'parameters' => [
+            'assetManager' => Reference::to(AssetManager::class),
+            'urlGenerator' => Reference::to(UrlGeneratorInterface::class),
+            'currentRoute' => Reference::to(CurrentRoute::class),
 //            'translator' => Reference::to(TranslatorInterface::class),
-//        ],
-//    ],
+        ],
+    ],
     'yiisoft/yii-view-renderer' => [
         'viewPath' => '@views',
         'layout' => '@layout/main.php',

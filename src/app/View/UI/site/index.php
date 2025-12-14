@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 /**
  * @var WebView $this
- * @var TranslatorInterface $translator
- * @var \App\app\ApplicationParameters $applicationParameters
+ //* @var TranslatorInterface $translator
+ * @var \Codices\ApplicationParameters $applicationParameters
  * @var Yiisoft\Router\UrlGeneratorInterface $urlGenerator
  */
 
-use Yiisoft\Translator\TranslatorInterface;
+//use Yiisoft\Translator\TranslatorInterface;
 use Yiisoft\View\WebView;
 
 $this->setTitle('Dashboard - ' . $applicationParameters->getName());

@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * @var WebView $this
  * @var Yiisoft\Router\UrlGeneratorInterface $urlGenerator
- * @var \App\app\Model\Item $item
+ * @var \Codices\Model\Item $item
  * //@var array $ authors
  * //@var array $ genres
  * //@var array $ publishers

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\app\Handler;
+namespace Codices\Handler;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -12,9 +12,6 @@ use Yiisoft\Router\CurrentRoute;
 use Yiisoft\Router\UrlGeneratorInterface;
 use Yiisoft\Yii\View\Renderer\ViewRenderer;
 
-/**
- * @since 2025.1
- */
 final class NotFoundHandler implements RequestHandlerInterface {
 
     public function __construct(private UrlGeneratorInterface $urlGenerator, private CurrentRoute $currentRoute,

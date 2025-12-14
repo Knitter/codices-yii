@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\app\Model;
+namespace Codices\Model;
 
 use Yiisoft\ActiveRecord\ActiveQueryInterface;
 use Yiisoft\ActiveRecord\ActiveRecord;
@@ -14,8 +14,6 @@ use Yiisoft\ActiveRecord\ActiveRecord;
  * @property bool $completed
  * @property int|null $bookCount
  * @property int|null $ownedCount
- *
- * @since 2025.1
  */
 final class Series extends ActiveRecord {
 

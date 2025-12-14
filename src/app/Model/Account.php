@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\app\Model;
+namespace Codices\Model;
 
 use Yiisoft\ActiveRecord\ActiveQueryInterface;
 use Yiisoft\ActiveRecord\ActiveRecord;
@@ -10,8 +10,6 @@ use Yiisoft\Security\PasswordHasher;
 use Yiisoft\Security\Random;
 
 /**
- * Account model
- *
  * @property int $id
  * @property string $username
  * @property string $email
@@ -21,8 +19,6 @@ use Yiisoft\Security\Random;
  * @property int $createdOn
  * @property int $updatedOn
  * @property string|null $authKey
- *
- * @since 2025.1
  */
 final class Account extends ActiveRecord {
 

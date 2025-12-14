@@ -2,13 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\app\Model;
+namespace Codices\Model;
 
 use Yiisoft\ActiveRecord\ActiveRecord;
 
 /**
- * Item model - represents a book, ebook, or audiobook
- *
  * @property int $id
  * @property string $title
  * @property int $ownedById
@@ -44,8 +42,6 @@ use Yiisoft\ActiveRecord\ActiveRecord;
  * @property int|null $seriesId
  * @property int|null $collectionId
  * @property int|null $duplicatesId
- *
- * @since 2025.1
  */
 final class Item extends ActiveRecord {
 

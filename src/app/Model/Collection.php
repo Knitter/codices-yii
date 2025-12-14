@@ -2,21 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\app\Model;
+namespace Codices\Model;
 
 use Yiisoft\ActiveRecord\ActiveRecord;
 
 /**
- * Collection model
- *
  * @property int $id
  * @property string $name
  * @property int $ownedById
  * @property string|null $publishDate
  * @property int|null $publishYear
  * @property string|null $description
- *
- * @since 2025.1
  */
 final class Collection extends ActiveRecord {
 

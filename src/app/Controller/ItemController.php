@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\app\Controller;
+namespace Codices\Controller;
 
-use App\app\Model\Author;
-use App\app\Model\Collection;
-use App\app\Model\Genre;
-use App\app\Model\Item;
-use App\app\Model\ItemAuthor;
-use App\app\Model\ItemGenre;
-use App\app\Model\Publisher;
-use App\app\Model\Series;
+use Codices\Model\Author;
+use Codices\Model\Collection;
+use Codices\Model\Genre;
+use Codices\Model\Item;
+use Codices\Model\ItemAuthor;
+use Codices\Model\ItemGenre;
+use Codices\Model\Publisher;
+use Codices\Model\Series;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Yiisoft\Data\Paginator\OffsetPaginator;

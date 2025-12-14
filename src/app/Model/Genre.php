@@ -2,18 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\app\Model;
+namespace Codices\Model;
 
 use Yiisoft\ActiveRecord\ActiveRecord;
 
 /**
- * Genre model
- *
  * @property int $id
  * @property string $name
  * @property int $ownedById
- *
- * @since 2025.1
  */
 final class Genre extends ActiveRecord {
 

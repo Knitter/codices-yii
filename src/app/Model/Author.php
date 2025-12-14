@@ -2,13 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\app\Model;
+namespace Codices\Model;
 
 use Yiisoft\ActiveRecord\ActiveRecord;
 
 /**
- * Author model
- *
  * @property int $id
  * @property string $name
  * @property int $ownedById
@@ -16,8 +14,6 @@ use Yiisoft\ActiveRecord\ActiveRecord;
  * @property string|null $biography
  * @property string|null $website
  * @property string|null $photo
- *
- * @since 2025.1
  */
 final class Author extends ActiveRecord {
 

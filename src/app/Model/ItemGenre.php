@@ -2,18 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\app\Model;
+namespace Codices\Model;
 
 use Yiisoft\ActiveRecord\ActiveQueryInterface;
 use Yiisoft\ActiveRecord\ActiveRecord;
 
 /**
- * ItemGenre model - junction table for Item and Genre
- *
  * @property int $itemId
  * @property int $genreId
- *
- * @since 2025.1
  */
 final class ItemGenre extends ActiveRecord {
     public function tableName(): string {

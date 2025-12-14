@@ -2,18 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\app\Model;
+namespace Codices\Model;
 
 use Yiisoft\ActiveRecord\ActiveQueryInterface;
 use Yiisoft\ActiveRecord\ActiveRecord;
 
 /**
- * ItemAuthor model - junction table for Item and Author
- *
  * @property int $itemId
  * @property int $authorId
- *
- * @since 2025.1
  */
 final class ItemAuthor extends ActiveRecord {
 

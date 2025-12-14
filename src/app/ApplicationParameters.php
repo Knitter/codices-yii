@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\app;
+namespace Codices;
 
 final class ApplicationParameters {
 
