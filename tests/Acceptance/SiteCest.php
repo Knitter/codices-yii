@@ -1,0 +1,21 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Codices\Tests\Acceptance;
+
+use app\tests\Support\AcceptanceTester;
+
+final class SiteCest
+{
+    public function homePage(AcceptanceTester $I): void
+    {
+        $I->amGoingTo('navigate to the Home page.');
+        $I->amOnPage('/');
+
+        $I->wantTo('ensure that Home page works.');
+
+        $I->expectTo('see page index.');
+        $I->see('Web Application');
+    }
+}
