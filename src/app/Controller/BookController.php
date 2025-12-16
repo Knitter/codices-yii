@@ -18,6 +18,9 @@ use Codices\Model\ItemAuthor;
 use Codices\Model\ItemGenre;
 use Codices\Model\Publisher;
 use Codices\Model\Series;
+use Codices\Query\ItemFilter;
+use Codices\Service\ItemService;
+use Codices\Service\SearchService;
 use yii\web\Response;
 
 final class BookController {

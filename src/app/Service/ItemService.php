@@ -1,0 +1,93 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Codices\Service;
+
+use Codices\Model\Item;
+use Codices\Repository\ItemRepositoryInterface;
+use Codices\View\Facade\BookForm;
+use Yii;
+use yii\db\Connection;
+use yii\db\StaleObjectException;
+
+final class ItemService
+{
+    public function __construct(
+        private readonly ItemRepositoryInterface $items,
+        private readonly Connection $db
+    ) {}
+
+    public function create(BookForm $form, int $ownerId): Item
+    {
+        $tx = $this->db->beginTransaction();
+        try {
+            $item = new Item();
+            $item->ownedById = $ownerId;
+            $form->applyToItem($item);
+
+            if (!$this->items->save($item)) {
+                throw new \RuntimeException('Failed to save item');
+            }
+
+            // Replace authors/genres pivots
+            $this->items->replaceAuthors((int)$item->id, $form->authors ?? []);
+            $this->items->replaceGenres((int)$item->id, $form->genres ?? []);
+
+            $tx->commit();
+            return $item;
+        } catch (\Throwable $e) {
+            $tx->rollBack();
+            throw $e;
+        }
+    }
+
+    public function update(int $id, BookForm $form, int $ownerId): Item
+    {
+        $item = $this->items->findById($id);
+        if ($item === null) {
+            throw new \RuntimeException('Item not found');
+        }
+
+        $tx = $this->db->beginTransaction();
+        try {
+            $item->ownedById = $ownerId; // keep/ensure ownership
+            $form->applyToItem($item);
+            if (!$this->items->save($item)) {
+                throw new \RuntimeException('Failed to save item');
+            }
+
+            $this->items->replaceAuthors((int)$item->id, $form->authors ?? []);
+            $this->items->replaceGenres((int)$item->id, $form->genres ?? []);
+
+            $tx->commit();
+            return $item;
+        } catch (\Throwable $e) {
+            $tx->rollBack();
+            throw $e;
+        }
+    }
+
+    /** @throws StaleObjectException|\Throwable */
+    public function delete(int $id): void
+    {
+        $item = $this->items->findById($id);
+        if ($item === null) {
+            return;
+        }
+
+        $tx = $this->db->beginTransaction();
+        try {
+            // Remove pivots first
+            $this->items->replaceAuthors((int)$item->id, []);
+            $this->items->replaceGenres((int)$item->id, []);
+            if ($item->delete() === false) {
+                throw new \RuntimeException('Failed to delete item');
+            }
+            $tx->commit();
+        } catch (\Throwable $e) {
+            $tx->rollBack();
+            throw $e;
+        }
+    }
+}
