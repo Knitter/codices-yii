@@ -12,7 +12,7 @@ return [
         // Repositories
         ItemRepositoryInterface::class => ItemRepository::class,
 
-        // Services (SearchService has a typed constructor and will be auto-resolved)
+        // Services
         SearchService::class => SearchService::class,
         ItemService::class => ItemService::class,
     ],

@@ -8,9 +8,6 @@ use yii\i18n\PhpMessageSource;
 $commonComponents = require dirname(__DIR__) . '/common/components.php';
 
 $config = [
-    //        'view' => [
-    //            'class' => 'erp\components\View',
-    //        ],
     'assetManager' => [
         'basePath' => '@assets',
         'bundles' => [
@@ -26,13 +23,6 @@ $config = [
     'errorHandler' => [
         'errorAction' => 'app/error',
     ],
-    //'i18n' => [
-    //    'translations' => [
-    //        'codices.web' => [
-    //            'class' => PhpMessageSource::class,
-    //        ],
-    //    ],
-    //],
     'formatter' => [
         'class' => 'yii\i18n\Formatter',
         'nullDisplay' => ''
