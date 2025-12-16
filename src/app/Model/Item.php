@@ -99,17 +99,17 @@ final class Item extends ActiveRecord {
         ];
     }
 
-//    public function beforeSave(bool $insert): bool {
-//        if (parent::beforeSave($insert)) {
-//            if ($insert && empty($this->addedOn)) {
-//                $this->addedOn = date('Y-m-d');
-//            }
-//
-//            return true;
-//        }
-//
-//        return false;
-//    }
+    public function beforeSave($insert): bool {
+        if (!parent::beforeSave($insert)) {
+            return false;
+        }
+
+        if ($insert && empty($this->addedOn)) {
+            $this->addedOn = date('Y-m-d');
+        }
+
+        return true;
+    }
 
     // Relationships
     public function getOwner(): ActiveQuery {

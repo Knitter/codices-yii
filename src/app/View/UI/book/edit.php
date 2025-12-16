@@ -3,8 +3,7 @@
 declare(strict_types=1);
 
 /**
- * @var WebView $this
- * @var Yiisoft\Router\UrlGeneratorInterface $urlGenerator
+ * @var \yii\web\View $this
  * @var \Codices\Model\Item $item
  * @var array $authors
  * @var array $genres
@@ -17,10 +16,11 @@ declare(strict_types=1);
  * @var string|null $csrf
  */
 
-use Yiisoft\Html\Html;
-use Yiisoft\View\WebView;
 
-$this->setTitle('Edit Book - ' . ($item->title ?? 'Unknown'));
+use yii\helpers\Html;
+use yii\helpers\Url;
+
+$this->title = Yii::t('codices', 'Edit Book - {title}', ['{title}' => ($item->title ?? 'Unknown')]);
 ?>
 
 <!-- Page Header -->
@@ -33,7 +33,7 @@ $this->setTitle('Edit Book - ' . ($item->title ?? 'Unknown'));
         <p class="text-muted mb-0">Update information for "<?= Html::encode($item->title ?? 'Unknown') ?>"</p>
     </div>
     <div class="d-flex gap-2">
-        <a href="<?= $urlGenerator->generate('book/index') ?>" class="btn btn-outline-secondary">
+        <a href="<?= Url::to('book/index') ?>" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left me-1"></i>Back to Books
         </a>
         <button type="button" class="btn btn-outline-info" onclick="viewHistory()">
@@ -48,9 +48,11 @@ $this->setTitle('Edit Book - ' . ($item->title ?? 'Unknown'));
         <div class="row align-items-center">
             <div class="col-auto">
                 <?php if ($item->cover): ?>
-                    <img src="<?= Html::encode($item->cover) ?>" alt="Cover" class="img-thumbnail" style="width: 60px; height: 90px; object-fit: cover;">
+                    <img src="<?= Html::encode($item->cover) ?>" alt="Cover" class="img-thumbnail"
+                         style="width: 60px; height: 90px; object-fit: cover;">
                 <?php else: ?>
-                    <div class="bg-light border d-flex align-items-center justify-content-center" style="width: 60px; height: 90px;">
+                    <div class="bg-light border d-flex align-items-center justify-content-center"
+                         style="width: 60px; height: 90px;">
                         <i class="bi bi-book text-muted fs-4"></i>
                     </div>
                 <?php endif; ?>
@@ -62,7 +64,8 @@ $this->setTitle('Edit Book - ' . ($item->title ?? 'Unknown'));
                 <?php endif; ?>
                 <div class="d-flex gap-3 text-muted small">
                     <?php if (!empty($currentAuthors)): ?>
-                        <span><i class="bi bi-person me-1"></i><?= Html::encode(implode(', ', array_map(fn($author) => $author->name, $currentAuthors))) ?></span>
+                        <span><i
+                                class="bi bi-person me-1"></i><?= Html::encode(implode(', ', array_map(fn($author) => $author->name, $currentAuthors))) ?></span>
                     <?php endif; ?>
                     <?php if ($item->publishYear): ?>
                         <span><i class="bi bi-calendar me-1"></i><?= Html::encode($item->publishYear) ?></span>
@@ -110,7 +113,8 @@ $this->setTitle('Edit Book - ' . ($item->title ?? 'Unknown'));
                                 Title <span class="text-danger">*</span>
                             </label>
                             <input type="text" class="form-control form-control-lg" id="title" name="title"
-                                   placeholder="Enter the book title" value="<?= Html::encode($item->title ?? '') ?>" required>
+                                   placeholder="Enter the book title" value="<?= Html::encode($item->title ?? '') ?>"
+                                   required>
                             <div class="invalid-feedback">
                                 Please provide a valid title.
                             </div>
@@ -123,7 +127,7 @@ $this->setTitle('Edit Book - ' . ($item->title ?? 'Unknown'));
                                 <option value="">Choose format...</option>
                                 <?php foreach ($formats as $format): ?>
                                     <option value="<?= Html::encode($format->name) ?>"
-                                            <?= ($item->format ?? '') === $format->name ? 'selected' : '' ?>>
+                                        <?= ($item->format ?? '') === $format->name ? 'selected' : '' ?>>
                                         <?= Html::encode($format->name) ?>
                                     </option>
                                 <?php endforeach; ?>
@@ -146,9 +150,9 @@ $this->setTitle('Edit Book - ' . ($item->title ?? 'Unknown'));
                                 <?php
                                 $currentAuthorIds = array_map(fn($author) => $author->id, $currentAuthors);
                                 foreach ($authors as $author):
-                                ?>
+                                    ?>
                                     <option value="<?= $author->id ?>"
-                                            <?= in_array($author->id, $currentAuthorIds) ? 'selected' : '' ?>>
+                                        <?= in_array($author->id, $currentAuthorIds) ? 'selected' : '' ?>>
                                         <?= Html::encode($author->name) ?>
                                     </option>
                                 <?php endforeach; ?>
@@ -196,7 +200,7 @@ $this->setTitle('Edit Book - ' . ($item->title ?? 'Unknown'));
                                 <option value="">Choose publisher...</option>
                                 <?php foreach ($publishers as $publisher): ?>
                                     <option value="<?= $publisher->id ?>"
-                                            <?= ($item->publisherId ?? '') == $publisher->id ? 'selected' : '' ?>>
+                                        <?= ($item->publisherId ?? '') == $publisher->id ? 'selected' : '' ?>>
                                         <?= Html::encode($publisher->name) ?>
                                     </option>
                                 <?php endforeach; ?>
@@ -224,16 +228,27 @@ $this->setTitle('Edit Book - ' . ($item->title ?? 'Unknown'));
                         <div class="col-md-6 mb-3">
                             <label for="language" class="form-label fw-semibold">Language</label>
                             <select class="form-select" id="language" name="language">
-                                <option value="en" <?= ($item->language ?? 'en') === 'en' ? 'selected' : '' ?>>English</option>
-                                <option value="es" <?= ($item->language ?? '') === 'es' ? 'selected' : '' ?>>Spanish</option>
-                                <option value="fr" <?= ($item->language ?? '') === 'fr' ? 'selected' : '' ?>>French</option>
-                                <option value="de" <?= ($item->language ?? '') === 'de' ? 'selected' : '' ?>>German</option>
-                                <option value="it" <?= ($item->language ?? '') === 'it' ? 'selected' : '' ?>>Italian</option>
-                                <option value="pt" <?= ($item->language ?? '') === 'pt' ? 'selected' : '' ?>>Portuguese</option>
-                                <option value="ru" <?= ($item->language ?? '') === 'ru' ? 'selected' : '' ?>>Russian</option>
-                                <option value="zh" <?= ($item->language ?? '') === 'zh' ? 'selected' : '' ?>>Chinese</option>
-                                <option value="ja" <?= ($item->language ?? '') === 'ja' ? 'selected' : '' ?>>Japanese</option>
-                                <option value="ko" <?= ($item->language ?? '') === 'ko' ? 'selected' : '' ?>>Korean</option>
+                                <option value="en" <?= ($item->language ?? 'en') === 'en' ? 'selected' : '' ?>>English
+                                </option>
+                                <option value="es" <?= ($item->language ?? '') === 'es' ? 'selected' : '' ?>>Spanish
+                                </option>
+                                <option value="fr" <?= ($item->language ?? '') === 'fr' ? 'selected' : '' ?>>French
+                                </option>
+                                <option value="de" <?= ($item->language ?? '') === 'de' ? 'selected' : '' ?>>German
+                                </option>
+                                <option value="it" <?= ($item->language ?? '') === 'it' ? 'selected' : '' ?>>Italian
+                                </option>
+                                <option value="pt" <?= ($item->language ?? '') === 'pt' ? 'selected' : '' ?>>
+                                    Portuguese
+                                </option>
+                                <option value="ru" <?= ($item->language ?? '') === 'ru' ? 'selected' : '' ?>>Russian
+                                </option>
+                                <option value="zh" <?= ($item->language ?? '') === 'zh' ? 'selected' : '' ?>>Chinese
+                                </option>
+                                <option value="ja" <?= ($item->language ?? '') === 'ja' ? 'selected' : '' ?>>Japanese
+                                </option>
+                                <option value="ko" <?= ($item->language ?? '') === 'ko' ? 'selected' : '' ?>>Korean
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -242,12 +257,14 @@ $this->setTitle('Edit Book - ' . ($item->title ?? 'Unknown'));
                         <div class="col-md-6 mb-3">
                             <label for="edition" class="form-label fw-semibold">Edition</label>
                             <input type="text" class="form-control" id="edition" name="edition"
-                                   placeholder="e.g., 1st Edition, Revised Edition" value="<?= Html::encode($item->edition ?? '') ?>">
+                                   placeholder="e.g., 1st Edition, Revised Edition"
+                                   value="<?= Html::encode($item->edition ?? '') ?>">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="volume" class="form-label fw-semibold">Volume</label>
                             <input type="text" class="form-control" id="volume" name="volume"
-                                   placeholder="e.g., Volume 1, Part A" value="<?= Html::encode($item->volume ?? '') ?>">
+                                   placeholder="e.g., Volume 1, Part A"
+                                   value="<?= Html::encode($item->volume ?? '') ?>">
                         </div>
                     </div>
                 </div>
@@ -269,9 +286,9 @@ $this->setTitle('Edit Book - ' . ($item->title ?? 'Unknown'));
                                 <?php
                                 $currentGenreIds = array_map(fn($genre) => $genre->id, $currentGenres);
                                 foreach ($genres as $genre):
-                                ?>
+                                    ?>
                                     <option value="<?= $genre->id ?>"
-                                            <?= in_array($genre->id, $currentGenreIds) ? 'selected' : '' ?>>
+                                        <?= in_array($genre->id, $currentGenreIds) ? 'selected' : '' ?>>
                                         <?= Html::encode($genre->name) ?>
                                     </option>
                                 <?php endforeach; ?>
@@ -287,7 +304,7 @@ $this->setTitle('Edit Book - ' . ($item->title ?? 'Unknown'));
                                 <option value="">Not part of a series</option>
                                 <?php foreach ($series as $serie): ?>
                                     <option value="<?= $serie->id ?>"
-                                            <?= ($item->seriesId ?? '') == $serie->id ? 'selected' : '' ?>>
+                                        <?= ($item->seriesId ?? '') == $serie->id ? 'selected' : '' ?>>
                                         <?= Html::encode($serie->name) ?>
                                     </option>
                                 <?php endforeach; ?>
@@ -311,7 +328,7 @@ $this->setTitle('Edit Book - ' . ($item->title ?? 'Unknown'));
                                 <option value="">No collection</option>
                                 <?php foreach ($collections as $collection): ?>
                                     <option value="<?= $collection->id ?>"
-                                            <?= ($item->collectionId ?? '') == $collection->id ? 'selected' : '' ?>>
+                                        <?= ($item->collectionId ?? '') == $collection->id ? 'selected' : '' ?>>
                                         <?= Html::encode($collection->name) ?>
                                     </option>
                                 <?php endforeach; ?>
@@ -330,14 +347,16 @@ $this->setTitle('Edit Book - ' . ($item->title ?? 'Unknown'));
                             <div class="rating-input">
                                 <div class="btn-group" role="group" aria-label="Rating">
                                     <?php for ($i = 1; $i <= 5; $i++): ?>
-                                        <input type="radio" class="btn-check" name="rating" id="rating<?= $i ?>" value="<?= $i ?>"
-                                               <?= ($item->rating ?? 0) == $i ? 'checked' : '' ?>>
+                                        <input type="radio" class="btn-check" name="rating" id="rating<?= $i ?>"
+                                               value="<?= $i ?>"
+                                            <?= ($item->rating ?? 0) == $i ? 'checked' : '' ?>>
                                         <label class="btn btn-outline-warning" for="rating<?= $i ?>">
                                             <i class="bi bi-star"></i>
                                         </label>
                                     <?php endfor; ?>
                                 </div>
-                                <button type="button" class="btn btn-sm btn-outline-secondary ms-2" onclick="clearRating()">
+                                <button type="button" class="btn btn-sm btn-outline-secondary ms-2"
+                                        onclick="clearRating()">
                                     <i class="bi bi-x"></i> Clear
                                 </button>
                             </div>
@@ -347,14 +366,15 @@ $this->setTitle('Edit Book - ' . ($item->title ?? 'Unknown'));
                             <div class="d-flex gap-3">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="read" name="read" value="1"
-                                           <?= ($item->read ?? false) ? 'checked' : '' ?>>
+                                        <?= ($item->read ?? false) ? 'checked' : '' ?>>
                                     <label class="form-check-label" for="read">
                                         Read
                                     </label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="translated" name="translated" value="1"
-                                           <?= ($item->translated ?? false) ? 'checked' : '' ?>>
+                                    <input class="form-check-input" type="checkbox" id="translated" name="translated"
+                                           value="1"
+                                        <?= ($item->translated ?? false) ? 'checked' : '' ?>>
                                     <label class="form-check-label" for="translated">
                                         Translated
                                     </label>
@@ -367,7 +387,8 @@ $this->setTitle('Edit Book - ' . ($item->title ?? 'Unknown'));
                         <div class="col-md-6 mb-3">
                             <label for="originalTitle" class="form-label fw-semibold">Original Title</label>
                             <input type="text" class="form-control" id="originalTitle" name="originalTitle"
-                                   placeholder="Original title (if translated)" value="<?= Html::encode($item->originalTitle ?? '') ?>">
+                                   placeholder="Original title (if translated)"
+                                   value="<?= Html::encode($item->originalTitle ?? '') ?>">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="url" class="form-label fw-semibold">URL</label>
@@ -398,12 +419,14 @@ $this->setTitle('Edit Book - ' . ($item->title ?? 'Unknown'));
                 <div class="card-body text-center">
                     <div class="current-cover mb-3">
                         <?php if ($item->cover): ?>
-                            <img src="<?= Html::encode($item->cover) ?>" alt="Current Cover" class="img-fluid rounded" style="max-height: 200px;">
+                            <img src="<?= Html::encode($item->cover) ?>" alt="Current Cover" class="img-fluid rounded"
+                                 style="max-height: 200px;">
                             <div class="mt-2">
                                 <small class="text-muted">Current cover</small>
                             </div>
                         <?php else: ?>
-                            <div class="bg-light border d-flex align-items-center justify-content-center rounded" style="height: 200px;">
+                            <div class="bg-light border d-flex align-items-center justify-content-center rounded"
+                                 style="height: 200px;">
                                 <div class="text-center">
                                     <i class="bi bi-image display-4 text-muted mb-2"></i>
                                     <p class="text-muted mb-0">No cover image</p>
@@ -425,7 +448,8 @@ $this->setTitle('Edit Book - ' . ($item->title ?? 'Unknown'));
 
                     <?php if ($item->cover): ?>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="removeCover" name="removeCover" value="1">
+                            <input class="form-check-input" type="checkbox" id="removeCover" name="removeCover"
+                                   value="1">
                             <label class="form-check-label text-danger" for="removeCover">
                                 Remove current cover
                             </label>
@@ -506,7 +530,7 @@ $this->setTitle('Edit Book - ' . ($item->title ?? 'Unknown'));
                     </small>
                 </div>
                 <div class="d-flex gap-2">
-                    <a href="<?= $urlGenerator->generate('book/index') ?>" class="btn btn-outline-secondary">
+                    <a href="<?= Url::to('book/index') ?>" class="btn btn-outline-secondary">
                         <i class="bi bi-x-circle me-1"></i>Cancel
                     </a>
                     <button type="submit" class="btn btn-primary">
@@ -519,132 +543,132 @@ $this->setTitle('Edit Book - ' . ($item->title ?? 'Unknown'));
 </form>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Form validation
-    const form = document.getElementById('bookForm');
-    form.addEventListener('submit', function(event) {
-        if (!form.checkValidity()) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
-        form.classList.add('was-validated');
-    });
+    document.addEventListener('DOMContentLoaded', function () {
+        // Form validation
+        const form = document.getElementById('bookForm');
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        });
 
-    // Cover image preview
-    document.getElementById('cover').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const uploadArea = document.querySelector('.cover-upload-area');
-                uploadArea.innerHTML = `
+        // Cover image preview
+        document.getElementById('cover').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const uploadArea = document.querySelector('.cover-upload-area');
+                    uploadArea.innerHTML = `
                     <img src="${e.target.result}" class="img-fluid rounded" style="max-height: 120px;">
                     <div class="mt-2">
                         <small class="text-muted">${file.name}</small>
                     </div>
                 `;
-                // Uncheck remove cover if new image is selected
-                const removeCoverElement = document.getElementById('removeCover');
-                if (removeCoverElement) {
-                    removeCoverElement.checked = false;
-                }
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    // Rating stars
-    const ratingInputs = document.querySelectorAll('input[name="rating"]');
-    ratingInputs.forEach(input => {
-        input.addEventListener('change', function() {
-            updateRatingDisplay(this.value);
+                    // Uncheck remove cover if new image is selected
+                    const removeCoverElement = document.getElementById('removeCover');
+                    if (removeCoverElement) {
+                        removeCoverElement.checked = false;
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
         });
-    });
 
-    // Initialize rating display
-    const checkedRating = document.querySelector('input[name="rating"]:checked');
-    if (checkedRating) {
-        updateRatingDisplay(checkedRating.value);
-    }
-});
+        // Rating stars
+        const ratingInputs = document.querySelectorAll('input[name="rating"]');
+        ratingInputs.forEach(input => {
+            input.addEventListener('change', function () {
+                updateRatingDisplay(this.value);
+            });
+        });
 
-function updateRatingDisplay(rating) {
-    const labels = document.querySelectorAll('.rating-input label');
-    labels.forEach((label, index) => {
-        const icon = label.querySelector('i');
-        if (index < rating) {
-            icon.className = 'bi bi-star-fill';
-            label.classList.remove('btn-outline-warning');
-            label.classList.add('btn-warning');
-        } else {
-            icon.className = 'bi bi-star';
-            label.classList.remove('btn-warning');
-            label.classList.add('btn-outline-warning');
+        // Initialize rating display
+        const checkedRating = document.querySelector('input[name="rating"]:checked');
+        if (checkedRating) {
+            updateRatingDisplay(checkedRating.value);
         }
     });
-}
 
-function clearRating() {
-    const ratingInputs = document.querySelectorAll('input[name="rating"]');
-    ratingInputs.forEach(input => input.checked = false);
-    updateRatingDisplay(0);
-}
-
-function markAsRead() {
-    document.getElementById('read').checked = true;
-}
-
-function duplicateBook() {
-    if (confirm('Create a duplicate of this book?')) {
-        window.location.href = '<?= $urlGenerator->generate('book/add') ?>?duplicate=<?= $item->id ?>';
+    function updateRatingDisplay(rating) {
+        const labels = document.querySelectorAll('.rating-input label');
+        labels.forEach((label, index) => {
+            const icon = label.querySelector('i');
+            if (index < rating) {
+                icon.className = 'bi bi-star-fill';
+                label.classList.remove('btn-outline-warning');
+                label.classList.add('btn-warning');
+            } else {
+                icon.className = 'bi bi-star';
+                label.classList.remove('btn-warning');
+                label.classList.add('btn-outline-warning');
+            }
+        });
     }
-}
 
-function resetForm() {
-    if (confirm('Reset all changes? This will restore the original values.')) {
-        location.reload();
+    function clearRating() {
+        const ratingInputs = document.querySelectorAll('input[name="rating"]');
+        ratingInputs.forEach(input => input.checked = false);
+        updateRatingDisplay(0);
     }
-}
 
-function deleteBook() {
-    if (confirm('Are you sure you want to delete this book? This action cannot be undone.')) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/book/delete/<?= $item->id ?>';
-
-        const csrfInput = document.createElement('input');
-        csrfInput.type = 'hidden';
-        csrfInput.name = '_csrf';
-        csrfInput.value = '<?= $csrf ?? '' ?>';
-        form.appendChild(csrfInput);
-
-        document.body.appendChild(form);
-        form.submit();
+    function markAsRead() {
+        document.getElementById('read').checked = true;
     }
-}
 
-function viewHistory() {
-    alert('History functionality would be implemented here.');
-}
+    function duplicateBook() {
+        if (confirm('Create a duplicate of this book?')) {
+            window.location.href = '<?= Url::to('book/add') ?>?duplicate=<?= $item->id ?>';
+        }
+    }
+
+    function resetForm() {
+        if (confirm('Reset all changes? This will restore the original values.')) {
+            location.reload();
+        }
+    }
+
+    function deleteBook() {
+        if (confirm('Are you sure you want to delete this book? This action cannot be undone.')) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/book/delete/<?= $item->id ?>';
+
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = '_csrf';
+            csrfInput.value = '<?= $csrf ?? '' ?>';
+            form.appendChild(csrfInput);
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+
+    function viewHistory() {
+        alert('History functionality would be implemented here.');
+    }
 </script>
 
 <style>
-.cover-upload-area:hover {
-    background-color: #f8f9fa;
-    border-color: #0d6efd !important;
-}
+    .cover-upload-area:hover {
+        background-color: #f8f9fa;
+        border-color: #0d6efd !important;
+    }
 
-.rating-input .btn {
-    border-radius: 0;
-}
+    .rating-input .btn {
+        border-radius: 0;
+    }
 
-.rating-input .btn:first-child {
-    border-top-left-radius: 0.375rem;
-    border-bottom-left-radius: 0.375rem;
-}
+    .rating-input .btn:first-child {
+        border-top-left-radius: 0.375rem;
+        border-bottom-left-radius: 0.375rem;
+    }
 
-.rating-input .btn:last-child {
-    border-top-right-radius: 0.375rem;
-    border-bottom-right-radius: 0.375rem;
-}
+    .rating-input .btn:last-child {
+        border-top-right-radius: 0.375rem;
+        border-bottom-right-radius: 0.375rem;
+    }
 </style>

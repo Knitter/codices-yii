@@ -3,22 +3,21 @@
 declare(strict_types=1);
 
 /**
- * @var WebView $this
- * @var Yiisoft\Router\UrlGeneratorInterface $urlGenerator
+ * @var \yii\web\View $this
  * @var \Codices\Model\Item $item
- * //@var array $ authors
- * //@var array $ genres
- * //@var array $ publishers
- * //@var array $ series
- * //@var array $ collections
- * //@var array $ formats
- * @var string|null $csrf
+ * @var array $authors
+ * @var array $genres
+ * @var array $publishers
+ * @var array $series
+ * @var array $collections
+ * @var array $formats
+ * @var string $csrf
  */
 
-use Yiisoft\Html\Html;
-use Yiisoft\View\WebView;
+use yii\helpers\Html;
+use yii\helpers\Url;
 
-$this->setTitle('Add New Book');
+$this->title = Yii::t('codices', 'Add New Book');
 ?>
 
 <!-- Page Header -->
@@ -30,7 +29,7 @@ $this->setTitle('Add New Book');
         </h1>
         <p class="text-muted mb-0">Add a new physical book to your library collection</p>
     </div>
-    <a href="<?= $urlGenerator->generate('book/index') ?>" class="btn btn-outline-secondary">
+    <a href="<?= Url::to('book/index') ?>" class="btn btn-outline-secondary">
         <i class="bi bi-arrow-left me-1"></i>Back to Books
     </a>
 </div>
@@ -465,7 +464,7 @@ $this->setTitle('Add New Book');
                     </small>
                 </div>
                 <div class="d-flex gap-2">
-                    <a href="<?= $urlGenerator->generate('book/index') ?>" class="btn btn-outline-secondary">
+                    <a href="<?= Url::to('book/index') ?>" class="btn btn-outline-secondary">
                         <i class="bi bi-x-circle me-1"></i>Cancel
                     </a>
                     <button type="submit" class="btn btn-primary">

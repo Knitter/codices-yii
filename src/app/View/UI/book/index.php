@@ -3,21 +3,18 @@
 declare(strict_types=1);
 
 /**
- * @var WebView $this
- * @var Yiisoft\Router\UrlGeneratorInterface $urlGenerator
- * @var Yiisoft\Data\Paginator\OffsetPaginator $paginator
+ * @var yii\web\View $this
  * @var array $queryParams
  * @var array $genres
  * @var array $publishers
- * @var Yiisoft\Data\Reader\Sort $sort
  * @var string $currentSort
  * @var string $currentDirection
  */
 
-use Yiisoft\View\WebView;
-use Yiisoft\Html\Html;
+use yii\helpers\Html;
+use yii\helpers\Url;
 
-$this->setTitle('Books Management');
+$this->title = Yii::t('codices', 'Books');
 ?>
 
 <!-- Page Header -->
@@ -30,7 +27,7 @@ $this->setTitle('Books Management');
         <p class="text-muted mb-0">Manage your physical book collection with advanced filtering and search</p>
     </div>
     <div class="d-flex gap-2">
-        <a href="<?= $urlGenerator->generate('book/add') ?>" class="btn btn-primary">
+        <a href="<?= Url::to('book/add') ?>" class="btn btn-primary">
             <i class="bi bi-plus-circle me-1"></i>Add New Book
         </a>
         <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#filterModal">

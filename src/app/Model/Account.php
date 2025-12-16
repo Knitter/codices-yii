@@ -42,21 +42,23 @@ final class Account extends ActiveRecord {
         ];
     }
 
-//    public function beforeSave(bool $insert): bool {
-//        if (parent::beforeSave($insert)) {
-//            if ($insert) {
-//                $this->createdOn = time();
-//            }
-//            $this->updatedOn = time();
-//            if ($this->isAttributeChanged('password')) {
-//                $this->password = new PasswordHasher()->hash($this->password);
-//            }
-//
-//            return true;
-//        }
-//
-//        return false;
-//    }
+    public function beforeSave($insert): bool {
+        if (!parent::beforeSave($insert)) {
+            return false;
+        }
+
+        if ($insert) {
+            $this->createdOn = time();
+        }
+
+        $this->updatedOn = time();
+        //TODO: Fix hash password generation
+        //if ($this->isAttributeChanged('password')) {
+        //    $this->password = new PasswordHasher()->hash($this->password);
+        //}
+
+        return true;
+    }
 
     public function validatePassword(string $password): bool {
         return false; //TODO: return new PasswordHasher()->validate($password, $this->password);
