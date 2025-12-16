@@ -1,37 +1,20 @@
 <?php
 
+/*
+ * Copyright (c) 2025 Sérgio Lopes. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root for details.
+ */
+
 declare(strict_types=1);
 
 namespace Codices\Controller;
 
 use Codices\Model\Account;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Yiisoft\Data\Paginator\OffsetPaginator;
-use Yiisoft\Data\Reader\OrderHelper;
-use Yiisoft\Data\Reader\Sort;
-use Yiisoft\Http\Method;
-use Yiisoft\Router\CurrentRoute;
-
-use Yiisoft\Validator\ValidatorInterface;
-use Yiisoft\Yii\View\Renderer\ViewRenderer;
+use yii\web\Response;
 
 final class AccountController {
 
-    private ServerRequestInterface $request;
-    private ResponseInterface $response;
-
-    public function __construct(
-        private ViewRenderer   $viewRenderer,
-        ServerRequestInterface $request,
-        ResponseInterface      $response
-    ) {
-        $this->viewRenderer = $viewRenderer->withControllerName('account');
-        $this->request = $request;
-        $this->response = $response;
-    }
-
-    public function index(CurrentRoute $currentRoute): ResponseInterface {
+    public function index(CurrentRoute $currentRoute): string {
         $query = Account::find()->orderBy(['username' => SORT_ASC]);
         $paginator = (new OffsetPaginator($query))
             ->withPageSize(10)
@@ -43,7 +26,7 @@ final class AccountController {
         ]);
     }
 
-    public function view(CurrentRoute $currentRoute): ResponseInterface {
+    public function view(CurrentRoute $currentRoute): Response|string {
         $id = $currentRoute->getArgument('id');
         $account = Account::findOne(['id' => $id]);
 
@@ -56,7 +39,7 @@ final class AccountController {
         ]);
     }
 
-    public function create(ValidatorInterface $validator): ResponseInterface {
+    public function create(ValidatorInterface $validator): Response|string {
         $account = new Account();
         $method = $this->request->getMethod();
         $errors = [];
@@ -80,7 +63,7 @@ final class AccountController {
         ]);
     }
 
-    public function update(CurrentRoute $currentRoute, ValidatorInterface $validator): ResponseInterface {
+    public function update(CurrentRoute $currentRoute, ValidatorInterface $validator): Response|string {
         $id = $currentRoute->getArgument('id');
         $account = Account::findOne(['id' => $id]);
 
@@ -109,7 +92,7 @@ final class AccountController {
         ]);
     }
 
-    public function delete(CurrentRoute $currentRoute): ResponseInterface {
+    public function delete(CurrentRoute $currentRoute): Response|string {
         $id = $currentRoute->getArgument('id');
         $account = Account::findOne(['id' => $id]);
 
@@ -120,7 +103,7 @@ final class AccountController {
         return $this->response->withStatus(302)->withHeader('Location', '/account');
     }
 
-    public function profile(): ResponseInterface {
+    public function profile(): Response|string {
         // Get current user account
         $account = Account::findOne(['id' => $this->user->getId()]);
 

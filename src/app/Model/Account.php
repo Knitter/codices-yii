@@ -1,13 +1,16 @@
 <?php
 
+/*
+ * Copyright (c) 2025 Sérgio Lopes. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root for details.
+ */
+
 declare(strict_types=1);
 
 namespace Codices\Model;
 
-use Yiisoft\ActiveRecord\ActiveQueryInterface;
-use Yiisoft\ActiveRecord\ActiveRecord;
-use Yiisoft\Security\PasswordHasher;
-use Yiisoft\Security\Random;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * @property int $id
@@ -22,7 +25,7 @@ use Yiisoft\Security\Random;
  */
 final class Account extends ActiveRecord {
 
-    public function tableName(): string {
+    public static function tableName(): string {
         return 'account';
     }
 
@@ -39,56 +42,56 @@ final class Account extends ActiveRecord {
         ];
     }
 
-    public function beforeSave(bool $insert): bool {
-        if (parent::beforeSave($insert)) {
-            if ($insert) {
-                $this->createdOn = time();
-            }
-            $this->updatedOn = time();
-            if ($this->isAttributeChanged('password')) {
-                $this->password = new PasswordHasher()->hash($this->password);
-            }
-
-            return true;
-        }
-
-        return false;
-    }
+//    public function beforeSave(bool $insert): bool {
+//        if (parent::beforeSave($insert)) {
+//            if ($insert) {
+//                $this->createdOn = time();
+//            }
+//            $this->updatedOn = time();
+//            if ($this->isAttributeChanged('password')) {
+//                $this->password = new PasswordHasher()->hash($this->password);
+//            }
+//
+//            return true;
+//        }
+//
+//        return false;
+//    }
 
     public function validatePassword(string $password): bool {
-        return new PasswordHasher()->validate($password, $this->password);
+        return false; //TODO: return new PasswordHasher()->validate($password, $this->password);
     }
 
     public function generateAuthKey(): void {
-        $this->authKey = Random::string(32);
+        //TODO: $this->authKey = Random::string(32);
     }
 
     // Relationships
-    public function getPublishers(): ActiveQueryInterface {
+    public function getPublishers(): ActiveQuery {
         return $this->hasMany(Publisher::class, ['ownedById' => 'id']);
     }
 
-    public function getSeries(): ActiveQueryInterface {
+    public function getSeries(): ActiveQuery {
         return $this->hasMany(Series::class, ['ownedById' => 'id']);
     }
 
-    public function getCollections(): ActiveQueryInterface {
+    public function getCollections(): ActiveQuery {
         return $this->hasMany(Collection::class, ['ownedById' => 'id']);
     }
 
-    public function getAuthors(): ActiveQueryInterface {
+    public function getAuthors(): ActiveQuery {
         return $this->hasMany(Author::class, ['ownedById' => 'id']);
     }
 
-    public function getGenres(): ActiveQueryInterface {
+    public function getGenres(): ActiveQuery {
         return $this->hasMany(Genre::class, ['ownedById' => 'id']);
     }
 
-    public function getFormats(): ActiveQueryInterface {
+    public function getFormats(): ActiveQuery {
         return $this->hasMany(Format::class, ['ownedById' => 'id']);
     }
 
-    public function getItems(): ActiveQueryInterface {
+    public function getItems(): ActiveQuery {
         return $this->hasMany(Item::class, ['ownedById' => 'id']);
     }
 }

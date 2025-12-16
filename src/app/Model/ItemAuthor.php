@@ -1,11 +1,16 @@
 <?php
 
+/*
+ * Copyright (c) 2025 Sérgio Lopes. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root for details.
+ */
+
 declare(strict_types=1);
 
 namespace Codices\Model;
 
-use Yiisoft\ActiveRecord\ActiveQueryInterface;
-use Yiisoft\ActiveRecord\ActiveRecord;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * @property int $itemId
@@ -13,11 +18,11 @@ use Yiisoft\ActiveRecord\ActiveRecord;
  */
 final class ItemAuthor extends ActiveRecord {
 
-    public function tableName(): string {
+    public static function tableName(): string {
         return 'item_author';
     }
 
-    public function primaryKey(): array {
+    public static function primaryKey(): array {
         return ['itemId', 'authorId'];
     }
 
@@ -29,11 +34,11 @@ final class ItemAuthor extends ActiveRecord {
     }
 
     // Relationships
-    public function getItem(): ActiveQueryInterface {
+    public function getItem(): ActiveQuery {
         return $this->hasOne(Item::class, ['id' => 'itemId']);
     }
 
-    public function getAuthor(): ActiveQueryInterface {
+    public function getAuthor(): ActiveQuery {
         return $this->hasOne(Author::class, ['id' => 'authorId']);
     }
 }

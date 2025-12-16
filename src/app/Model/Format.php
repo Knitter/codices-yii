@@ -1,10 +1,16 @@
 <?php
 
+/*
+ * Copyright (c) 2025 Sérgio Lopes. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root for details.
+ */
+
 declare(strict_types=1);
 
 namespace Codices\Model;
 
-use Yiisoft\ActiveRecord\ActiveRecord;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * @property string $type
@@ -13,11 +19,11 @@ use Yiisoft\ActiveRecord\ActiveRecord;
  */
 final class Format extends ActiveRecord {
 
-    public function tableName(): string {
+    public static function tableName(): string {
         return 'format';
     }
 
-    public function primaryKey(): array {
+    public static function primaryKey(): array {
         return ['type', 'name', 'ownedById'];
     }
 
@@ -30,11 +36,11 @@ final class Format extends ActiveRecord {
     }
 
     // Relationships
-    public function getOwner() {
+    public function getOwner(): ActiveQuery {
         return $this->hasOne(Account::class, ['id' => 'ownedById']);
     }
 
-    public function getItems() {
+    public function getItems(): ActiveQuery {
         return $this->hasMany(Item::class, ['format' => 'name'])
             ->andWhere(['type' => $this->type]);
     }

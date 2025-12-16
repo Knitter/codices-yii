@@ -1,10 +1,17 @@
 <?php
 
+/*
+ * Copyright (c) 2025 Sérgio Lopes. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root for details.
+ */
+
 declare(strict_types=1);
 
 namespace Codices\Model;
 
-use Yiisoft\ActiveRecord\ActiveRecord;
+use yii\base\InvalidConfigException;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * @property int $id
@@ -13,7 +20,7 @@ use Yiisoft\ActiveRecord\ActiveRecord;
  */
 final class Genre extends ActiveRecord {
 
-    public function tableName(): string {
+    public static function tableName(): string {
         return 'genre';
     }
 
@@ -25,16 +32,19 @@ final class Genre extends ActiveRecord {
     }
 
     // Relationships
-    public function getOwner() {
+    public function getOwner(): ActiveQuery {
         return $this->hasOne(Account::class, ['id' => 'ownedById']);
     }
 
-    public function getItems() {
+    /**
+     * @throws InvalidConfigException
+     */
+    public function getItems(): ActiveQuery {
         return $this->hasMany(Item::class, ['id' => 'itemId'])
             ->viaTable('item_genre', ['genreId' => 'id']);
     }
 
-    public function getItemGenres() {
+    public function getItemGenres(): ActiveQuery {
         return $this->hasMany(ItemGenre::class, ['genreId' => 'id']);
     }
 }

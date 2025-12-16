@@ -1,10 +1,17 @@
 <?php
 
+/*
+ * Copyright (c) 2025 Sérgio Lopes. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root for details.
+ */
+
 declare(strict_types=1);
 
 namespace Codices\Model;
 
-use Yiisoft\ActiveRecord\ActiveRecord;
+use yii\base\InvalidConfigException;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * @property int $id
@@ -49,7 +56,7 @@ final class Item extends ActiveRecord {
     public final const string TYPE_EBOOK = 'ebook';
     public final const string TYPE_AUDIO = 'audio';
 
-    public function tableName(): string {
+    public static function tableName(): string {
         return 'item';
     }
 
@@ -92,58 +99,64 @@ final class Item extends ActiveRecord {
         ];
     }
 
-    public function beforeSave(bool $insert): bool {
-        if (parent::beforeSave($insert)) {
-            if ($insert && empty($this->addedOn)) {
-                $this->addedOn = date('Y-m-d');
-            }
-
-            return true;
-        }
-
-        return false;
-    }
+//    public function beforeSave(bool $insert): bool {
+//        if (parent::beforeSave($insert)) {
+//            if ($insert && empty($this->addedOn)) {
+//                $this->addedOn = date('Y-m-d');
+//            }
+//
+//            return true;
+//        }
+//
+//        return false;
+//    }
 
     // Relationships
-    public function getOwner() {
+    public function getOwner(): ActiveQuery {
         return $this->hasOne(Account::class, ['id' => 'ownedById']);
     }
 
-    public function getPublisher() {
+    public function getPublisher(): ActiveQuery {
         return $this->hasOne(Publisher::class, ['id' => 'publisherId']);
     }
 
-    public function getSeries() {
+    public function getSeries(): ActiveQuery {
         return $this->hasOne(Series::class, ['id' => 'seriesId']);
     }
 
-    public function getCollection() {
+    public function getCollection(): ActiveQuery {
         return $this->hasOne(Collection::class, ['id' => 'collectionId']);
     }
 
-    public function getDuplicate() {
+    public function getDuplicate(): ActiveQuery {
         return $this->hasOne(Item::class, ['id' => 'duplicatesId']);
     }
 
-    public function getDuplicates() {
+    public function getDuplicates(): ActiveQuery {
         return $this->hasMany(Item::class, ['duplicatesId' => 'id']);
     }
 
-    public function getAuthors() {
+    /**
+     * @throws InvalidConfigException
+     */
+    public function getAuthors(): ActiveQuery {
         return $this->hasMany(Author::class, ['id' => 'authorId'])
             ->viaTable('item_author', ['itemId' => 'id']);
     }
 
-    public function getGenres() {
+    /**
+     * @throws InvalidConfigException
+     */
+    public function getGenres(): ActiveQuery {
         return $this->hasMany(Genre::class, ['id' => 'genreId'])
             ->viaTable('item_genre', ['itemId' => 'id']);
     }
 
-    public function getItemAuthors() {
+    public function getItemAuthors(): ActiveQuery {
         return $this->hasMany(ItemAuthor::class, ['itemId' => 'id']);
     }
 
-    public function getItemGenres() {
+    public function getItemGenres(): ActiveQuery {
         return $this->hasMany(ItemGenre::class, ['itemId' => 'id']);
     }
 

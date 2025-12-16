@@ -1,5 +1,10 @@
 <?php
 
+/*
+ * Copyright (c) 2025 Sérgio Lopes. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root for details.
+ */
+
 declare(strict_types=1);
 
 namespace Codices\Controller;
@@ -13,34 +18,34 @@ final class AppController extends CodicesController {
     }
 
     public function login(): Response|string {
-//        $this->viewRenderer = $this->viewRenderer->withLayout('@layout/auth');
-//        $method = $this->request->getMethod();
-//        $errors = [];
-//        $username = '';
-//
-//        if ($method === Method::POST) {
-//            $body = $this->request->getParsedBody();
-//            $username = $body['username'] ?? '';
-//            $password = $body['password'] ?? '';
-//
-//            if (empty($username) || empty($password)) {
-//                $errors[] = 'Username and password are required.';
-//            } else {
-//                // Find user by username
-//                $account = Account::findOne(['username' => $username]);
-//
-//                if ($account && $account->validatePassword($password)) {
-//                    // Login successful - redirect to dashboard
-//                    return $this->response->withStatus(302)->withHeader('Location', '/');
-//                } else {
-//                    $errors[] = 'Invalid username or password.';
-//                }
-//            }
-//        }
-//
+        $this->viewRenderer = $this->viewRenderer->withLayout('@layout/auth');
+        $method = $this->request->getMethod();
+        $errors = [];
+        $username = '';
+
+        if ($method === Method::POST) {
+            $body = $this->request->getParsedBody();
+            $username = $body['username'] ?? '';
+            $password = $body['password'] ?? '';
+
+            if (empty($username) || empty($password)) {
+                $errors[] = 'Username and password are required.';
+            } else {
+                // Find user by username
+                $account = Account::findOne(['username' => $username]);
+
+                if ($account && $account->validatePassword($password)) {
+                    // Login successful - redirect to dashboard
+                    return $this->response->withStatus(302)->withHeader('Location', '/');
+                } else {
+                    $errors[] = 'Invalid username or password.';
+                }
+            }
+        }
+
         return $this->render('login', [
-//            'errors' => $errors,
-//            'username' => $username,
+            'errors' => $errors,
+            'username' => $username,
         ]);
     }
 }

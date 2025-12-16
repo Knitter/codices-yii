@@ -1,5 +1,10 @@
 <?php
 
+/*
+ * Copyright (c) 2025 Sérgio Lopes. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root for details.
+ */
+
 declare(strict_types=1);
 
 namespace Codices\Controller;
@@ -13,32 +18,11 @@ use Codices\Model\ItemAuthor;
 use Codices\Model\ItemGenre;
 use Codices\Model\Publisher;
 use Codices\Model\Series;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Yiisoft\ActiveRecord\ActiveQuery;
-use Yiisoft\Data\Db\QueryDataReader;
-use Yiisoft\Data\Paginator\OffsetPaginator;
-use Yiisoft\Data\Reader\Filter\All;
-use Yiisoft\Data\Reader\Filter\Equals;
-use Yiisoft\Data\Reader\Filter\GreaterThanOrEqual;
-use Yiisoft\Data\Reader\Filter\LessThanOrEqual;
-use Yiisoft\Data\Reader\Filter\Like;
-use Yiisoft\Data\Reader\Sort;
-use Yiisoft\Http\Method;
-use Yiisoft\Router\CurrentRoute;
-use Yiisoft\Validator\ValidatorInterface;
-use Yiisoft\Yii\View\Renderer\ViewRenderer;
+use yii\web\Response;
 
 final class BookController {
 
-    public function __construct(private ViewRenderer                    $viewRenderer,
-                                private readonly ServerRequestInterface $request,
-                                private readonly ResponseInterface      $response) {
-
-        $this->viewRenderer = $viewRenderer->withControllerName('book');
-    }
-
-    public function index(CurrentRoute $currentRoute): ResponseInterface {
+    public function index(CurrentRoute $currentRoute): Response|string {
         //TODO: Move filters to BookFilter class as soon as I understand the all Yii3 structure, packages, etc..
         $queryParams = $this->request->getQueryParams();
         $query = new ActiveQuery(Item::class)->where(['type' => Item::TYPE_PAPER]);
@@ -121,7 +105,7 @@ final class BookController {
         ]);
     }
 
-    public function add(ValidatorInterface $validator): ResponseInterface {
+    public function add(ValidatorInterface $validator): Response|string {
         //TODO: Move filters to BookForm class as soon as I understand the all Yii3 structure, packages, etc..
         $item = new Item();
         //TODO: use public property approach since we consider AR models to be simple DB-to-APP connectors/DTO and all
@@ -192,7 +176,7 @@ final class BookController {
         ]);
     }
 
-    public function edit(CurrentRoute $currentRoute, ValidatorInterface $validator): ResponseInterface {
+    public function edit(CurrentRoute $currentRoute, ValidatorInterface $validator): Response|string {
         //TODO: Move filters to BookForm class as soon as I understand the all Yii3 structure, packages, etc..
         $id = (int)$currentRoute->getArgument('id');
         $item = Item::findOne(['id' => $id, 'type' => Item::TYPE_PAPER]);
@@ -271,7 +255,7 @@ final class BookController {
         ]);
     }
 
-    public function delete(CurrentRoute $currentRoute): ResponseInterface {
+    public function delete(CurrentRoute $currentRoute): Response|string {
         $id = (int)$currentRoute->getArgument('id');
         $item = Item::findOne(['id' => $id, 'type' => Item::TYPE_PAPER]);
         if ($item === null) {

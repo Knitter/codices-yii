@@ -1,5 +1,10 @@
 <?php
 
+/*
+ * Copyright (c) 2025 Sérgio Lopes. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root for details.
+ */
+
 declare(strict_types=1);
 
 namespace Codices\Controller;
@@ -12,32 +17,11 @@ use Codices\Model\ItemAuthor;
 use Codices\Model\ItemGenre;
 use Codices\Model\Publisher;
 use Codices\Model\Series;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Yiisoft\Data\Paginator\OffsetPaginator;
-use Yiisoft\Data\Reader\Sort;
-use Yiisoft\Http\Method;
-use Yiisoft\Router\CurrentRoute;
-use Yiisoft\Validator\ValidatorInterface;
-use Yiisoft\Yii\View\Renderer\ViewRenderer;
+use yii\web\Response;
 
-/**
- * @since 2025.1
- */
 final class ItemController {
 
-    private ServerRequestInterface $request;
-    private ResponseInterface $response;
-
-    public function __construct(private ViewRenderer $viewRenderer, ServerRequestInterface $request,
-                                ResponseInterface    $response) {
-
-        $this->viewRenderer = $viewRenderer->withControllerName('item');
-        $this->request = $request;
-        $this->response = $response;
-    }
-
-    public function index(CurrentRoute $currentRoute): ResponseInterface {
+    public function index(CurrentRoute $currentRoute): Response|string {
         $query = Item::find()->orderBy(['title' => Sort::SORT_ASC]);
         $paginator = (new OffsetPaginator($query))
             ->withPageSize(10)
@@ -49,7 +33,7 @@ final class ItemController {
         ]);
     }
 
-    public function books(CurrentRoute $currentRoute): ResponseInterface {
+    public function books(CurrentRoute $currentRoute): Response|string {
         $query = Item::find()
             ->where(['type' => Item::TYPE_PAPER])
             ->orderBy(['title' => Sort::SORT_ASC]);
@@ -63,7 +47,7 @@ final class ItemController {
         ]);
     }
 
-    public function ebooks(CurrentRoute $currentRoute): ResponseInterface {
+    public function ebooks(CurrentRoute $currentRoute): Response|string {
         $query = Item::find()
             ->where(['type' => Item::TYPE_EBOOK])
             ->orderBy(['title' => Sort::SORT_ASC]);
@@ -77,7 +61,7 @@ final class ItemController {
         ]);
     }
 
-    public function audiobooks(CurrentRoute $currentRoute): ResponseInterface {
+    public function audiobooks(CurrentRoute $currentRoute): Response|string {
         $query = Item::find()
             ->where(['type' => Item::TYPE_AUDIO])
             ->orderBy(['title' => Sort::SORT_ASC]);
@@ -91,7 +75,7 @@ final class ItemController {
         ]);
     }
 
-    public function view(CurrentRoute $currentRoute): ResponseInterface {
+    public function view(CurrentRoute $currentRoute): Response|string {
         $id = $currentRoute->getArgument('id');
         $item = Item::findOne(['id' => $id]);
 
@@ -105,7 +89,7 @@ final class ItemController {
         ]);
     }
 
-    public function create(ValidatorInterface $validator): ResponseInterface {
+    public function create(ValidatorInterface $validator): Response|string {
         $item = new Item();
         $method = $this->request->getMethod();
         $errors = [];
@@ -172,7 +156,7 @@ final class ItemController {
         ]);
     }
 
-    public function update(CurrentRoute $currentRoute, ValidatorInterface $validator): ResponseInterface {
+    public function update(CurrentRoute $currentRoute, ValidatorInterface $validator): Response|string {
         $id = $currentRoute->getArgument('id');
         $item = Item::findOne(['id' => $id]);
 
@@ -242,7 +226,7 @@ final class ItemController {
         ]);
     }
 
-    public function delete(CurrentRoute $currentRoute): ResponseInterface {
+    public function delete(CurrentRoute $currentRoute): Response|string {
         $id = $currentRoute->getArgument('id');
         $item = Item::findOne(['id' => $id]);
 
@@ -257,7 +241,7 @@ final class ItemController {
         return $this->response->withStatus(302)->withHeader('Location', '/item');
     }
 
-    public function search(): ResponseInterface {
+    public function search(): Response|string {
         $query = null;
         $results = [];
         $searchTerm = $this->request->getQueryParams()['q'] ?? '';

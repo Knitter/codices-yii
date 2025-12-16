@@ -1,22 +1,28 @@
 <?php
 
+/*
+ * Copyright (c) 2025 Sérgio Lopes. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root for details.
+ */
+
 declare(strict_types=1);
 
 namespace Codices\Model;
 
-use Yiisoft\ActiveRecord\ActiveQueryInterface;
-use Yiisoft\ActiveRecord\ActiveRecord;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * @property int $itemId
  * @property int $genreId
  */
 final class ItemGenre extends ActiveRecord {
-    public function tableName(): string {
+
+    public static function tableName(): string {
         return 'item_genre';
     }
 
-    public function primaryKey(): array {
+    public static function primaryKey(): array {
         return ['itemId', 'genreId'];
     }
 
@@ -28,11 +34,11 @@ final class ItemGenre extends ActiveRecord {
     }
 
     // Relationships
-    public function getItem(): ActiveQueryInterface {
+    public function getItem(): ActiveQuery {
         return $this->hasOne(Item::class, ['id' => 'itemId']);
     }
 
-    public function getGenre(): ActiveQueryInterface {
+    public function getGenre(): ActiveQuery {
         return $this->hasOne(Genre::class, ['id' => 'genreId']);
     }
 }

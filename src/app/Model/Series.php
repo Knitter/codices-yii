@@ -1,11 +1,16 @@
 <?php
 
+/*
+ * Copyright (c) 2025 Sérgio Lopes. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root for details.
+ */
+
 declare(strict_types=1);
 
 namespace Codices\Model;
 
-use Yiisoft\ActiveRecord\ActiveQueryInterface;
-use Yiisoft\ActiveRecord\ActiveRecord;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * @property int $id
@@ -17,7 +22,7 @@ use Yiisoft\ActiveRecord\ActiveRecord;
  */
 final class Series extends ActiveRecord {
 
-    public function tableName(): string {
+    public static function tableName(): string {
         return 'series';
     }
 
@@ -32,11 +37,11 @@ final class Series extends ActiveRecord {
     }
 
     // Relationships
-    public function getOwner(): ActiveQueryInterface {
+    public function getOwner(): ActiveQuery {
         return $this->hasOne(Account::class, ['id' => 'ownedById']);
     }
 
-    public function getItems(): ActiveQueryInterface {
+    public function getItems(): ActiveQuery {
         return $this->hasMany(Item::class, ['seriesId' => 'id']);
     }
 }

@@ -1,35 +1,20 @@
 <?php
 
+/*
+ * Copyright (c) 2025 Sérgio Lopes. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root for details.
+ */
+
 declare(strict_types=1);
 
 namespace Codices\Controller;
 
 use Codices\Model\Author;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Yiisoft\Data\Paginator\OffsetPaginator;
-use Yiisoft\Data\Reader\Sort;
-use Yiisoft\Http\Method;
-use Yiisoft\Router\CurrentRoute;
-use Yiisoft\Validator\ValidatorInterface;
-use Yiisoft\Yii\View\Renderer\ViewRenderer;
+use yii\web\Response;
 
 final class AuthorController {
 
-    private ServerRequestInterface $request;
-    private ResponseInterface $response;
-
-    public function __construct(
-        private ViewRenderer   $viewRenderer,
-        ServerRequestInterface $request,
-        ResponseInterface      $response
-    ) {
-        $this->viewRenderer = $viewRenderer->withControllerName('author');
-        $this->request = $request;
-        $this->response = $response;
-    }
-
-    public function index(CurrentRoute $currentRoute): ResponseInterface {
+    public function index(CurrentRoute $currentRoute): Response|string {
         $query = Author::find()->orderBy(['name' => Sort::SORT_ASC, 'surname' => Sort::SORT_ASC]);
         $paginator = (new OffsetPaginator($query))
             ->withPageSize(10)
@@ -40,7 +25,7 @@ final class AuthorController {
         ]);
     }
 
-    public function view(CurrentRoute $currentRoute): ResponseInterface {
+    public function view(CurrentRoute $currentRoute): Response|string {
         $id = $currentRoute->getArgument('id');
         $author = Author::findOne(['id' => $id]);
 
@@ -53,7 +38,7 @@ final class AuthorController {
         ]);
     }
 
-    public function create(ValidatorInterface $validator): ResponseInterface {
+    public function create(ValidatorInterface $validator): Response|string {
         $author = new Author();
         $method = $this->request->getMethod();
         $errors = [];
@@ -79,7 +64,7 @@ final class AuthorController {
         ]);
     }
 
-    public function update(CurrentRoute $currentRoute, ValidatorInterface $validator): ResponseInterface {
+    public function update(CurrentRoute $currentRoute, ValidatorInterface $validator): Response|string {
         $id = $currentRoute->getArgument('id');
         $author = Author::findOne(['id' => $id]);
 
@@ -108,7 +93,7 @@ final class AuthorController {
         ]);
     }
 
-    public function delete(CurrentRoute $currentRoute): ResponseInterface {
+    public function delete(CurrentRoute $currentRoute): Response|string {
         $id = $currentRoute->getArgument('id');
         $author = Author::findOne(['id' => $id]);
 

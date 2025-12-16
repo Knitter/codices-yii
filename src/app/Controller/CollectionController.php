@@ -1,33 +1,20 @@
 <?php
 
+/*
+ * Copyright (c) 2025 Sérgio Lopes. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root for details.
+ */
+
 declare(strict_types=1);
 
 namespace Codices\Controller;
 
 use Codices\Model\Collection;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Yiisoft\Data\Paginator\OffsetPaginator;
-use Yiisoft\Data\Reader\Sort;
-use Yiisoft\Http\Method;
-use Yiisoft\Router\CurrentRoute;
-use Yiisoft\Validator\ValidatorInterface;
-use Yiisoft\Yii\View\Renderer\ViewRenderer;
+use yii\web\Response;
 
 final class CollectionController {
 
-    private ServerRequestInterface $request;
-    private ResponseInterface $response;
-
-    public function __construct(private ViewRenderer $viewRenderer, ServerRequestInterface $request,
-                                ResponseInterface    $response) {
-
-        $this->viewRenderer = $viewRenderer->withControllerName('collection');
-        $this->request = $request;
-        $this->response = $response;
-    }
-
-    public function index(CurrentRoute $currentRoute): ResponseInterface {
+    public function index(CurrentRoute $currentRoute): Response|string {
         $query = Collection::find()->orderBy(['name' => Sort::SORT_ASC]);
         $paginator = (new OffsetPaginator($query))
             ->withPageSize(10)
@@ -38,7 +25,7 @@ final class CollectionController {
         ]);
     }
 
-    public function view(CurrentRoute $currentRoute): ResponseInterface {
+    public function view(CurrentRoute $currentRoute): Response|string {
         $id = $currentRoute->getArgument('id');
         $collection = Collection::findOne(['id' => $id]);
 
@@ -51,7 +38,7 @@ final class CollectionController {
         ]);
     }
 
-    public function create(ValidatorInterface $validator): ResponseInterface {
+    public function create(ValidatorInterface $validator): Response|string {
         $collection = new Collection();
         $method = $this->request->getMethod();
         $errors = [];
@@ -77,7 +64,7 @@ final class CollectionController {
         ]);
     }
 
-    public function update(CurrentRoute $currentRoute, ValidatorInterface $validator): ResponseInterface {
+    public function update(CurrentRoute $currentRoute, ValidatorInterface $validator): Response|string {
         $id = $currentRoute->getArgument('id');
         $collection = Collection::findOne(['id' => $id]);
 
@@ -106,7 +93,7 @@ final class CollectionController {
         ]);
     }
 
-    public function delete(CurrentRoute $currentRoute): ResponseInterface {
+    public function delete(CurrentRoute $currentRoute): Response|string {
         $id = $currentRoute->getArgument('id');
         $collection = Collection::findOne(['id' => $id]);
 
