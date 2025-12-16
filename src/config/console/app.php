@@ -31,8 +31,8 @@ $config = [
         'migrate' => [
             'class' => 'yii\console\controllers\MigrateController',
             'migrationTable' => 'migration_history',
+            'migrationPath' => ['@migrations'],
         ],
-        'migrationPath' => ['@migrations']
     ],
 ];
 

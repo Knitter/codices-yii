@@ -7,7 +7,9 @@ If you are looking for a solution to manage your personal library, Codices is th
 
 ## Project
 
-Codices is built with PHP and the Yii framework. The application currently runs on Yii 2 while keeping some Yii 3-style components and conventions (see Code Organization below). The target storage engine is SQLite (self‑hosted and simple to set up), but the database layer and migrations are still being finalized during the ongoing cleanup.
+`Codices` is built with PHP and the Yii framework. The application currently runs on Yii 2 while keeping some Yii
+3-style components and conventions (see Code Organization below). The target storage engine is SQLite (self‑hosted and
+simple to set up), but the database layer and migrations are still being finalized during the ongoing cleanup.
 
 ### Features
 
@@ -114,13 +116,13 @@ Then open http://127.0.0.1:8080 in your browser.
 
 ### Code Organization
 
-Codices follows MVC with a few intentional deviations from a typical Yii 2 application layout:
+`Codices` follows MVC with a few intentional deviations from a typical Yii 2 application layout:
 
 - All application code is inside `src/app` (both web and any potential console code live here).
 - Controller namespace is `Codices\Controller` (see `src/config/web/app.php`).
 - Views are not under the default `views` folder. Instead:
-  - Layouts live in `src/app/View/Layout` and are referenced via the `@layout` alias.
-  - Controller view files live in `src/app/View/UI` and are referenced via the `@views` alias.
+    - Layouts live in `src/app/View/Layout` and are referenced via the `@layout` alias.
+    - Controller view files live in `src/app/View/UI` and are referenced via the `@views` alias.
 - Namespaces are capitalized and singular, e.g., `Controller` instead of `controllers`.
 - Action methods do not use the `actionXxx` prefix; they are named in camelCase.
 - Asset bundles live in `src/app/Asset` (e.g., `CodicesAsset`).
@@ -134,7 +136,7 @@ Aliasing and configuration highlights:
 
 Database and migrations:
 
-- Database component wiring is being completed as part of the cleanup. Migrations are present under `src/migrations` and use `Yiisoft\Db\Migration` (Yii 3 style). Migration execution tooling will be documented once finalized.
+- Database component wiring is being completed as part of the cleanup. Migrations are present under `src/migrations`.
 
 Testing:
 

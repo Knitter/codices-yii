@@ -23,6 +23,13 @@ return [
             ],
         ],
     ],
+    'db' => [
+        'class' => yii\db\Connection::class,
+        'dsn' => 'sqlite:' . Yii::getAlias(getenv('CODICES_DB_PATH') ?: '@data/codices.sqlite'),
+        'attributes' => [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        ],
+    ],
     'i18n' => [
         'translations' => [
             '*' => [
