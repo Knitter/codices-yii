@@ -23,4 +23,12 @@ return [
             ],
         ],
     ],
+    'i18n' => [
+        'translations' => [
+            '*' => [
+                'class' => 'yii\i18n\PhpMessageSource',
+                'basePath' => '@messages'
+            ]
+        ]
+    ],
 ];

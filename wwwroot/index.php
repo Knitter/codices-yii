@@ -19,7 +19,5 @@ if (getenv('YII_C3')) {
     }
 }
 
-require dirname(__DIR__) . '/src/config/aliases.php';
-
 $config = require dirname(__DIR__) . '/src/config/web/app.php';
 new yii\web\Application($config)->run();
