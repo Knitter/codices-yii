@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 /**
  * @var \yii\web\View $this
- * @var \Codices\Model\Item $item
+ * @var \Codices\Model\Item|\Codices\View\Facade\BookForm $item
+ * @var \Codices\View\Facade\BookForm $model
  * @var array $authors
  * @var array $genres
  * @var array $publishers
@@ -19,6 +20,9 @@ declare(strict_types=1);
 
 use yii\helpers\Html;
 use yii\helpers\Url;
+// Allow using new Form Model while keeping legacy template structure
+if (!isset($item) && isset($model)) { $item = $model; }
+if (!isset($csrf)) { $csrf = Yii::$app->request->getCsrfToken(); }
 
 $this->title = Yii::t('codices', 'Edit Book - {title}', ['{title}' => ($item->title ?? 'Unknown')]);
 ?>

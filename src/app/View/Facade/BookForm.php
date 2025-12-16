@@ -1,0 +1,155 @@
+<?php
+
+/*
+ * Copyright (c) 2025 Sérgio Lopes. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root for details.
+ */
+
+declare(strict_types=1);
+
+namespace Codices\View\Facade;
+
+use Codices\Model\Item;
+use yii\base\Model;
+
+final class BookForm extends Model {
+
+    public ?int $id = null;
+    public string $title = '';
+    public ?string $subtitle = null;
+    public ?string $originalTitle = null;
+    public ?string $plot = null;
+    public ?string $isbn = null;
+    public ?string $format = null;
+    public ?int $pageCount = null;
+    public ?string $publishDate = null; // keep string; parse as needed
+    public ?int $publishYear = null;
+    public ?string $language = null;
+    public ?string $edition = null;
+    public ?string $volume = null;
+    public ?int $rating = null;
+    public ?string $url = null;
+    public ?string $review = null;
+    public ?int $publisherId = null;
+    public ?int $seriesId = null;
+    public ?int $collectionId = null;
+    public ?int $orderInSeries = null;
+    public int $copies = 1;
+    public bool $translated = false;
+    public bool $read = false;
+    public string $type = ''; // assigned in init()
+
+    /** @var int[] */
+    public array $authors = [];
+    /** @var int[] */
+    public array $genres = [];
+
+    public function init(): void {
+        parent::init();
+        if ($this->type === '') {
+            $this->type = Item::TYPE_PAPER;
+        }
+    }
+
+    public function rules(): array {
+        // Validation rules largely mirror Item::rules(); arrays added for authors/genres
+        return [
+            [['title'], 'required'],
+            [['title', 'subtitle', 'originalTitle', 'language', 'edition', 'volume', 'format'], 'string', 'max' => 255],
+            [['plot', 'review'], 'string'],
+            [['isbn'], 'string', 'max' => 32],
+            [['url'], 'url'],
+            [['pageCount', 'publishYear', 'rating', 'publisherId', 'seriesId', 'collectionId', 'orderInSeries', 'copies'], 'integer'],
+            [['translated', 'read'], 'boolean'],
+            [['publishDate'], 'safe'],
+            [['type'], 'in', 'range' => [Item::TYPE_PAPER, Item::TYPE_EBOOK, Item::TYPE_AUDIO]],
+            [['rating'], 'integer', 'min' => 0, 'max' => 5],
+            [['pageCount', 'publishYear', 'orderInSeries', 'copies'], 'integer', 'min' => 0],
+            [['authors', 'genres'], 'each', 'rule' => ['integer']],
+        ];
+    }
+
+    public function attributeLabels(): array {
+        return [
+            'title' => 'Title',
+            'subtitle' => 'Subtitle',
+            'originalTitle' => 'Original Title',
+            'plot' => 'Plot',
+            'isbn' => 'ISBN',
+            'format' => 'Format',
+            'pageCount' => 'Pages',
+            'publishDate' => 'Publish Date',
+            'publishYear' => 'Publish Year',
+            'language' => 'Language',
+            'edition' => 'Edition',
+            'volume' => 'Volume',
+            'rating' => 'Rating',
+            'url' => 'URL',
+            'review' => 'Review',
+            'publisherId' => 'Publisher',
+            'seriesId' => 'Series',
+            'collectionId' => 'Collection',
+            'orderInSeries' => 'Order in Series',
+            'copies' => 'Copies',
+            'translated' => 'Translated',
+            'read' => 'Read',
+            'type' => 'Type',
+            'authors' => 'Authors',
+            'genres' => 'Genres',
+        ];
+    }
+
+    public function loadFromItem(Item $item): void {
+        $this->id = (int)$item->id;
+        $this->title = (string)$item->title;
+        $this->subtitle = $item->subtitle;
+        $this->originalTitle = $item->originalTitle;
+        $this->plot = $item->plot;
+        $this->isbn = $item->isbn;
+        $this->format = $item->format;
+        $this->pageCount = $item->pageCount;
+        $this->publishDate = $item->publishDate;
+        $this->publishYear = $item->publishYear;
+        $this->language = $item->language;
+        $this->edition = $item->edition;
+        $this->volume = $item->volume;
+        $this->rating = $item->rating;
+        $this->url = $item->url;
+        $this->review = $item->review;
+        $this->publisherId = $item->publisherId;
+        $this->seriesId = $item->seriesId;
+        $this->collectionId = $item->collectionId;
+        $this->orderInSeries = $item->orderInSeries;
+        $this->copies = (int)($item->copies ?? 1);
+        $this->translated = (bool)$item->translated;
+        $this->read = (bool)$item->read;
+        $this->type = (string)$item->type;
+    }
+
+    public function applyToItem(Item $item): Item {
+        $item->title = $this->title;
+        $item->subtitle = $this->subtitle;
+        $item->originalTitle = $this->originalTitle;
+        $item->plot = $this->plot;
+        $item->isbn = $this->isbn;
+        $item->format = $this->format;
+        $item->pageCount = $this->pageCount;
+        $item->publishDate = $this->publishDate;
+        $item->publishYear = $this->publishYear;
+        $item->language = $this->language;
+        $item->edition = $this->edition;
+        $item->volume = $this->volume;
+        $item->rating = $this->rating;
+        $item->url = $this->url;
+        $item->review = $this->review;
+        $item->publisherId = $this->publisherId;
+        $item->seriesId = $this->seriesId;
+        $item->collectionId = $this->collectionId;
+        $item->orderInSeries = $this->orderInSeries;
+        $item->copies = $this->copies;
+        $item->translated = $this->translated;
+        $item->read = $this->read;
+        $item->type = $this->type;
+        return $item;
+    }
+}

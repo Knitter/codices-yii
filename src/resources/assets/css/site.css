@@ -516,3 +516,23 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
 }
+
+/* Book Details Page */
+.cover-upload-area:hover {
+    background-color: #f8f9fa;
+    border-color: #0d6efd !important;
+}
+
+.rating-input .btn {
+    border-radius: 0;
+}
+
+.rating-input .btn:first-child {
+    border-top-left-radius: 0.375rem;
+    border-bottom-left-radius: 0.375rem;
+}
+
+.rating-input .btn:last-child {
+    border-top-right-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+}

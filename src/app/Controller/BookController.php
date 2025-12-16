@@ -21,52 +21,26 @@ use Codices\Model\Series;
 use Codices\Query\ItemFilter;
 use Codices\Service\ItemService;
 use Codices\Service\SearchService;
+use Codices\View\Facade\BookForm;
+use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\Response;
 
-final class BookController {
+final class BookController extends CodicesController {
 
-    public function index(CurrentRoute $currentRoute): Response|string {
-        //TODO: Move filters to BookFilter class as soon as I understand the all Yii3 structure, packages, etc..
-        $queryParams = $this->request->getQueryParams();
-        $query = new ActiveQuery(Item::class)->where(['type' => Item::TYPE_PAPER]);
+    public function __construct($id, $module, private readonly SearchService $searchService,
+                                private readonly ItemService $itemService, $config = []) {
+        parent::__construct($id, $module, $config);
+    }
 
-        $filters = [];
-        if (!empty($queryParams['title'])) {
-            $filters[] = new Like('title', $queryParams['title']);
-        }
+    public function index(): Response|string {
+        $queryParams = Yii::$app->request->get();
+        $filter = ItemFilter::fromArray($queryParams);
+        $result = $this->searchService->searchItems($filter);
 
-        if (!empty($queryParams['author'])) {
-            $query = $query->joinWith('authors');
-            $filters[] = new Like('author.name', $queryParams['author']);
-        }
-
-        if (!empty($queryParams['genre_id'])) {
-            $query = $query->joinWith('genres');
-            $filters[] = new Equals('genre.id', (int)$queryParams['genre_id']);
-        }
-
-        if (!empty($queryParams['publisher_id'])) {
-            $filters[] = new Equals('publisherId', (int)$queryParams['publisher_id']);
-        }
-
-        if (!empty($queryParams['year_from'])) {
-            $filters[] = new GreaterThanOrEqual('publishYear', (int)$queryParams['year_from']);
-        }
-
-        if (!empty($queryParams['year_to'])) {
-            $filters[] = new LessThanOrEqual('publishYear', (int)$queryParams['year_to']);
-        }
-
-        if (!empty($queryParams['rating'])) {
-            $filters[] = new Equals('rating', (int)$queryParams['rating']);
-        }
-
-        $dataReader = new QueryDataReader($query);
-        if (!empty($filters)) {
-            $dataReader = $dataReader->withFilter(new All(...$filters));
-        }
-
-        $sort = Sort::only([
+        $sortOrder = $queryParams['sort'] ?? 'title';
+        $sortDirection = $queryParams['sort_dir'] ?? 'asc';
+        $sort = [
             'title' => [
                 'asc' => ['title' => SORT_ASC],
                 'desc' => ['title' => SORT_DESC],
@@ -83,21 +57,20 @@ final class BookController {
                 'asc' => ['addedOn' => SORT_ASC],
                 'desc' => ['addedOn' => SORT_DESC],
             ],
-        ]);
+        ];
 
-        $sortOrder = $queryParams['sort'] ?? 'title';
-        $sortDirection = $queryParams['sort_dir'] ?? 'asc';
-        //$dataReader = $dataReader->withSort($sort->withOrder([$sortOrder => $sortDirection === 'desc' ? SORT_DESC : SORT_ASC]));
+        $paginator = [
+            'items' => $result->items,
+            'total' => $result->total,
+            'page' => $result->page,
+            'pageSize' => $result->pageSize,
+        ];
 
-        $paginator = new OffsetPaginator($dataReader);
-        $paginator = $paginator->withPageSize((int)($queryParams['per_page'] ?? 20));
-        $paginator = $paginator->withCurrentPage((int)($queryParams['page'] ?? 1));
-
-        //TODO: Fix this... Yii2 was so much simpler :(
+        //TODO: Load related and filter-support data
         $genres = [];//Genre::find()->orderBy('name')->all();
         $publishers = [];//Publisher::find()->orderBy('name')->all();
 
-        return $this->viewRenderer->render('index', [
+        return $this->render('index', [
             'paginator' => $paginator,
             'queryParams' => $queryParams,
             //'genres' => $genres,
@@ -108,202 +81,92 @@ final class BookController {
         ]);
     }
 
-    public function add(ValidatorInterface $validator): Response|string {
-        //TODO: Move filters to BookForm class as soon as I understand the all Yii3 structure, packages, etc..
-        $item = new Item();
-        //TODO: use public property approach since we consider AR models to be simple DB-to-APP connectors/DTO and all
-        //logic should go into form models, filter models and possible repositories.
-        $item->type = Item::TYPE_PAPER;
+    public function add(): Response|string {
 
-        if ($this->request->getMethod() === Method::POST) {
-            $body = $this->request->getParsedBody();
+        $form = new BookForm();
 
-            // Set basic attributes
-            $item->title = $body['title'] ?? '';
-            $item->subtitle = $body['subtitle'] ?? null;
-            $item->originalTitle = $body['originalTitle'] ?? null;
-            $item->plot = $body['plot'] ?? null;
-            $item->isbn = $body['isbn'] ?? null;
-            $item->format = $body['format'] ?? null;
-            $item->pageCount = !empty($body['pageCount']) ? (int)$body['pageCount'] : null;
-            $item->publishDate = $body['publishDate'] ?? null;
-            $item->publishYear = !empty($body['publishYear']) ? (int)$body['publishYear'] : null;
-            $item->language = $body['language'] ?? null;
-            $item->edition = $body['edition'] ?? null;
-            $item->volume = $body['volume'] ?? null;
-            $item->rating = !empty($body['rating']) ? (int)$body['rating'] : null;
-            $item->url = $body['url'] ?? null;
-            $item->review = $body['review'] ?? null;
-            $item->publisherId = !empty($body['publisherId']) ? (int)$body['publisherId'] : null;
-            $item->seriesId = !empty($body['seriesId']) ? (int)$body['seriesId'] : null;
-            $item->collectionId = !empty($body['collectionId']) ? (int)$body['collectionId'] : null;
-            $item->orderInSeries = !empty($body['orderInSeries']) ? (int)$body['orderInSeries'] : null;
-            $item->copies = !empty($body['copies']) ? (int)$body['copies'] : 1;
-            $item->translated = !empty($body['translated']);
-            $item->read = !empty($body['read']);
+        // Lookups
+        $authors = ArrayHelper::map(Author::find()->orderBy('name')->all(), 'id', 'name');
+        $genres = ArrayHelper::map(Genre::find()->orderBy('name')->all(), 'id', 'name');
+        $publishers = ArrayHelper::map(Publisher::find()->orderBy('name')->all(), 'id', 'name');
+        $series = ArrayHelper::map(Series::find()->orderBy('name')->all(), 'id', 'name');
+        $collections = ArrayHelper::map(Collection::find()->orderBy('name')->all(), 'id', 'name');
+        $formats = ArrayHelper::map(Format::find()->orderBy('name')->all(), 'name', 'name');
 
-            // Set owner (you might want to get this from session/auth)
-            $item->ownedById = 1; // TODO: Get from authenticated user
+        $request = Yii::$app->request;
+        if ($request->isPost) {
+            // Accept legacy flat POST names (no model prefix)
+            $form->setAttributes($request->post());
 
-            $result = $validator->validate($item);
-            if ($result->isValid() && $item->save()) {
-                // Handle authors
-                if (!empty($body['authors'])) {
-                    $this->saveAuthors($item, $body['authors']);
-                }
-
-                // Handle genres
-                if (!empty($body['genres'])) {
-                    $this->saveGenres($item, $body['genres']);
-                }
-
-                // Redirect to index
-                return $this->response->withHeader('Location', '/book')->withStatus(302);
+            $form->authors = (array)$request->post('authors', $form->authors);
+            $form->genres = (array)$request->post('genres', $form->genres);
+            $form->translated = (bool)$request->post('translated', $form->translated);
+            $form->read = (bool)$request->post('read', $form->read);
+            if ($form->validate()) {
+                $ownerId = 1; // TODO: from auth
+                $this->itemService->create($form, $ownerId);
+                return $this->redirect(['/book/index']);
             }
         }
 
-        //$authors = Author::find()->orderBy('name')->all();
-        //$genres = Genre::find()->orderBy('name')->all();
-        //$publishers = Publisher::find()->orderBy('name')->all();
-        //$series = Series::find()->orderBy('name')->all();
-        //$collections = Collection::find()->orderBy('name')->all();
-        //$formats = Format::find()->orderBy('name')->all();
-        return $this->viewRenderer->render('add', [
-            'item' => $item,
-//            'authors' => $authors,
-//            'genres' => $genres,
-//            'publishers' => $publishers,
-//            'series' => $series,
-//            'collections' => $collections,
-//            'formats' => $formats,
-        ]);
-    }
-
-    public function edit(CurrentRoute $currentRoute, ValidatorInterface $validator): Response|string {
-        //TODO: Move filters to BookForm class as soon as I understand the all Yii3 structure, packages, etc..
-        $id = (int)$currentRoute->getArgument('id');
-        $item = Item::findOne(['id' => $id, 'type' => Item::TYPE_PAPER]);
-
-        if ($item === null) {
-            return $this->response->withStatus(404);
-        }
-
-        if ($this->request->getMethod() === Method::POST) {
-            $body = $this->request->getParsedBody();
-
-            // Update attributes
-            $item->title = $body['title'] ?? '';
-            $item->subtitle = $body['subtitle'] ?? null;
-            $item->originalTitle = $body['originalTitle'] ?? null;
-            $item->plot = $body['plot'] ?? null;
-            $item->isbn = $body['isbn'] ?? null;
-            $item->format = $body['format'] ?? null;
-            $item->pageCount = !empty($body['pageCount']) ? (int)$body['pageCount'] : null;
-            $item->publishDate = $body['publishDate'] ?? null;
-            $item->publishYear = !empty($body['publishYear']) ? (int)$body['publishYear'] : null;
-            $item->language = $body['language'] ?? null;
-            $item->edition = $body['edition'] ?? null;
-            $item->volume = $body['volume'] ?? null;
-            $item->rating = !empty($body['rating']) ? (int)$body['rating'] : null;
-            $item->url = $body['url'] ?? null;
-            $item->review = $body['review'] ?? null;
-            $item->publisherId = !empty($body['publisherId']) ? (int)$body['publisherId'] : null;
-            $item->seriesId = !empty($body['seriesId']) ? (int)$body['seriesId'] : null;
-            $item->collectionId = !empty($body['collectionId']) ? (int)$body['collectionId'] : null;
-            $item->orderInSeries = !empty($body['orderInSeries']) ? (int)$body['orderInSeries'] : null;
-            $item->copies = !empty($body['copies']) ? (int)$body['copies'] : 1;
-            $item->translated = !empty($body['translated']);
-            $item->read = !empty($body['read']);
-
-            $result = $validator->validate($item);
-
-            if ($result->isValid() && $item->save()) {
-                // Update authors
-                if (isset($body['authors'])) {
-                    $this->saveAuthors($item, $body['authors']);
-                }
-
-                // Update genres
-                if (isset($body['genres'])) {
-                    $this->saveGenres($item, $body['genres']);
-                }
-
-                // Redirect to index
-                return $this->response->withHeader('Location', '/book')->withStatus(302);
-            }
-        }
-
-        // Get form data
-        $authors = Author::find()->orderBy('name')->all();
-        $genres = Genre::find()->orderBy('name')->all();
-        $publishers = Publisher::find()->orderBy('name')->all();
-        $series = Series::find()->orderBy('name')->all();
-        $collections = Collection::find()->orderBy('name')->all();
-        $formats = Format::find()->orderBy('name')->all();
-
-        // Get current authors and genres
-        $currentAuthors = $item->getAuthors()->all();
-        $currentGenres = $item->getGenres()->all();
-
-        return $this->viewRenderer->render('edit', [
-            'item' => $item,
+        return $this->render('add', [
+            'model' => $form,
             'authors' => $authors,
             'genres' => $genres,
             'publishers' => $publishers,
             'series' => $series,
             'collections' => $collections,
             'formats' => $formats,
-            'currentAuthors' => $currentAuthors,
-            'currentGenres' => $currentGenres,
+            'csrf' => Yii::$app->request->getCsrfToken(),
         ]);
     }
 
-    public function delete(CurrentRoute $currentRoute): Response|string {
-        $id = (int)$currentRoute->getArgument('id');
-        $item = Item::findOne(['id' => $id, 'type' => Item::TYPE_PAPER]);
+    public function edit(): Response|string {
+        $id = (int)Yii::$app->request->get('id');
+        $item = Item::findOne(['id' => $id]);
         if ($item === null) {
-            return $this->response->withStatus(404);
+            return $this->asJson(['message' => 'Not found'])->setStatusCode(404);
         }
 
-        if ($this->request->getMethod() === Method::POST) {
-            //ItemAuthor::deleteAll(['itemId' => $item->id]);
-            //ItemGenre::deleteAll(['itemId' => $item->id]);
+        $form = new BookForm();
+        $form->loadFromItem($item);
 
-            if ($item->delete()) {
-                return $this->response->withHeader('Location', '/book')->withStatus(302);
+        // prefill authors/genres
+        $form->authors = array_map(static fn($a) => (int)$a['id'], $item->getAuthors()->select('id')->asArray()->all());
+        $form->genres = array_map(static fn($g) => (int)$g['id'], $item->getGenres()->select('id')->asArray()->all());
+
+        // Lookups
+        $authors = ArrayHelper::map(Author::find()->orderBy('name')->all(), 'id', 'name');
+        $genres = ArrayHelper::map(Genre::find()->orderBy('name')->all(), 'id', 'name');
+        $publishers = ArrayHelper::map(Publisher::find()->orderBy('name')->all(), 'id', 'name');
+        $series = ArrayHelper::map(Series::find()->orderBy('name')->all(), 'id', 'name');
+        $collections = ArrayHelper::map(Collection::find()->orderBy('name')->all(), 'id', 'name');
+        $formats = ArrayHelper::map(Format::find()->orderBy('name')->all(), 'name', 'name');
+
+        $request = Yii::$app->request;
+        if ($request->isPost) {
+            $form->setAttributes($request->post());
+            $form->authors = (array)$request->post('authors', $form->authors);
+            $form->genres = (array)$request->post('genres', $form->genres);
+            $form->translated = (bool)$request->post('translated', $form->translated);
+            $form->read = (bool)$request->post('read', $form->read);
+            if ($form->validate()) {
+                $ownerId = 1; // TODO: from auth
+                $this->itemService->update($id, $form, $ownerId);
+                return $this->redirect(['/book/index']);
             }
         }
 
-        return $this->response->withHeader('Location', '/book')->withStatus(302);
-    }
-
-    private function saveAuthors(Item $item, array $authorIds): void {
-        // Delete existing associations
-        ItemAuthor::deleteAll(['itemId' => $item->id]);
-
-        // Create new associations
-        foreach ($authorIds as $authorId) {
-            if (!empty($authorId)) {
-                $itemAuthor = new ItemAuthor();
-                $itemAuthor->itemId = $item->id;
-                $itemAuthor->authorId = (int)$authorId;
-                $itemAuthor->save();
-            }
-        }
-    }
-
-    private function saveGenres(Item $item, array $genreIds): void {
-        // Delete existing associations
-        ItemGenre::deleteAll(['itemId' => $item->id]);
-
-        // Create new associations
-        foreach ($genreIds as $genreId) {
-            if (!empty($genreId)) {
-                $itemGenre = new ItemGenre();
-                $itemGenre->itemId = $item->id;
-                $itemGenre->genreId = (int)$genreId;
-                $itemGenre->save();
-            }
-        }
+        return $this->render('edit', [
+            'model' => $form,
+            'authors' => $authors,
+            'genres' => $genres,
+            'publishers' => $publishers,
+            'series' => $series,
+            'collections' => $collections,
+            'formats' => $formats,
+            'itemId' => $id,
+            'csrf' => Yii::$app->request->getCsrfToken(),
+        ]);
     }
 }

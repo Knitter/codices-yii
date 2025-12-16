@@ -60,45 +60,6 @@ final class Item extends ActiveRecord {
         return 'item';
     }
 
-    public function rules(): array {
-        return [
-            'title' => [['required'], ['string', 'max' => 255]],
-            'ownedById' => [['required'], ['integer'], ['exist', 'targetClass' => Account::class, 'targetAttribute' => 'id']],
-            'type' => [['required'], ['string', 'max' => 255], ['in', 'range' => [self::TYPE_PAPER, self::TYPE_EBOOK, self::TYPE_AUDIO]]],
-            'translated' => [['boolean']],
-            'read' => [['boolean']],
-            'copies' => [['integer']],
-            'subtitle' => [['string', 'max' => 255]],
-            'originalTitle' => [['string', 'max' => 255]],
-            'plot' => [['string']],
-            'isbn' => [['string', 'max' => 255]],
-            'format' => [['string', 'max' => 255]],
-            'pageCount' => [['integer']],
-            'publishDate' => [['string', 'max' => 255]],
-            'publishYear' => [['integer']],
-            'addedOn' => [['string', 'max' => 255]],
-            'language' => [['string', 'max' => 255]],
-            'edition' => [['string', 'max' => 255]],
-            'volume' => [['string', 'max' => 255]],
-            'rating' => [['integer', 'min' => 0, 'max' => 5]],
-            'url' => [['string', 'max' => 255], ['url']],
-            'review' => [['string']],
-            'cover' => [['string', 'max' => 255]],
-            'filename' => [['string', 'max' => 255]],
-            'fileLocation' => [['string', 'max' => 255]],
-            'narrator' => [['string', 'max' => 255]],
-            'bitrate' => [['string', 'max' => 255]],
-            'boughtFrom' => [['string', 'max' => 255]],
-            'duration' => [['integer']],
-            'sizeBytes' => [['integer']],
-            'orderInSeries' => [['integer']],
-            'publisherId' => [['integer'], ['exist', 'targetClass' => Publisher::class, 'targetAttribute' => 'id']],
-            'seriesId' => [['integer'], ['exist', 'targetClass' => Series::class, 'targetAttribute' => 'id']],
-            'collectionId' => [['integer'], ['exist', 'targetClass' => Collection::class, 'targetAttribute' => 'id']],
-            'duplicatesId' => [['integer'], ['exist', 'targetClass' => Item::class, 'targetAttribute' => 'id']],
-        ];
-    }
-
     public function beforeSave($insert): bool {
         if (!parent::beforeSave($insert)) {
             return false;

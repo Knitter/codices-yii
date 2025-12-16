@@ -1,5 +1,10 @@
 <?php
 
+/*
+ * Copyright (c) 2025 Sérgio Lopes. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root for details.
+ */
+
 declare(strict_types=1);
 
 namespace Codices\Repository;
@@ -13,25 +18,21 @@ use Yii;
 use yii\db\Expression;
 use yii\db\Query;
 
-final class ItemRepository implements ItemRepositoryInterface
-{
-    public function findById(int $id): ?Item
-    {
+final class ItemRepository implements ItemRepositoryInterface {
+
+    public function findById(int $id): ?Item {
         return Item::findOne($id);
     }
 
-    public function save(Item $item): bool
-    {
+    public function save(Item $item): bool {
         return (bool)$item->save();
     }
 
-    public function delete(Item $item): bool
-    {
+    public function delete(Item $item): bool {
         return (bool)$item->delete();
     }
 
-    public function search(ItemFilter $filter): ItemSearchResult
-    {
+    public function search(ItemFilter $filter): ItemSearchResult {
         $q = Item::find()->alias('i');
 
         $needAuthorJoin = $filter->authorName !== null;
@@ -40,28 +41,32 @@ final class ItemRepository implements ItemRepositoryInterface
         if ($filter->title !== null) {
             $q->andWhere(['like', 'i.title', $filter->title]);
         }
+
         if ($filter->publisherId !== null) {
             $q->andWhere(['i.publisherId' => $filter->publisherId]);
         }
+
         if ($filter->yearFrom !== null) {
             $q->andWhere(['>=', 'i.publishYear', $filter->yearFrom]);
         }
+
         if ($filter->yearTo !== null) {
             $q->andWhere(['<=', 'i.publishYear', $filter->yearTo]);
         }
+
         if ($filter->rating !== null) {
             $q->andWhere(['i.rating' => $filter->rating]);
         }
 
         if ($needAuthorJoin) {
             $q->innerJoin(['ia' => 'item_author'], 'ia.itemId = i.id')
-              ->innerJoin(['a' => 'author'], 'a.id = ia.authorId')
-              ->andWhere(['like', 'a.name', $filter->authorName]);
+                ->innerJoin(['a' => 'author'], 'a.id = ia.authorId')
+                ->andWhere(['like', 'a.name', $filter->authorName]);
         }
 
         if ($needGenreJoin) {
             $q->innerJoin(['ig' => 'item_genre'], 'ig.itemId = i.id')
-              ->andWhere(['ig.genreId' => $filter->genreId]);
+                ->andWhere(['ig.genreId' => $filter->genreId]);
         }
 
         // Count (distinct in case of joins)
@@ -89,8 +94,7 @@ final class ItemRepository implements ItemRepositoryInterface
         return new ItemSearchResult($items, $total, $filter->page, $filter->pageSize);
     }
 
-    public function replaceAuthors(int $itemId, array $authorIds): void
-    {
+    public function replaceAuthors(int $itemId, array $authorIds): void {
         $db = Yii::$app->db;
         $db->createCommand()->delete('item_author', ['itemId' => $itemId])->execute();
         if ($authorIds) {
@@ -99,8 +103,7 @@ final class ItemRepository implements ItemRepositoryInterface
         }
     }
 
-    public function replaceGenres(int $itemId, array $genreIds): void
-    {
+    public function replaceGenres(int $itemId, array $genreIds): void {
         $db = Yii::$app->db;
         $db->createCommand()->delete('item_genre', ['itemId' => $itemId])->execute();
         if ($genreIds) {

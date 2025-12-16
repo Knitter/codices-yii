@@ -15,5 +15,5 @@ Yii::setAlias('@views', $rootDir . '/src/app/View/UI');
 Yii::setAlias('@layout', $rootDir . '/src/app/View/Layout');
 Yii::setAlias('@migrations', $rootDir . '/src/migrations');
 Yii::setAlias('@data', $rootDir . '/data');
-
+// Alias for Codices namespace root so Yii can resolve controllerNamespace Codices\* to paths
 Yii::setAlias('@Codices', $rootDir . '/src/app');

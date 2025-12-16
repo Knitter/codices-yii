@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 /**
  * @var \yii\web\View $this
- * @var \Codices\Model\Item $item
+ * @var \Codices\Model\Item|\Codices\View\Facade\BookForm $item
+ * @var \Codices\View\Facade\BookForm $model
  * @var array $authors
  * @var array $genres
  * @var array $publishers
@@ -16,6 +17,14 @@ declare(strict_types=1);
 
 use yii\helpers\Html;
 use yii\helpers\Url;
+
+// Allow using new Form Model while keeping legacy template structure
+if (!isset($item) && isset($model)) {
+    $item = $model;
+}
+if (!isset($csrf)) {
+    $csrf = Yii::$app->request->getCsrfToken();
+}
 
 $this->title = Yii::t('codices', 'Add New Book');
 ?>
@@ -574,24 +583,3 @@ $this->title = Yii::t('codices', 'Add New Book');
         alert('ISBN import functionality would be implemented here.');
     }
 </script>
-
-<style>
-    .cover-upload-area:hover {
-        background-color: #f8f9fa;
-        border-color: #0d6efd !important;
-    }
-
-    .rating-input .btn {
-        border-radius: 0;
-    }
-
-    .rating-input .btn:first-child {
-        border-top-left-radius: 0.375rem;
-        border-bottom-left-radius: 0.375rem;
-    }
-
-    .rating-input .btn:last-child {
-        border-top-right-radius: 0.375rem;
-        border-bottom-right-radius: 0.375rem;
-    }
-</style>

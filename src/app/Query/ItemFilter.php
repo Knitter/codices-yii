@@ -1,23 +1,27 @@
 <?php
 
+/*
+ * Copyright (c) 2025 Sérgio Lopes. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root for details.
+ */
+
 declare(strict_types=1);
 
 namespace Codices\Query;
 
-final class ItemFilter
-{
+final class ItemFilter {
     public function __construct(
         public readonly ?string $title = null,
         public readonly ?string $authorName = null,
-        public readonly ?int $genreId = null,
-        public readonly ?int $publisherId = null,
-        public readonly ?int $yearFrom = null,
-        public readonly ?int $yearTo = null,
-        public readonly ?int $rating = null,
-        public readonly string $sort = 'title',
-        public readonly string $direction = 'asc',
-        public readonly int $page = 1,
-        public readonly int $pageSize = 20,
+        public readonly ?int    $genreId = null,
+        public readonly ?int    $publisherId = null,
+        public readonly ?int    $yearFrom = null,
+        public readonly ?int    $yearTo = null,
+        public readonly ?int    $rating = null,
+        public readonly string  $sort = 'title',
+        public readonly string  $direction = 'asc',
+        public readonly int     $page = 1,
+        public readonly int     $pageSize = 20,
     ) {
     }
 
@@ -25,8 +29,7 @@ final class ItemFilter
      * Build a filter from query params (strings) safely.
      * Unknown keys are ignored.
      */
-    public static function fromArray(array $query): self
-    {
+    public static function fromArray(array $query): self {
         $title = self::nullIfEmpty($query['title'] ?? null);
         $authorName = self::nullIfEmpty($query['author'] ?? ($query['authorName'] ?? null));
         $genreId = self::toIntOrNull($query['genre_id'] ?? ($query['genreId'] ?? null));
@@ -57,14 +60,12 @@ final class ItemFilter
         );
     }
 
-    private static function nullIfEmpty(?string $value): ?string
-    {
+    private static function nullIfEmpty(?string $value): ?string {
         $value = $value !== null ? trim($value) : null;
         return $value === '' ? null : $value;
     }
 
-    private static function toIntOrNull($value): ?int
-    {
+    private static function toIntOrNull($value): ?int {
         if ($value === null || $value === '') {
             return null;
         }

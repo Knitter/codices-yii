@@ -1,5 +1,10 @@
 <?php
 
+/*
+ * Copyright (c) 2025 Sérgio Lopes. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root for details.
+ */
+
 declare(strict_types=1);
 
 namespace Codices\Service;
@@ -11,15 +16,15 @@ use Yii;
 use yii\db\Connection;
 use yii\db\StaleObjectException;
 
-final class ItemService
-{
-    public function __construct(
-        private readonly ItemRepositoryInterface $items,
-        private readonly Connection $db
-    ) {}
+final readonly class ItemService {
 
-    public function create(BookForm $form, int $ownerId): Item
-    {
+    public function __construct(
+        private ItemRepositoryInterface $items,
+        private Connection              $db
+    ) {
+    }
+
+    public function create(BookForm $form, int $ownerId): Item {
         $tx = $this->db->beginTransaction();
         try {
             $item = new Item();
@@ -42,8 +47,7 @@ final class ItemService
         }
     }
 
-    public function update(int $id, BookForm $form, int $ownerId): Item
-    {
+    public function update(int $id, BookForm $form, int $ownerId): Item {
         $item = $this->items->findById($id);
         if ($item === null) {
             throw new \RuntimeException('Item not found');
@@ -69,8 +73,7 @@ final class ItemService
     }
 
     /** @throws StaleObjectException|\Throwable */
-    public function delete(int $id): void
-    {
+    public function delete(int $id): void {
         $item = $this->items->findById($id);
         if ($item === null) {
             return;
