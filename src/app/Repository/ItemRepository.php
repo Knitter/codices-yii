@@ -9,14 +9,13 @@ declare(strict_types=1);
 
 namespace Codices\Repository;
 
-use Codices\Model\Author;
-use Codices\Model\Genre;
 use Codices\Model\Item;
 use Codices\Query\ItemFilter;
 use Codices\Query\ItemSearchResult;
 use Yii;
+use yii\db\Exception;
 use yii\db\Expression;
-use yii\db\Query;
+use yii\db\StaleObjectException;
 
 final class ItemRepository implements ItemRepositoryInterface {
 
@@ -24,27 +23,43 @@ final class ItemRepository implements ItemRepositoryInterface {
         return Item::findOne($id);
     }
 
+    /**
+     * @throws Exception
+     */
     public function save(Item $item): bool {
         return (bool)$item->save();
     }
 
+    /**
+     * @throws \Throwable
+     * @throws StaleObjectException
+     */
     public function delete(Item $item): bool {
         return (bool)$item->delete();
     }
 
     public function search(ItemFilter $filter): ItemSearchResult {
-        $q = Item::find()->alias('i');
-
         $needAuthorJoin = $filter->authorName !== null;
         $needGenreJoin = $filter->genreId !== null;
 
-        if ($filter->title !== null) {
-            $q->andWhere(['like', 'i.title', $filter->title]);
-        }
+        $offset = ($filter->page - 1) * $filter->pageSize;
+        $sort = [
+            'title' => 'i.title',
+            'publishYear' => 'i.publishYear',
+            'rating' => 'i.rating',
+            'addedOn' => 'i.addedOn',
+        ];
 
-        if ($filter->publisherId !== null) {
-            $q->andWhere(['i.publisherId' => $filter->publisherId]);
-        }
+        $sortBy = $sort[$filter->sort] ?? 'i.title';
+        $sortDirection = $filter->direction === 'desc' ? SORT_DESC : SORT_ASC;
+
+        $q = Item::find()
+            ->alias('i')
+            ->andFilterWhere(['like', 'i.title', $filter->title])
+            ->andFilterWhere([
+                'i.publisherId' => $filter->publisherId,
+                'i.rating' => $filter->rating
+            ]);
 
         if ($filter->yearFrom !== null) {
             $q->andWhere(['>=', 'i.publishYear', $filter->yearFrom]);
@@ -52,10 +67,6 @@ final class ItemRepository implements ItemRepositoryInterface {
 
         if ($filter->yearTo !== null) {
             $q->andWhere(['<=', 'i.publishYear', $filter->yearTo]);
-        }
-
-        if ($filter->rating !== null) {
-            $q->andWhere(['i.rating' => $filter->rating]);
         }
 
         if ($needAuthorJoin) {
@@ -73,42 +84,47 @@ final class ItemRepository implements ItemRepositoryInterface {
         $countQuery = clone $q;
         $total = (int)$countQuery->select(new Expression('COUNT(DISTINCT i.id)'))->scalar();
 
-        // Sorting
-        $sortMap = [
-            'title' => 'i.title',
-            'publishYear' => 'i.publishYear',
-            'rating' => 'i.rating',
-            'addedOn' => 'i.addedOn',
-        ];
-        $column = $sortMap[$filter->sort] ?? 'i.title';
-        $direction = $filter->direction === 'desc' ? SORT_DESC : SORT_ASC;
-        $q->orderBy([$column => $direction]);
-
-        // Pagination
-        $offset = ($filter->page - 1) * $filter->pageSize;
-        $q->offset($offset)->limit($filter->pageSize)->groupBy('i.id');
+        $q->orderBy([$sortBy => $sortDirection])
+            ->offset($offset)
+            ->limit($filter->pageSize)
+            ->groupBy('i.id');
 
         /** @var Item[] $items */
         $items = $q->all();
-
         return new ItemSearchResult($items, $total, $filter->page, $filter->pageSize);
     }
 
-    public function replaceAuthors(int $itemId, array $authorIds): void {
+    /**
+     * @throws Exception
+     */
+    public function replaceAuthors(int $itemId, array $authorIds = []): void {
         $db = Yii::$app->db;
-        $db->createCommand()->delete('item_author', ['itemId' => $itemId])->execute();
+        $db->createCommand()
+            ->delete('item_author', ['itemId' => $itemId])
+            ->execute();
+
         if ($authorIds) {
             $rows = array_map(static fn(int $aid) => [$itemId, $aid], $authorIds);
-            $db->createCommand()->batchInsert('item_author', ['itemId', 'authorId'], $rows)->execute();
+            $db->createCommand()
+                ->batchInsert('item_author', ['itemId', 'authorId'], $rows)
+                ->execute();
         }
     }
 
-    public function replaceGenres(int $itemId, array $genreIds): void {
+    /**
+     * @throws Exception
+     */
+    public function replaceGenres(int $itemId, array $genreIds = []): void {
         $db = Yii::$app->db;
-        $db->createCommand()->delete('item_genre', ['itemId' => $itemId])->execute();
+        $db->createCommand()
+            ->delete('item_genre', ['itemId' => $itemId])
+            ->execute();
+
         if ($genreIds) {
             $rows = array_map(static fn(int $gid) => [$itemId, $gid], $genreIds);
-            $db->createCommand()->batchInsert('item_genre', ['itemId', 'genreId'], $rows)->execute();
+            $db->createCommand()
+                ->batchInsert('item_genre', ['itemId', 'genreId'], $rows)
+                ->execute();
         }
     }
 }

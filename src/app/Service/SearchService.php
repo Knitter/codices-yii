@@ -13,9 +13,9 @@ use Codices\Query\ItemFilter;
 use Codices\Query\ItemSearchResult;
 use Codices\Repository\ItemRepositoryInterface;
 
-final class SearchService {
+final readonly class SearchService {
 
-    public function __construct(private readonly ItemRepositoryInterface $items) {
+    public function __construct(private ItemRepositoryInterface $items) {
     }
 
     public function searchItems(ItemFilter $filter): ItemSearchResult {

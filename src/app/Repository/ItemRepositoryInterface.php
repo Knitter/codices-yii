@@ -24,8 +24,8 @@ interface ItemRepositoryInterface {
     public function search(ItemFilter $filter): ItemSearchResult;
 
     /** @param int[] $authorIds */
-    public function replaceAuthors(int $itemId, array $authorIds): void;
+    public function replaceAuthors(int $itemId, array $authorIds = []): void;
 
     /** @param int[] $genreIds */
-    public function replaceGenres(int $itemId, array $genreIds): void;
+    public function replaceGenres(int $itemId, array $genreIds = []): void;
 }

@@ -2,14 +2,13 @@
 
 declare(strict_types=1);
 
-use Codices\Asset\CodicesAsset;
-use yii\helpers\Html;
-
 /**
  * @var string $content
- * @var string|null $csrf
  * @var yii\web\View $this
  */
+
+use Codices\Asset\CodicesAsset;
+use yii\helpers\Html;
 
 CodicesAsset::register($this);
 
@@ -26,17 +25,14 @@ $this->beginPage();
 <body class="d-flex flex-column min-vh-100">
 <?php $this->beginBody() ?>
 
-<!-- Navigation -->
 <?= $this->render('_navigation') ?>
 
-<!-- Main Content -->
 <main class="flex-grow-1">
     <div class="container my-4">
         <?= $content ?>
     </div>
 </main>
 
-<!-- Footer -->
 <?= $this->render('_footer') ?>
 
 <!-- Theme Toggle Script -->

@@ -26,12 +26,10 @@ $this->beginPage()
 <body class="d-flex flex-column min-vh-100">
 <?php $this->beginBody() ?>
 
-<!-- Main Content -->
 <main class="flex-grow-1 d-flex align-items-center">
     <?= $content ?>
 </main>
 
-<!-- Theme Toggle Script -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Load saved theme or default to light

@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @var string $username
  */
 
-//$this->setTitle('Login - ' . $applicationParameters->getName());
+$this->title = Yii::t('codices', 'Codices: Login') ?>;
 ?>
 <div class="container-fluid p-0">
     <div class="row g-0 login-container">
@@ -33,11 +33,9 @@ declare(strict_types=1);
                     <div class="mb-4">
                         <i class="bi bi-book-fill" style="font-size: 4rem;"></i>
                     </div>
-                    <h1 class="display-4 fw-bold mb-3">
-                        <?php //= Html::encode($applicationParameters->getName()) ?>
-                    </h1>
+                    <h1 class="display-4 fw-bold mb-3">Codices</h1>
                     <p class="lead mb-4">
-                        Your comprehensive digital library management system
+                        <?= Yii::t('codices', 'Your comprehensive digital library management system') ?>
                     </p>
                     <div class="d-flex justify-content-center gap-4 text-white-50">
                         <div class="text-center">

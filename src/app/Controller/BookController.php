@@ -82,7 +82,6 @@ final class BookController extends CodicesController {
     }
 
     public function add(): Response|string {
-
         $form = new BookForm();
 
         // Lookups
@@ -102,6 +101,7 @@ final class BookController extends CodicesController {
             $form->genres = (array)$request->post('genres', $form->genres);
             $form->translated = (bool)$request->post('translated', $form->translated);
             $form->read = (bool)$request->post('read', $form->read);
+
             if ($form->validate()) {
                 $ownerId = 1; // TODO: from auth
                 $this->itemService->create($form, $ownerId);

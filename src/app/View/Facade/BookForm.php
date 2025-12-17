@@ -22,7 +22,7 @@ final class BookForm extends Model {
     public ?string $isbn = null;
     public ?string $format = null;
     public ?int $pageCount = null;
-    public ?string $publishDate = null; // keep string; parse as needed
+    public ?string $publishDate = null;
     public ?int $publishYear = null;
     public ?string $language = null;
     public ?string $edition = null;
@@ -37,7 +37,7 @@ final class BookForm extends Model {
     public int $copies = 1;
     public bool $translated = false;
     public bool $read = false;
-    public string $type = ''; // assigned in init()
+    public string $type = '';
 
     /** @var int[] */
     public array $authors = [];
@@ -52,7 +52,6 @@ final class BookForm extends Model {
     }
 
     public function rules(): array {
-        // Validation rules largely mirror Item::rules(); arrays added for authors/genres
         return [
             [['title'], 'required'],
             [['title', 'subtitle', 'originalTitle', 'language', 'edition', 'volume', 'format'], 'string', 'max' => 255],
@@ -150,6 +149,7 @@ final class BookForm extends Model {
         $item->translated = $this->translated;
         $item->read = $this->read;
         $item->type = $this->type;
+
         return $item;
     }
 }
