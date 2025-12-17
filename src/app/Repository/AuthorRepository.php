@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace Codices\Repository;
 
 use Codices\Model\Author;
+use yii\db\Exception;
+use yii\db\StaleObjectException;
 
 final class AuthorRepository implements AuthorRepositoryInterface {
 
@@ -17,10 +19,17 @@ final class AuthorRepository implements AuthorRepositoryInterface {
         return Author::findOne($id);
     }
 
+    /**
+     * @throws Exception
+     */
     public function save(Author $author): bool {
         return (bool)$author->save();
     }
 
+    /**
+     * @throws StaleObjectException
+     * @throws \Throwable
+     */
     public function delete(Author $author): bool {
         return (bool)$author->delete();
     }

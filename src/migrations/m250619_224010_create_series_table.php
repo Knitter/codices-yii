@@ -22,7 +22,7 @@ final class m250619_224010_create_series_table extends Migration {
         ]);
 
         $this->createIndex('ix_series_name', '{{%series}}', ['name']);
-        $this->createIndex('ix_series_ownedById', '{{%series}}', ['ownedById']);
+        $this->createIndex('ix_series_ownedbyid', '{{%series}}', ['ownedById']);
     }
 
     public function safeDown(): void {

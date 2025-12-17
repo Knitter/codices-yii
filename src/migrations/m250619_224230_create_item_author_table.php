@@ -17,8 +17,8 @@ final class m250619_224230_create_item_author_table extends Migration {
             'authorId' => $this->integer()->notNull(),
         ]);
 
-        $this->createIndex('ix_item_author_itemId', '{{%item_author}}', ['itemId']);
-        $this->createIndex('ix_item_author_authorId', '{{%item_author}}', ['authorId']);
+        $this->createIndex('ix_item_author_itemid', '{{%item_author}}', ['itemId']);
+        $this->createIndex('ix_item_author_authorid', '{{%item_author}}', ['authorId']);
     }
 
     public function safeDown(): void {

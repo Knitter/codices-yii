@@ -26,13 +26,6 @@ final class ItemAuthor extends ActiveRecord {
         return ['itemId', 'authorId'];
     }
 
-    public function rules(): array {
-        return [
-            'itemId' => [['required'], ['integer'], ['exist', 'targetClass' => Item::class, 'targetAttribute' => 'id']],
-            'authorId' => [['required'], ['integer'], ['exist', 'targetClass' => Author::class, 'targetAttribute' => 'id']],
-        ];
-    }
-
     // Relationships
     public function getItem(): ActiveQuery {
         return $this->hasOne(Item::class, ['id' => 'itemId']);

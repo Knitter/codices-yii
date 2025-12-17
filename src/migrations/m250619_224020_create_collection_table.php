@@ -22,7 +22,7 @@ final class m250619_224020_create_collection_table extends Migration {
         ]);
 
         $this->createIndex('ix_collection_name', '{{%collection}}', ['name']);
-        $this->createIndex('ix_collection_ownedById', '{{%collection}}', ['ownedById']);
+        $this->createIndex('ix_collection_ownedbyid', '{{%collection}}', ['ownedById']);
     }
 
     public function safeDown(): void {

@@ -26,13 +26,6 @@ final class ItemGenre extends ActiveRecord {
         return ['itemId', 'genreId'];
     }
 
-    public function rules(): array {
-        return [
-            'itemId' => [['required'], ['integer'], ['exist', 'targetClass' => Item::class, 'targetAttribute' => 'id']],
-            'genreId' => [['required'], ['integer'], ['exist', 'targetClass' => Genre::class, 'targetAttribute' => 'id']],
-        ];
-    }
-
     // Relationships
     public function getItem(): ActiveQuery {
         return $this->hasOne(Item::class, ['id' => 'itemId']);

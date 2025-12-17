@@ -21,7 +21,7 @@ final class m250619_224001_create_publisher_table extends Migration {
         ]);
 
         $this->createIndex('ix_publisher_name', '{{%publisher}}', ['name']);
-        $this->createIndex('ix_publisher_ownedById', '{{%publisher}}', ['ownedById']);
+        $this->createIndex('ix_publisher_ownedbyid', '{{%publisher}}', ['ownedById']);
     }
 
     public function safeDown(): void {

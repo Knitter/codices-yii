@@ -19,7 +19,7 @@ final class m250619_224148_create_genre_table extends Migration {
         ]);
 
         $this->createIndex('ix_genre_name', '{{%genre}}', ['name']);
-        $this->createIndex('ix_genre_ownedById', '{{%genre}}', ['ownedById']);
+        $this->createIndex('ix_genre_ownedbyid', '{{%genre}}', ['ownedById']);
     }
 
     public function safeDown(): void {

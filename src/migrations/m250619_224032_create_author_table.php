@@ -23,7 +23,7 @@ final class m250619_224032_create_author_table extends Migration {
         ]);
 
         $this->createIndex('ix_author_name', '{{%author}}', ['name']);
-        $this->createIndex('ix_author_ownedById', '{{%author}}', ['ownedById']);
+        $this->createIndex('ix_author_ownedbyid', '{{%author}}', ['ownedById']);
     }
 
     public function safeDown(): void {

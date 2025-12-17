@@ -27,14 +27,6 @@ final class Format extends ActiveRecord {
         return ['type', 'name', 'ownedById'];
     }
 
-    public function rules(): array {
-        return [
-            'type' => [['required'], ['string', 'max' => 255]],
-            'name' => [['required'], ['string', 'max' => 255]],
-            'ownedById' => [['required'], ['integer'], ['exist', 'targetClass' => Account::class, 'targetAttribute' => 'id']],
-        ];
-    }
-
     // Relationships
     public function getOwner(): ActiveQuery {
         return $this->hasOne(Account::class, ['id' => 'ownedById']);

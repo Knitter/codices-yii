@@ -52,11 +52,11 @@ final class m250619_224209_create_item_table extends Migration {
 
         // Indexes
         $this->createIndex('ix_item_title', '{{%item}}', ['title']);
-        $this->createIndex('ix_item_ownedById', '{{%item}}', ['ownedById']);
-        $this->createIndex('ix_item_publisherId', '{{%item}}', ['publisherId']);
-        $this->createIndex('ix_item_seriesId', '{{%item}}', ['seriesId']);
-        $this->createIndex('ix_item_collectionId', '{{%item}}', ['collectionId']);
-        $this->createIndex('ix_item_duplicatesId', '{{%item}}', ['duplicatesId']);
+        $this->createIndex('ix_item_ownedbyid', '{{%item}}', ['ownedById']);
+        $this->createIndex('ix_item_publisherid', '{{%item}}', ['publisherId']);
+        $this->createIndex('ix_item_seriesid', '{{%item}}', ['seriesId']);
+        $this->createIndex('ix_item_collectionid', '{{%item}}', ['collectionId']);
+        $this->createIndex('ix_item_duplicatesid', '{{%item}}', ['duplicatesId']);
     }
 
     public function safeDown(): void {

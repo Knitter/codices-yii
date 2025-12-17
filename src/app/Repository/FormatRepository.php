@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace Codices\Repository;
 
 use Codices\Model\Format;
+use yii\db\Exception;
+use yii\db\StaleObjectException;
 
 final class FormatRepository implements FormatRepositoryInterface {
 
@@ -17,10 +19,17 @@ final class FormatRepository implements FormatRepositoryInterface {
         return Format::findOne(['type' => $type, 'name' => $name, 'ownedById' => $ownedById]);
     }
 
+    /**
+     * @throws Exception
+     */
     public function save(Format $format): bool {
         return (bool)$format->save();
     }
 
+    /**
+     * @throws \Throwable
+     * @throws StaleObjectException
+     */
     public function delete(Format $format): bool {
         return (bool)$format->delete();
     }

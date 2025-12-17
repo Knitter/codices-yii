@@ -17,8 +17,8 @@ final class m250619_224237_create_item_genre_table extends Migration {
             'genreId' => $this->integer()->notNull(),
         ]);
 
-        $this->createIndex('ix_item_genre_itemId', '{{%item_genre}}', ['itemId']);
-        $this->createIndex('ix_item_genre_genreId', '{{%item_genre}}', ['genreId']);
+        $this->createIndex('ix_item_genre_itemid', '{{%item_genre}}', ['itemId']);
+        $this->createIndex('ix_item_genre_genreid', '{{%item_genre}}', ['genreId']);
     }
 
     public function safeDown(): void {

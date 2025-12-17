@@ -29,18 +29,19 @@ final class Account extends ActiveRecord {
         return 'account';
     }
 
-    public function rules(): array {
-        return [
-            'username' => [['required'], ['string', 'max' => 255], ['unique']],
-            'email' => [['required'], ['string', 'max' => 255], ['email']],
-            'name' => [['required'], ['string', 'max' => 255]],
-            'active' => [['boolean']],
-            'password' => [['required'], ['string', 'min' => 6]],
-            'createdOn' => [['integer']],
-            'updatedOn' => [['integer']],
-            'authKey' => [['string', 'max' => 255]],
-        ];
-    }
+    //TODO: Move once profile form is implemented
+    //    public function rules(): array {
+    //        return [
+    //            'username' => [['required'], ['string', 'max' => 255], ['unique']],
+    //            'email' => [['required'], ['string', 'max' => 255], ['email']],
+    //            'name' => [['required'], ['string', 'max' => 255]],
+    //            'active' => [['boolean']],
+    //            'password' => [['required'], ['string', 'min' => 6]],
+    //            'createdOn' => [['integer']],
+    //            'updatedOn' => [['integer']],
+    //            'authKey' => [['string', 'max' => 255]],
+    //        ];
+    //    }
 
     public function beforeSave($insert): bool {
         if (!parent::beforeSave($insert)) {

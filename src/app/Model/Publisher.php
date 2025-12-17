@@ -25,15 +25,6 @@ final class Publisher extends ActiveRecord {
         return 'publisher';
     }
 
-    public function rules(): array {
-        return [
-            'name' => [['required'], ['string', 'max' => 255]],
-            'ownedById' => [['required'], ['integer'], ['exist', 'targetClass' => Account::class, 'targetAttribute' => 'id']],
-            'summary' => [['string']],
-            'website' => [['string', 'max' => 255], ['url']],
-        ];
-    }
-
     // Relationships
     public function getOwner(): ActiveQuery {
         return $this->hasOne(Account::class, ['id' => 'ownedById']);

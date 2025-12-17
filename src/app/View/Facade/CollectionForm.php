@@ -15,28 +15,49 @@ use yii\base\Model;
 final class CollectionForm extends Model {
 
     public ?int $id = null;
+    public ?int $ownedById = null;
     public string $name = '';
+    public string $publishDate = '';
+    public string $publishYear = '';
+    public string $description = '';
 
     public function rules(): array {
         return [
-            [['name'], 'required'],
+            [['name', 'ownedById'], 'required'],
             [['name'], 'string', 'max' => 255],
+            [['publishDate', 'description'], 'string'],
+            [['publishYear'], 'integer'],
         ];
     }
 
     public function attributeLabels(): array {
+        //TODO: Extract to UI/templating layer and avoid the hard dependency on Yii
         return [
+            'id' => 'No.',
+            'ownedById' => 'Owned By',
             'name' => 'Name',
+            'publishDate' => 'Publish Date',
+            'publishYear' => 'Publish Year',
+            'description' => 'Description',
         ];
     }
 
     public function loadFromCollection(Collection $collection): void {
         $this->id = (int)$collection->id;
-        $this->name = (string)$collection->name;
+        $this->ownedById = (int)$collection->ownedById;
+        $this->publishDate = (string)$collection->publishDate;
+        $this->publishYear = (string)$collection->publishYear;
+        $this->description = (string)$collection->description;
     }
 
     public function applyToCollection(Collection $collection): Collection {
+        $collection->id = $this->id;
+        $collection->ownedById = $this->ownedById;
         $collection->name = $this->name;
+        $collection->publishDate = $this->publishDate;
+        $collection->publishYear = $this->publishYear;
+        $collection->description = $this->description;
+
         return $collection;
     }
 }

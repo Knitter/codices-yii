@@ -20,7 +20,7 @@ final class m250619_224155_create_format_table extends Migration {
 
         $this->createIndex('ix_format_type', '{{%format}}', ['type']);
         $this->createIndex('ix_format_name', '{{%format}}', ['name']);
-        $this->createIndex('ix_format_ownedById', '{{%format}}', ['ownedById']);
+        $this->createIndex('ix_format_ownedbyid', '{{%format}}', ['ownedById']);
     }
 
     public function safeDown(): void {

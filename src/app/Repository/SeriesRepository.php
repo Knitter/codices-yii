@@ -10,7 +10,9 @@ declare(strict_types=1);
 namespace Codices\Repository;
 
 use Codices\Model\Series;
+use yii\db\Exception;
 use yii\db\Expression;
+use yii\db\StaleObjectException;
 
 final class SeriesRepository implements SeriesRepositoryInterface {
 
@@ -18,10 +20,17 @@ final class SeriesRepository implements SeriesRepositoryInterface {
         return Series::findOne($id);
     }
 
+    /**
+     * @throws Exception
+     */
     public function save(Series $series): bool {
         return (bool)$series->save();
     }
 
+    /**
+     * @throws StaleObjectException
+     * @throws \Throwable
+     */
     public function delete(Series $series): bool {
         return (bool)$series->delete();
     }

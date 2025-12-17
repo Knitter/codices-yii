@@ -15,6 +15,7 @@ use yii\base\Model;
 final class BookForm extends Model {
 
     public ?int $id = null;
+    public ?int $ownedById = null;
     public string $title = '';
     public ?string $subtitle = null;
     public ?string $originalTitle = null;
@@ -23,6 +24,7 @@ final class BookForm extends Model {
     public ?string $format = null;
     public ?int $pageCount = null;
     public ?string $publishDate = null;
+    public ?string $addedOn = null;
     public ?int $publishYear = null;
     public ?string $language = null;
     public ?string $edition = null;
@@ -38,6 +40,16 @@ final class BookForm extends Model {
     public bool $translated = false;
     public bool $read = false;
     public string $type = '';
+    public string $cover = '';
+    public string $filename = '';
+    public string $fileLocation = '';
+
+    public string $narrator = '';
+    public string $bitrate = '';
+    public string $boughtFrom = '';
+    public ?int $duration = null; // in minutes
+    public ?int $sizeBytes = null; // in KB
+    public ?int $duplicatesId = null;
 
     /** @var int[] */
     public array $authors = [];
@@ -54,11 +66,11 @@ final class BookForm extends Model {
     public function rules(): array {
         return [
             [['title'], 'required'],
-            [['title', 'subtitle', 'originalTitle', 'language', 'edition', 'volume', 'format'], 'string', 'max' => 255],
+            [['title', 'subtitle', 'originalTitle', 'language', 'edition', 'volume', 'format', 'fileLocation', 'narrator', 'bitrate', 'boughtFrom'], 'string', 'max' => 255],
             [['plot', 'review'], 'string'],
             [['isbn'], 'string', 'max' => 32],
             [['url'], 'url'],
-            [['pageCount', 'publishYear', 'rating', 'publisherId', 'seriesId', 'collectionId', 'orderInSeries', 'copies'], 'integer'],
+            [['pageCount', 'publishYear', 'rating', 'publisherId', 'seriesId', 'collectionId', 'orderInSeries', 'copies', 'sizeBytes', 'duplicatesId', 'duration'], 'integer'],
             [['translated', 'read'], 'boolean'],
             [['publishDate'], 'safe'],
             [['type'], 'in', 'range' => [Item::TYPE_PAPER, Item::TYPE_EBOOK, Item::TYPE_AUDIO]],
@@ -95,11 +107,21 @@ final class BookForm extends Model {
             'type' => 'Type',
             'authors' => 'Authors',
             'genres' => 'Genres',
+            'cover' => 'Cover',
+            'filename' => 'Filename',
+            'fileLocation' => 'File Location',
+            'narrator' => 'Narrator',
+            'bitrate' => 'Bitrate',
+            'boughtFrom' => 'Bought From',
+            'duration' => 'Duration',
+            'sizeBytes' => 'Size',
+            'duplicatesId' => 'Duplicates'
         ];
     }
 
     public function loadFromItem(Item $item): void {
         $this->id = (int)$item->id;
+        $this->ownedById = (int)$item->ownedById;
         $this->title = (string)$item->title;
         $this->subtitle = $item->subtitle;
         $this->originalTitle = $item->originalTitle;
@@ -123,6 +145,15 @@ final class BookForm extends Model {
         $this->translated = (bool)$item->translated;
         $this->read = (bool)$item->read;
         $this->type = (string)$item->type;
+        $this->cover = (string)$item->cover;
+        $this->filename = (string)$item->filename;
+        $this->fileLocation = (string)$item->fileLocation;
+        $this->narrator = (string)$item->narrator;
+        $this->bitrate = (string)$item->bitrate;
+        $this->boughtFrom = (string)$item->boughtFrom;
+        $this->duration = (int)$item->duration;
+        $this->sizeBytes = (int)$item->sizeBytes;
+        $this->duplicatesId = (int)$item->duplicatesId;
     }
 
     public function applyToItem(Item $item): Item {
@@ -149,6 +180,15 @@ final class BookForm extends Model {
         $item->translated = $this->translated;
         $item->read = $this->read;
         $item->type = $this->type;
+        $item->cover = $this->cover;
+        $item->filename = $this->filename;
+        $item->fileLocation = $this->fileLocation;
+        $item->narrator = $this->narrator;
+        $item->bitrate = $this->bitrate;
+        $item->boughtFrom = $this->boughtFrom;
+        $item->duration = $this->duration;
+        $item->sizeBytes = $this->sizeBytes;
+        $item->duplicatesId = $this->duplicatesId;
 
         return $item;
     }

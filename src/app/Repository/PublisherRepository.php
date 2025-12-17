@@ -10,7 +10,9 @@ declare(strict_types=1);
 namespace Codices\Repository;
 
 use Codices\Model\Publisher;
+use yii\db\Exception;
 use yii\db\Expression;
+use yii\db\StaleObjectException;
 
 final class PublisherRepository implements PublisherRepositoryInterface {
 
@@ -18,10 +20,17 @@ final class PublisherRepository implements PublisherRepositoryInterface {
         return Publisher::findOne($id);
     }
 
+    /**
+     * @throws Exception
+     */
     public function save(Publisher $publisher): bool {
         return (bool)$publisher->save();
     }
 
+    /**
+     * @throws StaleObjectException
+     * @throws \Throwable
+     */
     public function delete(Publisher $publisher): bool {
         return (bool)$publisher->delete();
     }

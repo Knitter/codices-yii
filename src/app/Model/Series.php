@@ -26,16 +26,6 @@ final class Series extends ActiveRecord {
         return 'series';
     }
 
-    public function rules(): array {
-        return [
-            'name' => [['required'], ['string', 'max' => 255]],
-            'ownedById' => [['required'], ['integer'], ['exist', 'targetClass' => Account::class, 'targetAttribute' => 'id']],
-            'completed' => [['boolean']],
-            'bookCount' => [['integer']],
-            'ownedCount' => [['integer']],
-        ];
-    }
-
     // Relationships
     public function getOwner(): ActiveQuery {
         return $this->hasOne(Account::class, ['id' => 'ownedById']);

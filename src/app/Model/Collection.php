@@ -26,16 +26,6 @@ final class Collection extends ActiveRecord {
         return 'collection';
     }
 
-    public function rules(): array {
-        return [
-            'name' => [['required'], ['string', 'max' => 255]],
-            'ownedById' => [['required'], ['integer'], ['exist', 'targetClass' => Account::class, 'targetAttribute' => 'id']],
-            'publishDate' => [['string', 'max' => 255]],
-            'publishYear' => [['integer']],
-            'description' => [['string']],
-        ];
-    }
-
     // Relationships
     public function getOwner(): ActiveQuery {
         return $this->hasOne(Account::class, ['id' => 'ownedById']);

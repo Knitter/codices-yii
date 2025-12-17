@@ -29,17 +29,6 @@ final class Author extends ActiveRecord {
         return 'author';
     }
 
-    public function rules(): array {
-        return [
-            'name' => [['required'], ['string', 'max' => 255]],
-            'ownedById' => [['required'], ['integer'], ['exist', 'targetClass' => Account::class, 'targetAttribute' => 'id']],
-            'surname' => [['string', 'max' => 255]],
-            'biography' => [['string']],
-            'website' => [['string', 'max' => 255], ['url']],
-            'photo' => [['string', 'max' => 255]],
-        ];
-    }
-
     // Relationships
     public function getOwner(): ActiveQuery {
         return $this->hasOne(Account::class, ['id' => 'ownedById']);

@@ -15,28 +15,35 @@ use yii\base\Model;
 final class GenreForm extends Model {
 
     public ?int $id = null;
+    public ?int $ownedById = null;
     public string $name = '';
 
     public function rules(): array {
         return [
-            [['name'], 'required'],
+            [['name', 'ownedById'], 'required'],
             [['name'], 'string', 'max' => 255],
         ];
     }
 
     public function attributeLabels(): array {
+        //TODO: Extract to UI/templating layer and avoid the hard dependency on Yii
         return [
+            'id' => 'No.',
             'name' => 'Name',
+            'ownedById' => 'Owned By',
         ];
     }
 
     public function loadFromGenre(Genre $genre): void {
         $this->id = (int)$genre->id;
+        $this->ownedById = (int)$genre->ownedById;
         $this->name = (string)$genre->name;
     }
 
     public function applyToGenre(Genre $genre): Genre {
+        $genre->ownedById = $this->ownedById;
         $genre->name = $this->name;
+        
         return $genre;
     }
 }
