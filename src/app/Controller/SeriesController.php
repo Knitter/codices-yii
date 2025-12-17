@@ -9,98 +9,90 @@ declare(strict_types=1);
 
 namespace Codices\Controller;
 
-use Codices\Model\Series;
+use Codices\Service\SeriesService;
+use Codices\View\Facade\SeriesForm;
+use Yii;
 use yii\web\Response;
 
-final class SeriesController {
+final class SeriesController extends CodicesController {
 
-    public function index(CurrentRoute $currentRoute): Response|string {
-        $query = Series::find()->orderBy(['name' => Sort::SORT_ASC]);
-        $paginator = (new OffsetPaginator($query))
-            ->withPageSize(10)
-            ->withCurrentPage((int)$currentRoute->getArgument('page', '1'));
+    public function __construct($id, $module, private readonly SeriesService $seriesService, $config = []) {
+        parent::__construct($id, $module, $config);
+    }
 
-        return $this->viewRenderer->render('index', [
+    public function index(): Response|string {
+        $request = Yii::$app->request;
+        $page = (int)$request->get('page', 1);
+        $pageSize = (int)$request->get('per_page', 10);
+        $sort = (string)$request->get('sort', 'name');
+        $direction = (string)$request->get('sort_dir', 'asc');
+
+        $paginator = $this->seriesService->list($page, $pageSize, $sort, $direction);
+
+        return $this->render('index', [
             'paginator' => $paginator,
         ]);
     }
 
-    public function view(CurrentRoute $currentRoute): Response|string {
-        $id = $currentRoute->getArgument('id');
-        $series = Series::findOne(['id' => $id]);
-
+    public function view(): Response|string {
+        $id = (int)Yii::$app->request->get('id');
+        $series = $this->seriesService->findById($id);
         if ($series === null) {
-            return $this->viewRenderer->renderWithStatus('_404', [], 404);
+            return $this->asJson(['message' => 'Not found'])->setStatusCode(404);
         }
 
-        return $this->viewRenderer->render('view', [
+        return $this->render('view', [
             'series' => $series,
         ]);
     }
 
-    public function create(ValidatorInterface $validator): Response|string {
-        $series = new Series();
-        $method = $this->request->getMethod();
-        $errors = [];
-
-        if ($method === Method::POST) {
-            $body = $this->request->getParsedBody();
-            $series->setAttributes($body);
-
-            // Set the owner ID to the current user
-            $series->ownedById = 1; // This should be replaced with the current user ID
-
-            $errors = $validator->validate($series);
-            if (empty($errors)) {
-                if ($series->save()) {
-                    return $this->response->withStatus(302)->withHeader('Location', '/series/view/' . $series->id);
-                }
+    public function add(): Response|string {
+        $form = new SeriesForm();
+        $request = Yii::$app->request;
+        if ($request->isPost) {
+            $form->setAttributes($request->post());
+            if ($form->validate()) {
+                $ownerId = 1; // TODO: replace with current user id
+                $this->seriesService->create($form, $ownerId);
+                return $this->redirect(['/series/index']);
             }
         }
 
-        return $this->viewRenderer->render('create', [
-            'series' => $series,
-            'errors' => $errors,
+        return $this->render('add', [
+            'model' => $form,
+            'csrf' => Yii::$app->request->getCsrfToken(),
         ]);
     }
 
-    public function update(CurrentRoute $currentRoute, ValidatorInterface $validator): Response|string {
-        $id = $currentRoute->getArgument('id');
-        $series = Series::findOne(['id' => $id]);
-
+    public function edit(): Response|string {
+        $id = (int)Yii::$app->request->get('id');
+        $series = $this->seriesService->findById($id);
         if ($series === null) {
-            return $this->viewRenderer->renderWithStatus('_404', [], 404);
+            return $this->asJson(['message' => 'Not found'])->setStatusCode(404);
         }
 
-        $method = $this->request->getMethod();
-        $errors = [];
+        $form = new SeriesForm();
+        $form->loadFromSeries($series);
 
-        if ($method === Method::POST) {
-            $body = $this->request->getParsedBody();
-            $series->setAttributes($body);
-
-            $errors = $validator->validate($series);
-            if (empty($errors)) {
-                if ($series->save()) {
-                    return $this->response->withStatus(302)->withHeader('Location', '/series/view/' . $series->id);
-                }
+        $request = Yii::$app->request;
+        if ($request->isPost) {
+            $form->setAttributes($request->post());
+            if ($form->validate()) {
+                $this->seriesService->update($id, $form);
+                return $this->redirect(['/series/index']);
             }
         }
 
-        return $this->viewRenderer->render('update', [
-            'series' => $series,
-            'errors' => $errors,
+        return $this->render('edit', [
+            'model' => $form,
+            'seriesId' => $id,
+            'csrf' => Yii::$app->request->getCsrfToken(),
         ]);
     }
 
-    public function delete(CurrentRoute $currentRoute): Response|string {
-        $id = $currentRoute->getArgument('id');
-        $series = Series::findOne(['id' => $id]);
-
-        if ($series !== null) {
-            $series->delete();
-        }
-
-        return $this->response->withStatus(302)->withHeader('Location', '/series');
+    public function delete(): Response|string {
+        $id = (int)Yii::$app->request->get('id');
+        $this->seriesService->delete($id);
+        return $this->redirect(['/series/index']);
     }
 }

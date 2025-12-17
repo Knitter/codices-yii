@@ -10,116 +10,103 @@ declare(strict_types=1);
 namespace Codices\Controller;
 
 use Codices\Model\Format;
+use Codices\Service\FormatService;
+use Codices\View\Facade\FormatForm;
+use Yii;
 use yii\web\Response;
 
-final class FormatController {
+final class FormatController extends CodicesController {
 
-    public function index(CurrentRoute $currentRoute): Response|string {
-        $query = Format::find()->orderBy(['type' => Sort::SORT_ASC, 'name' => Sort::SORT_ASC]);
-        $paginator = (new OffsetPaginator($query))
-            ->withPageSize(10)
-            ->withCurrentPage((int)$currentRoute->getArgument('page', '1'));
+    public function __construct($id, $module, private readonly FormatService $formatService, $config = []) {
+        parent::__construct($id, $module, $config);
+    }
 
-        return $this->viewRenderer->render('index', [
+    public function index(): Response|string {
+        $request = Yii::$app->request;
+        $page = (int)$request->get('page', 1);
+        $pageSize = (int)$request->get('per_page', 10);
+        $sort = (string)$request->get('sort', 'name');
+        $direction = (string)$request->get('sort_dir', 'asc');
+
+        $paginator = $this->formatService->list($page, $pageSize, $sort, $direction);
+
+        return $this->render('index', [
             'paginator' => $paginator,
             'formatTypes' => Format::getFormatTypes(),
         ]);
     }
 
-    public function view(CurrentRoute $currentRoute): Response|string {
-        $type = $currentRoute->getArgument('type');
-        $name = $currentRoute->getArgument('name');
-        $ownedById = $currentRoute->getArgument('ownedById', '1'); // Default to user 1 for now
+    public function view(): Response|string {
+        $type = (string)Yii::$app->request->get('type', '');
+        $name = (string)Yii::$app->request->get('name', '');
+        $ownerId = 1; // TODO: current user id
 
-        $format = Format::findOne(['type' => $type, 'name' => $name, 'ownedById' => $ownedById]);
-
+        $format = $this->formatService->findOne($type, $name, $ownerId);
         if ($format === null) {
-            return $this->viewRenderer->renderWithStatus('_404', [], 404);
+            return $this->asJson(['message' => 'Not found'])->setStatusCode(404);
         }
 
-        return $this->viewRenderer->render('view', [
+        return $this->render('view', [
             'format' => $format,
             'formatTypes' => Format::getFormatTypes(),
         ]);
     }
 
-    public function create(ValidatorInterface $validator): Response|string {
-        $format = new Format();
-        $method = $this->request->getMethod();
-        $errors = [];
-
-        if ($method === Method::POST) {
-            $body = $this->request->getParsedBody();
-            $format->setAttributes($body);
-
-            // Set the owner ID to the current user
-            $format->ownedById = 1; // This should be replaced with the current user ID
-
-            $errors = $validator->validate($format);
-            if (empty($errors)) {
-                if ($format->save()) {
-                    return $this->response->withStatus(302)->withHeader(
-                        'Location',
-                        '/format/view/' . $format->type . '/' . $format->name . '/' . $format->ownedById
-                    );
-                }
+    public function add(): Response|string {
+        $form = new FormatForm();
+        $request = Yii::$app->request;
+        if ($request->isPost) {
+            $form->setAttributes($request->post());
+            if ($form->validate()) {
+                $ownerId = 1; // TODO: replace with current user id
+                $this->formatService->create($form, $ownerId);
+                return $this->redirect(['/format/index']);
             }
         }
 
-        return $this->viewRenderer->render('create', [
-            'format' => $format,
-            'errors' => $errors,
+        return $this->render('add', [
+            'model' => $form,
             'formatTypes' => Format::getFormatTypes(),
+            'csrf' => Yii::$app->request->getCsrfToken(),
         ]);
     }
 
-    public function update(CurrentRoute $currentRoute, ValidatorInterface $validator): Response|string {
-        $type = $currentRoute->getArgument('type');
-        $name = $currentRoute->getArgument('name');
-        $ownedById = $currentRoute->getArgument('ownedById', '1'); // Default to user 1 for now
-
-        $format = Format::findOne(['type' => $type, 'name' => $name, 'ownedById' => $ownedById]);
-
+    public function edit(): Response|string {
+        $type = (string)Yii::$app->request->get('type', '');
+        $name = (string)Yii::$app->request->get('name', '');
+        $ownerId = 1; // TODO: current user id
+        $format = $this->formatService->findOne($type, $name, $ownerId);
         if ($format === null) {
-            return $this->viewRenderer->renderWithStatus('_404', [], 404);
+            return $this->asJson(['message' => 'Not found'])->setStatusCode(404);
         }
 
-        $method = $this->request->getMethod();
-        $errors = [];
+        $form = new FormatForm();
+        $form->loadFromFormat($format);
 
-        if ($method === Method::POST) {
-            $body = $this->request->getParsedBody();
-            $format->setAttributes($body);
-
-            $errors = $validator->validate($format);
-            if (empty($errors)) {
-                if ($format->save()) {
-                    return $this->response->withStatus(302)->withHeader(
-                        'Location',
-                        '/format/view/' . $format->type . '/' . $format->name . '/' . $format->ownedById
-                    );
-                }
+        $request = Yii::$app->request;
+        if ($request->isPost) {
+            $form->setAttributes($request->post());
+            if ($form->validate()) {
+                // Use original keys from query to locate the record, allow updating keys via form
+                $this->formatService->update($type, $name, $ownerId, $form);
+                return $this->redirect(['/format/index']);
             }
         }
 
-        return $this->viewRenderer->render('update', [
-            'format' => $format,
-            'errors' => $errors,
+        return $this->render('edit', [
+            'model' => $form,
+            'formatType' => $type,
+            'formatName' => $name,
             'formatTypes' => Format::getFormatTypes(),
+            'csrf' => Yii::$app->request->getCsrfToken(),
         ]);
     }
 
-    public function delete(CurrentRoute $currentRoute): Response {
-        $type = $currentRoute->getArgument('type');
-        $name = $currentRoute->getArgument('name');
-        $ownedById = $currentRoute->getArgument('ownedById', '1'); // Default to user 1 for now
-
-        $format = Format::findOne(['type' => $type, 'name' => $name, 'ownedById' => $ownedById]);
-
-        if ($format !== null) {
-            $format->delete();
-        }
-
-        return $this->response->withStatus(302)->withHeader('Location', '/format');
+    public function delete(): Response|string {
+        $type = (string)Yii::$app->request->get('type', '');
+        $name = (string)Yii::$app->request->get('name', '');
+        $ownerId = 1; // TODO: current user id
+        $this->formatService->delete($type, $name, $ownerId);
+        return $this->redirect(['/format/index']);
     }
 }

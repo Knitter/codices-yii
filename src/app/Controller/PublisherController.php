@@ -9,99 +9,90 @@ declare(strict_types=1);
 
 namespace Codices\Controller;
 
-use Codices\Model\Publisher;
+use Codices\Service\PublisherService;
+use Codices\View\Facade\PublisherForm;
+use Yii;
 use yii\web\Response;
 
-final class PublisherController {
+final class PublisherController extends CodicesController {
 
-    public function index(CurrentRoute $currentRoute): Response|string {
-        $query = Publisher::find()->orderBy(['name' => Sort::SORT_ASC]);
-        $paginator = (new OffsetPaginator($query))
-            ->withPageSize(10)
-            ->withCurrentPage((int)$currentRoute->getArgument('page', '1'));
+    public function __construct($id, $module, private readonly PublisherService $publisherService, $config = []) {
+        parent::__construct($id, $module, $config);
+    }
 
-        return $this->viewRenderer->render('index', [
+    public function index(): Response|string {
+        $request = Yii::$app->request;
+        $page = (int)$request->get('page', 1);
+        $pageSize = (int)$request->get('per_page', 10);
+        $sort = (string)$request->get('sort', 'name');
+        $direction = (string)$request->get('sort_dir', 'asc');
+
+        $paginator = $this->publisherService->list($page, $pageSize, $sort, $direction);
+
+        return $this->render('index', [
             'paginator' => $paginator,
-            'currentRoute' => $currentRoute,
         ]);
     }
 
-    public function view(CurrentRoute $currentRoute): Response|string {
-        $id = $currentRoute->getArgument('id');
-        $publisher = Publisher::findOne(['id' => $id]);
-
+    public function view(): Response|string {
+        $id = (int)Yii::$app->request->get('id');
+        $publisher = $this->publisherService->findById($id);
         if ($publisher === null) {
-            return $this->viewRenderer->renderWithStatus('_404', [], 404);
+            return $this->asJson(['message' => 'Not found'])->setStatusCode(404);
         }
 
-        return $this->viewRenderer->render('view', [
+        return $this->render('view', [
             'publisher' => $publisher,
         ]);
     }
 
-    public function create(ValidatorInterface $validator): Response|string {
-        $publisher = new Publisher();
-        $method = $this->request->getMethod();
-        $errors = [];
-
-        if ($method === Method::POST) {
-            $body = $this->request->getParsedBody();
-            $publisher->setAttributes($body);
-
-            // Set the owner ID to the current user
-            $publisher->ownedById = 1; // This should be replaced with the current user ID
-
-            $errors = $validator->validate($publisher);
-            if (empty($errors)) {
-                if ($publisher->save()) {
-                    return $this->response->withStatus(302)->withHeader('Location', '/publisher/view/' . $publisher->id);
-                }
+    public function add(): Response|string {
+        $form = new PublisherForm();
+        $request = Yii::$app->request;
+        if ($request->isPost) {
+            $form->setAttributes($request->post());
+            if ($form->validate()) {
+                $ownerId = 1; // TODO: replace with current user id
+                $this->publisherService->create($form, $ownerId);
+                return $this->redirect(['/publisher/index']);
             }
         }
 
-        return $this->viewRenderer->render('create', [
-            'publisher' => $publisher,
-            'errors' => $errors,
+        return $this->render('add', [
+            'model' => $form,
+            'csrf' => Yii::$app->request->getCsrfToken(),
         ]);
     }
 
-    public function update(CurrentRoute $currentRoute, ValidatorInterface $validator): Response|string {
-        $id = $currentRoute->getArgument('id');
-        $publisher = Publisher::findOne(['id' => $id]);
-
+    public function edit(): Response|string {
+        $id = (int)Yii::$app->request->get('id');
+        $publisher = $this->publisherService->findById($id);
         if ($publisher === null) {
-            return $this->viewRenderer->renderWithStatus('_404', [], 404);
+            return $this->asJson(['message' => 'Not found'])->setStatusCode(404);
         }
 
-        $method = $this->request->getMethod();
-        $errors = [];
+        $form = new PublisherForm();
+        $form->loadFromPublisher($publisher);
 
-        if ($method === Method::POST) {
-            $body = $this->request->getParsedBody();
-            $publisher->setAttributes($body);
-
-            $errors = $validator->validate($publisher);
-            if (empty($errors)) {
-                if ($publisher->save()) {
-                    return $this->response->withStatus(302)->withHeader('Location', '/publisher/view/' . $publisher->id);
-                }
+        $request = Yii::$app->request;
+        if ($request->isPost) {
+            $form->setAttributes($request->post());
+            if ($form->validate()) {
+                $this->publisherService->update($id, $form);
+                return $this->redirect(['/publisher/index']);
             }
         }
 
-        return $this->viewRenderer->render('update', [
-            'publisher' => $publisher,
-            'errors' => $errors,
+        return $this->render('edit', [
+            'model' => $form,
+            'publisherId' => $id,
+            'csrf' => Yii::$app->request->getCsrfToken(),
         ]);
     }
 
-    public function delete(CurrentRoute $currentRoute): Response|string {
-        $id = $currentRoute->getArgument('id');
-        $publisher = Publisher::findOne(['id' => $id]);
-
-        if ($publisher !== null) {
-            $publisher->delete();
-        }
-
-        return $this->response->withStatus(302)->withHeader('Location', '/publisher');
+    public function delete(): Response|string {
+        $id = (int)Yii::$app->request->get('id');
+        $this->publisherService->delete($id);
+        return $this->redirect(['/publisher/index']);
     }
 }

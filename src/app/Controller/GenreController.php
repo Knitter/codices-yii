@@ -9,98 +9,90 @@ declare(strict_types=1);
 
 namespace Codices\Controller;
 
-use Codices\Model\Genre;
+use Codices\Service\GenreService;
+use Codices\View\Facade\GenreForm;
+use Yii;
 use yii\web\Response;
 
-final class GenreController {
+final class GenreController extends CodicesController {
 
-    public function index(CurrentRoute $currentRoute): Response|string {
-        $query = Genre::find()->orderBy(['name' => Sort::SORT_ASC]);
-        $paginator = (new OffsetPaginator($query))
-            ->withPageSize(10)
-            ->withCurrentPage((int)$currentRoute->getArgument('page', '1'));
+    public function __construct($id, $module, private readonly GenreService $genreService, $config = []) {
+        parent::__construct($id, $module, $config);
+    }
 
-        return $this->viewRenderer->render('index', [
+    public function index(): Response|string {
+        $request = Yii::$app->request;
+        $page = (int)$request->get('page', 1);
+        $pageSize = (int)$request->get('per_page', 10);
+        $sort = (string)$request->get('sort', 'name');
+        $direction = (string)$request->get('sort_dir', 'asc');
+
+        $paginator = $this->genreService->list($page, $pageSize, $sort, $direction);
+
+        return $this->render('index', [
             'paginator' => $paginator,
         ]);
     }
 
-    public function view(CurrentRoute $currentRoute): Response|string {
-        $id = $currentRoute->getArgument('id');
-        $genre = Genre::findOne(['id' => $id]);
-
+    public function view(): Response|string {
+        $id = (int)Yii::$app->request->get('id');
+        $genre = $this->genreService->findById($id);
         if ($genre === null) {
-            return $this->viewRenderer->renderWithStatus('_404', [], 404);
+            return $this->asJson(['message' => 'Not found'])->setStatusCode(404);
         }
 
-        return $this->viewRenderer->render('view', [
+        return $this->render('view', [
             'genre' => $genre,
         ]);
     }
 
-    public function create(ValidatorInterface $validator): Response|string {
-        $genre = new Genre();
-        $method = $this->request->getMethod();
-        $errors = [];
-
-        if ($method === Method::POST) {
-            $body = $this->request->getParsedBody();
-            $genre->setAttributes($body);
-
-            // Set the owner ID to the current user
-            $genre->ownedById = 1; // This should be replaced with the current user ID
-
-            $errors = $validator->validate($genre);
-            if (empty($errors)) {
-                if ($genre->save()) {
-                    return $this->response->withStatus(302)->withHeader('Location', '/genre/view/' . $genre->id);
-                }
+    public function add(): Response|string {
+        $form = new GenreForm();
+        $request = Yii::$app->request;
+        if ($request->isPost) {
+            $form->setAttributes($request->post());
+            if ($form->validate()) {
+                $ownerId = 1; // TODO: replace with current user id
+                $this->genreService->create($form, $ownerId);
+                return $this->redirect(['/genre/index']);
             }
         }
 
-        return $this->viewRenderer->render('create', [
-            'genre' => $genre,
-            'errors' => $errors,
+        return $this->render('add', [
+            'model' => $form,
+            'csrf' => Yii::$app->request->getCsrfToken(),
         ]);
     }
 
-    public function update(CurrentRoute $currentRoute, ValidatorInterface $validator): Response|string {
-        $id = $currentRoute->getArgument('id');
-        $genre = Genre::findOne(['id' => $id]);
-
+    public function edit(): Response|string {
+        $id = (int)Yii::$app->request->get('id');
+        $genre = $this->genreService->findById($id);
         if ($genre === null) {
-            return $this->viewRenderer->renderWithStatus('_404', [], 404);
+            return $this->asJson(['message' => 'Not found'])->setStatusCode(404);
         }
 
-        $method = $this->request->getMethod();
-        $errors = [];
+        $form = new GenreForm();
+        $form->loadFromGenre($genre);
 
-        if ($method === Method::POST) {
-            $body = $this->request->getParsedBody();
-            $genre->setAttributes($body);
-
-            $errors = $validator->validate($genre);
-            if (empty($errors)) {
-                if ($genre->save()) {
-                    return $this->response->withStatus(302)->withHeader('Location', '/genre/view/' . $genre->id);
-                }
+        $request = Yii::$app->request;
+        if ($request->isPost) {
+            $form->setAttributes($request->post());
+            if ($form->validate()) {
+                $this->genreService->update($id, $form);
+                return $this->redirect(['/genre/index']);
             }
         }
 
-        return $this->viewRenderer->render('update', [
-            'genre' => $genre,
-            'errors' => $errors,
+        return $this->render('edit', [
+            'model' => $form,
+            'genreId' => $id,
+            'csrf' => Yii::$app->request->getCsrfToken(),
         ]);
     }
 
-    public function delete(CurrentRoute $currentRoute): Response|string {
-        $id = $currentRoute->getArgument('id');
-        $genre = Genre::findOne(['id' => $id]);
-
-        if ($genre !== null) {
-            $genre->delete();
-        }
-
-        return $this->response->withStatus(302)->withHeader('Location', '/genre');
+    public function delete(): Response|string {
+        $id = (int)Yii::$app->request->get('id');
+        $this->genreService->delete($id);
+        return $this->redirect(['/genre/index']);
     }
 }
