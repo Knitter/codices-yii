@@ -11,6 +11,8 @@ namespace Codices\Service;
 
 use Codices\Model\Genre;
 use Codices\Repository\GenreRepositoryInterface;
+use Codices\Query\GenreFilter;
+use Codices\Query\GenreListResult;
 use Codices\View\Facade\GenreForm;
 use RuntimeException;
 
@@ -21,6 +23,10 @@ final readonly class GenreService {
 
     public function list(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array {
         return $this->genres->listPage($page, $pageSize, $sort, $direction);
+    }
+
+    public function search(GenreFilter $filter): GenreListResult {
+        return $this->genres->search($filter);
     }
 
     public function findById(int $id): ?Genre {

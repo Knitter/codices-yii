@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace Codices\Repository;
 
 use Codices\Model\Genre;
+use Codices\Query\GenreFilter;
+use Codices\Query\GenreListResult;
 use yii\db\Exception;
 use yii\db\Expression;
 use yii\db\StaleObjectException;
@@ -57,5 +59,26 @@ final class GenreRepository implements GenreRepositoryInterface {
             'page' => $page,
             'pageSize' => $pageSize,
         ];
+    }
+
+    public function search(GenreFilter $filter): GenreListResult {
+        $allowedSort = ['name' => 'name', 'id' => 'id'];
+        $sortBy = $allowedSort[$filter->sort] ?? 'name';
+        $sortDirection = strtolower($filter->direction) === 'desc' ? SORT_DESC : SORT_ASC;
+
+        $q = Genre::find();
+        if ($filter->name !== null) {
+            $q->andWhere(['like', 'name', $filter->name]);
+        }
+
+        $countQuery = clone $q;
+        $total = (int)$countQuery->select(new Expression('COUNT(*)'))->scalar();
+
+        $items = $q->orderBy([$sortBy => $sortDirection])
+            ->offset(max(0, ($filter->page - 1) * $filter->pageSize))
+            ->limit($filter->pageSize)
+            ->all();
+
+        return new GenreListResult($items, $total, $filter->page, $filter->pageSize);
     }
 }

@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace Codices\Repository;
 
 use Codices\Model\Publisher;
+use Codices\Query\PublisherFilter;
+use Codices\Query\PublisherListResult;
 
 interface PublisherRepositoryInterface {
 
@@ -23,4 +25,6 @@ interface PublisherRepositoryInterface {
      * @return array{items: Publisher[], total: int, page: int, pageSize: int}
      */
     public function listPage(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array;
+
+    public function search(PublisherFilter $filter): PublisherListResult;
 }

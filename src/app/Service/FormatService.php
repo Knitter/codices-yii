@@ -11,6 +11,8 @@ namespace Codices\Service;
 
 use Codices\Model\Format;
 use Codices\Repository\FormatRepositoryInterface;
+use Codices\Query\FormatFilter;
+use Codices\Query\FormatListResult;
 use Codices\View\Facade\FormatForm;
 use RuntimeException;
 
@@ -21,6 +23,10 @@ final readonly class FormatService {
 
     public function list(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array {
         return $this->formats->listPage($page, $pageSize, $sort, $direction);
+    }
+
+    public function search(FormatFilter $filter): FormatListResult {
+        return $this->formats->search($filter);
     }
 
     public function findOne(string $type, string $name, int $ownerId): ?Format {

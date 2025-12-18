@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace Codices\Repository;
 
 use Codices\Model\Format;
+use Codices\Query\FormatFilter;
+use Codices\Query\FormatListResult;
 
 interface FormatRepositoryInterface {
 
@@ -23,4 +25,6 @@ interface FormatRepositoryInterface {
      * @return array{items: Format[], total: int, page: int, pageSize: int}
      */
     public function listPage(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array;
+
+    public function search(FormatFilter $filter): FormatListResult;
 }

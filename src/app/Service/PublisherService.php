@@ -11,6 +11,8 @@ namespace Codices\Service;
 
 use Codices\Model\Publisher;
 use Codices\Repository\PublisherRepositoryInterface;
+use Codices\Query\PublisherFilter;
+use Codices\Query\PublisherListResult;
 use Codices\View\Facade\PublisherForm;
 use RuntimeException;
 
@@ -21,6 +23,10 @@ final readonly class PublisherService {
 
     public function list(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array {
         return $this->publishers->listPage($page, $pageSize, $sort, $direction);
+    }
+
+    public function search(PublisherFilter $filter): PublisherListResult {
+        return $this->publishers->search($filter);
     }
 
     public function findById(int $id): ?Publisher {

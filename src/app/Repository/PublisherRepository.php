@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace Codices\Repository;
 
 use Codices\Model\Publisher;
+use Codices\Query\PublisherFilter;
+use Codices\Query\PublisherListResult;
 use yii\db\Exception;
 use yii\db\Expression;
 use yii\db\StaleObjectException;
@@ -56,5 +58,26 @@ final class PublisherRepository implements PublisherRepositoryInterface {
             'page' => $page,
             'pageSize' => $pageSize,
         ];
+    }
+
+    public function search(PublisherFilter $filter): PublisherListResult {
+        $allowedSort = ['name' => 'name', 'id' => 'id'];
+        $sortBy = $allowedSort[$filter->sort] ?? 'name';
+        $sortDirection = strtolower($filter->direction) === 'desc' ? SORT_DESC : SORT_ASC;
+
+        $q = Publisher::find();
+        if ($filter->name !== null) {
+            $q->andWhere(['like', 'name', $filter->name]);
+        }
+
+        $countQuery = clone $q;
+        $total = (int)$countQuery->select(new Expression('COUNT(*)'))->scalar();
+
+        $items = $q->orderBy([$sortBy => $sortDirection])
+            ->offset(max(0, ($filter->page - 1) * $filter->pageSize))
+            ->limit($filter->pageSize)
+            ->all();
+
+        return new PublisherListResult($items, $total, $filter->page, $filter->pageSize);
     }
 }

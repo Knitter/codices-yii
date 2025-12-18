@@ -11,6 +11,8 @@ namespace Codices\Service;
 
 use Codices\Model\Series;
 use Codices\Repository\SeriesRepositoryInterface;
+use Codices\Query\SeriesFilter;
+use Codices\Query\SeriesListResult;
 use Codices\View\Facade\SeriesForm;
 use RuntimeException;
 
@@ -21,6 +23,10 @@ final readonly class SeriesService {
 
     public function list(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array {
         return $this->seriesRepo->listPage($page, $pageSize, $sort, $direction);
+    }
+
+    public function search(SeriesFilter $filter): SeriesListResult {
+        return $this->seriesRepo->search($filter);
     }
 
     public function findById(int $id): ?Series {

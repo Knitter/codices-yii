@@ -11,6 +11,8 @@ namespace Codices\Service;
 
 use Codices\Model\Collection;
 use Codices\Repository\CollectionRepositoryInterface;
+use Codices\Query\CollectionFilter;
+use Codices\Query\CollectionListResult;
 use Codices\View\Facade\CollectionForm;
 use RuntimeException;
 
@@ -21,6 +23,10 @@ final readonly class CollectionService {
 
     public function list(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array {
         return $this->collections->listPage($page, $pageSize, $sort, $direction);
+    }
+
+    public function search(CollectionFilter $filter): CollectionListResult {
+        return $this->collections->search($filter);
     }
 
     public function findById(int $id): ?Collection {

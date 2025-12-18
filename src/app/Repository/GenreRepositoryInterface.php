@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace Codices\Repository;
 
 use Codices\Model\Genre;
+use Codices\Query\GenreFilter;
+use Codices\Query\GenreListResult;
 
 interface GenreRepositoryInterface {
 
@@ -23,4 +25,6 @@ interface GenreRepositoryInterface {
      * @return array{items: Genre[], total: int, page: int, pageSize: int}
      */
     public function listPage(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array;
+
+    public function search(GenreFilter $filter): GenreListResult;
 }

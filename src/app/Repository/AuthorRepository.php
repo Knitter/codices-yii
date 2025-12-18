@@ -10,6 +10,9 @@ declare(strict_types=1);
 namespace Codices\Repository;
 
 use Codices\Model\Author;
+use Codices\Query\AuthorFilter;
+use Codices\Query\AuthorListResult;
+use yii\db\Expression;
 use yii\db\Exception;
 use yii\db\StaleObjectException;
 
@@ -59,5 +62,29 @@ final class AuthorRepository implements AuthorRepositoryInterface {
             'page' => $page,
             'pageSize' => $pageSize,
         ];
+    }
+
+    public function search(AuthorFilter $filter): AuthorListResult {
+        $allowedSort = ['name' => 'name', 'id' => 'id'];
+        $sortBy = $allowedSort[$filter->sort] ?? 'name';
+        $sortDirection = strtolower($filter->direction) === 'desc' ? SORT_DESC : SORT_ASC;
+
+        $q = Author::find();
+        if ($filter->name !== null) {
+            $q->andWhere(['or',
+                ['like', 'name', $filter->name],
+                ['like', 'surname', $filter->name],
+            ]);
+        }
+
+        $countQuery = clone $q;
+        $total = (int)$countQuery->select(new Expression('COUNT(*)'))->scalar();
+
+        $items = $q->orderBy([$sortBy => $sortDirection])
+            ->offset(max(0, ($filter->page - 1) * $filter->pageSize))
+            ->limit($filter->pageSize)
+            ->all();
+
+        return new AuthorListResult($items, $total, $filter->page, $filter->pageSize);
     }
 }

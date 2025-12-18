@@ -11,6 +11,8 @@ namespace Codices\Service;
 
 use Codices\Model\Author;
 use Codices\Repository\AuthorRepositoryInterface;
+use Codices\Query\AuthorFilter;
+use Codices\Query\AuthorListResult;
 use Codices\View\Facade\AuthorForm;
 use RuntimeException;
 
@@ -21,6 +23,10 @@ final readonly class AuthorService {
 
     public function list(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array {
         return $this->authors->listPage($page, $pageSize, $sort, $direction);
+    }
+
+    public function search(AuthorFilter $filter): AuthorListResult {
+        return $this->authors->search($filter);
     }
 
     public function findById(int $id): ?Author {

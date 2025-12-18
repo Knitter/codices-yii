@@ -30,6 +30,10 @@ $config = [
     'language' => 'en-US',
     'name' => 'Codices',
     //
+    'aliases' => [
+        '@bower' => '@root/vendor/bower-asset',
+        '@npm' => '@root/vendor/npm-asset',
+    ],
     'bootstrap' => $bootstrap,
     'components' => $components,
     'container' => $container,

@@ -4,19 +4,18 @@ declare(strict_types=1);
 
 /**
  * @var \yii\web\View $this
- * @var array{items: \Codices\Model\Genre[], total: int, page: int, pageSize: int} $paginator
+ * @var \yii\data\ArrayDataProvider $dataProvider
+ * @var \Codices\Query\GenreFilter $filter
+ * @var array $queryParams
  */
 
+use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\widgets\ActiveForm;
 
 $this->title = Yii::t('codices', 'Genres');
 
-$items = $paginator['items'] ?? [];
-$total = (int)($paginator['total'] ?? 0);
-$page = max(1, (int)($paginator['page'] ?? 1));
-$pageSize = max(1, (int)($paginator['pageSize'] ?? 10));
-$pages = max(1, (int)ceil($total / $pageSize));
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -29,61 +28,93 @@ $pages = max(1, (int)ceil($total / $pageSize));
     </a>
     </div>
 
-<div class="card border-0 shadow-sm">
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead>
-                <tr>
-                    <th class="px-4">Name</th>
-                    <th class="text-end px-4" style="width: 160px">Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php if (!$items): ?>
-                    <tr>
-                        <td colspan="2" class="text-center text-muted py-4">No genres found.</td>
-                    </tr>
-                <?php else: ?>
-                    <?php foreach ($items as $genre): ?>
-                        <tr>
-                            <td class="px-4">
-                                <a href="<?= Url::to(['genre/view', 'id' => $genre->id]) ?>" class="text-decoration-none">
-                                    <?= Html::encode($genre->name) ?>
-                                </a>
-                            </td>
-                            <td class="text-end px-4">
-                                <a class="btn btn-sm btn-outline-secondary" href="<?= Url::to(['genre/edit', 'id' => $genre->id]) ?>">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                                <a class="btn btn-sm btn-outline-danger ms-1" href="<?= Url::to(['genre/delete', 'id' => $genre->id]) ?>"
-                                   onclick="return confirm('Delete this genre?');">
-                                    <i class="bi bi-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-                </tbody>
-            </table>
+<div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+        <?php $form = ActiveForm::begin([
+            'method' => 'get',
+            'action' => ['genre/index'],
+            'options' => ['class' => 'row g-2 align-items-end'],
+        ]); ?>
+        <div class="col-md-4">
+            <label class="form-label fw-semibold">Name</label>
+            <input type="text" name="name" value="<?= Html::encode($filter->name ?? '') ?>" class="form-control"
+                   placeholder="e.g., Science Fiction">
         </div>
+        <div class="col-md-2">
+            <label class="form-label fw-semibold">Per page</label>
+            <select name="per_page" class="form-select">
+                <?php foreach ([10, 20, 50, 100] as $ps): ?>
+                    <option value="<?= $ps ?>" <?= $filter->pageSize === $ps ? 'selected' : '' ?>><?= $ps ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label fw-semibold">Sort</label>
+            <select name="sort" class="form-select">
+                <option value="name" <?= $filter->sort === 'name' ? 'selected' : '' ?>>Name</option>
+                <option value="id" <?= $filter->sort === 'id' ? 'selected' : '' ?>>ID</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label fw-semibold">Direction</label>
+            <select name="sort_dir" class="form-select">
+                <option value="asc" <?= $filter->direction === 'asc' ? 'selected' : '' ?>>Asc</option>
+                <option value="desc" <?= $filter->direction === 'desc' ? 'selected' : '' ?>>Desc</option>
+            </select>
+        </div>
+        <div class="col-md-2 text-end">
+            <button type="submit" class="btn btn-outline-secondary">
+                <i class="bi bi-search me-1"></i> Search
+            </button>
+        </div>
+        <?php ActiveForm::end(); ?>
     </div>
 </div>
 
-<?php if ($pages > 1): ?>
-    <nav aria-label="Genres pagination" class="mt-3">
-        <ul class="pagination mb-0">
-            <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">
-                <a class="page-link" href="<?= Url::to(['genre/index', 'page' => $page - 1]) ?>">Previous</a>
-            </li>
-            <?php for ($p = 1; $p <= $pages; $p++): ?>
-                <li class="page-item <?= $p === $page ? 'active' : '' ?>">
-                    <a class="page-link" href="<?= Url::to(['genre/index', 'page' => $p]) ?>"><?= $p ?></a>
-                </li>
-            <?php endfor; ?>
-            <li class="page-item <?= $page >= $pages ? 'disabled' : '' ?>">
-                <a class="page-link" href="<?= Url::to(['genre/index', 'page' => $page + 1]) ?>">Next</a>
-            </li>
-        </ul>
-    </nav>
-<?php endif; ?>
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <?= GridView::widget([
+            'dataProvider' => $dataProvider,
+            'tableOptions' => ['class' => 'table table-hover align-middle mb-0'],
+            'layout' => "{items}\n<div class=\"p-3\">{pager}</div>",
+            'columns' => [
+                [
+                    'attribute' => 'id',
+                    'contentOptions' => ['class' => 'px-4 text-muted', 'style' => 'width: 100px'],
+                ],
+                [
+                    'attribute' => 'name',
+                    'format' => 'raw',
+                    'contentOptions' => ['class' => 'px-4'],
+                    'value' => static function ($model) {
+                        $url = Url::to(['genre/view', 'id' => $model->id]);
+                        return Html::a(Html::encode($model->name), $url, ['class' => 'text-decoration-none']);
+                    },
+                ],
+                [
+                    'class' => 'yii\\grid\\ActionColumn',
+                    'header' => 'Actions',
+                    'headerOptions' => ['class' => 'text-end px-4', 'style' => 'width: 160px'],
+                    'contentOptions' => ['class' => 'text-end px-4'],
+                    'template' => '{edit} {delete}',
+                    'buttons' => [
+                        'edit' => static function ($url, $model) {
+                            $url = Url::to(['genre/edit', 'id' => $model->id]);
+                            return Html::a('<i class="bi bi-pencil"></i>', $url, ['class' => 'btn btn-sm btn-outline-secondary']);
+                        },
+                        'delete' => static function ($url, $model) {
+                            $url = Url::to(['genre/delete', 'id' => $model->id]);
+                            return Html::a('<i class="bi bi-trash"></i>', $url, [
+                                'class' => 'btn btn-sm btn-outline-danger ms-1',
+                                'data-confirm' => 'Delete this genre?',
+                            ]);
+                        },
+                    ],
+                ],
+            ],
+            'pager' => [
+                'options' => ['class' => 'pagination mb-0'],
+            ],
+        ]); ?>
+    </div>
+</div>

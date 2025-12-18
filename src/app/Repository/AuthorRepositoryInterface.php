@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace Codices\Repository;
 
 use Codices\Model\Author;
+use Codices\Query\AuthorFilter;
+use Codices\Query\AuthorListResult;
 
 interface AuthorRepositoryInterface {
 
@@ -23,4 +25,6 @@ interface AuthorRepositoryInterface {
      * @return array{items: Author[], total: int, page: int, pageSize: int}
      */
     public function listPage(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array;
+
+    public function search(AuthorFilter $filter): AuthorListResult;
 }

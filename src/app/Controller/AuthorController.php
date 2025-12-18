@@ -11,7 +11,9 @@ namespace Codices\Controller;
 
 use Codices\Service\AuthorService;
 use Codices\View\Facade\AuthorForm;
+use Codices\Query\AuthorFilter;
 use Yii;
+use yii\data\ArrayDataProvider;
 use yii\web\Response;
 
 final class AuthorController extends CodicesController {
@@ -21,16 +23,44 @@ final class AuthorController extends CodicesController {
     }
 
     public function index(): Response|string {
-        $request = Yii::$app->request;
-        $page = (int)$request->get('page', 1);
-        $pageSize = (int)$request->get('per_page', 10);
-        $sort = (string)$request->get('sort', 'name');
-        $direction = (string)$request->get('sort_dir', 'asc');
+        $queryParams = Yii::$app->request->get();
+        $filter = AuthorFilter::fromArray($queryParams);
+        $result = $this->authorService->search($filter);
 
-        $paginator = $this->authorService->list($page, $pageSize, $sort, $direction);
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $result->items,
+            'totalCount' => $result->total,
+            'pagination' => [
+                'pageSize' => $result->pageSize,
+                'page' => $result->page - 1,
+                'pageParam' => 'page',
+                'pageSizeParam' => 'per_page',
+            ],
+            'sort' => [
+                'attributes' => [
+                    'name' => [
+                        'asc' => ['name' => SORT_ASC],
+                        'desc' => ['name' => SORT_DESC],
+                        'default' => SORT_ASC,
+                        'label' => 'Name',
+                    ],
+                    'id' => [
+                        'asc' => ['id' => SORT_ASC],
+                        'desc' => ['id' => SORT_DESC],
+                        'label' => 'ID',
+                    ],
+                ],
+                'defaultOrder' => [
+                    $filter->sort => $filter->direction === 'desc' ? SORT_DESC : SORT_ASC,
+                ],
+                'sortParam' => 'sort',
+            ],
+        ]);
 
         return $this->render('index', [
-            'paginator' => $paginator,
+            'dataProvider' => $dataProvider,
+            'filter' => $filter,
+            'queryParams' => $queryParams,
         ]);
     }
 

@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace Codices\Repository;
 
 use Codices\Model\Collection;
+use Codices\Query\CollectionFilter;
+use Codices\Query\CollectionListResult;
 
 interface CollectionRepositoryInterface {
 
@@ -23,4 +25,6 @@ interface CollectionRepositoryInterface {
      * @return array{items: Collection[], total: int, page: int, pageSize: int}
      */
     public function listPage(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array;
+
+    public function search(CollectionFilter $filter): CollectionListResult;
 }

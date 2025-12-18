@@ -19,7 +19,7 @@ use Codices\Model\Publisher;
 use Codices\Model\Series;
 use yii\web\Response;
 
-final class ItemController extends CodicesController {
+final class ItemController extends CodicesController{
 
     public function index(CurrentRoute $currentRoute): Response|string {
         $query = Item::find()->orderBy(['title' => Sort::SORT_ASC]);
