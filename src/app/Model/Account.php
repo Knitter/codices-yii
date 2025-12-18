@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Codices\Model;
 
+use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
@@ -50,23 +51,29 @@ final class Account extends ActiveRecord {
 
         if ($insert) {
             $this->createdOn = time();
+            if (empty($this->authKey)) {
+                $this->generateAuthKey();
+            }
         }
 
         $this->updatedOn = time();
-        //TODO: Fix hash password generation
-        //if ($this->isAttributeChanged('password')) {
-        //    $this->password = new PasswordHasher()->hash($this->password);
-        //}
+        // Hash password if it was changed and is non-empty (plain text provided via form)
+        if ($this->isAttributeChanged('password') && $this->password !== '') {
+            $this->password = Yii::$app->security->generatePasswordHash($this->password);
+        }
 
         return true;
     }
 
     public function validatePassword(string $password): bool {
-        return false; //TODO: return new PasswordHasher()->validate($password, $this->password);
+        if ($this->password === '') {
+            return false;
+        }
+        return Yii::$app->security->validatePassword($password, $this->password);
     }
 
     public function generateAuthKey(): void {
-        //TODO: $this->authKey = Random::string(32);
+        $this->authKey = Yii::$app->security->generateRandomString(32);
     }
 
     // Relationships

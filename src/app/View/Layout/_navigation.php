@@ -57,6 +57,14 @@ use yii\helpers\Url;
                                 <i class="bi bi-headphones me-2"></i> <?= Yii::t('codices', 'Audiobooks') ?>
                             </a>
                         </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="<?= Url::to('/item/import') ?>">
+                                <i class="bi bi-tablet me-2"></i> <?= Yii::t('codices', 'Import...') ?>
+                            </a>
+                        </li>
                     </ul>
                 </li>
 

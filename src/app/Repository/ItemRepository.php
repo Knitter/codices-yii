@@ -61,6 +61,10 @@ final class ItemRepository implements ItemRepositoryInterface {
                 'i.rating' => $filter->rating
             ]);
 
+        if ($filter->type !== null) {
+            $q->andWhere(['i.type' => $filter->type]);
+        }
+
         if ($filter->yearFrom !== null) {
             $q->andWhere(['>=', 'i.publishYear', $filter->yearFrom]);
         }

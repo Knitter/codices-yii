@@ -19,6 +19,7 @@ final readonly class ItemFilter {
         public ?int    $yearFrom = null,
         public ?int    $yearTo = null,
         public ?int    $rating = null,
+        public ?string $type = null,
         public string  $sort = 'title',
         public string  $direction = 'asc', //TODO: Replace with SORT_ASC|SORT_DESC PHP constants
         public int     $page = 1,
@@ -40,6 +41,12 @@ final readonly class ItemFilter {
         $yearFrom = self::toIntOrNull($query['year_from'] ?? ($query['yearFrom'] ?? null));
         $yearTo = self::toIntOrNull($query['year_to'] ?? ($query['yearTo'] ?? null));
         $rating = self::toIntOrNull($query['rating'] ?? null);
+        $type = self::nullIfEmpty($query['type'] ?? null);
+        // allow only known types
+        $allowedTypes = ['paper', 'ebook', 'audio'];
+        if ($type !== null && !in_array($type, $allowedTypes, true)) {
+            $type = null;
+        }
         $sort = in_array(($query['sort'] ?? 'title'), ['title', 'publishYear', 'rating', 'addedOn'], true)
             ? $query['sort']
             : 'title';
@@ -50,7 +57,7 @@ final readonly class ItemFilter {
         $pageSize = max(1, min(100, (int)($query['per_page'] ?? ($query['pageSize'] ?? 20))));
 
         return new self(
-            $title, $authorName, $genreId, $publisherId, $yearFrom, $yearTo, $rating, $sort, $direction,
+            $title, $authorName, $genreId, $publisherId, $yearFrom, $yearTo, $rating, $type, $sort, $direction,
             $page, $pageSize
         );
     }

@@ -16,6 +16,8 @@ use Codices\Repository\AuthorRepository;
 use Codices\Repository\AuthorRepositoryInterface;
 use Codices\Repository\FormatRepository;
 use Codices\Repository\FormatRepositoryInterface;
+use Codices\Repository\AccountRepository;
+use Codices\Repository\AccountRepositoryInterface;
 use Codices\Service\SearchService;
 use Codices\Service\ItemService;
 use Codices\Service\GenreService;
@@ -24,6 +26,7 @@ use Codices\Service\SeriesService;
 use Codices\Service\CollectionService;
 use Codices\Service\AuthorService;
 use Codices\Service\FormatService;
+use Codices\Service\AccountService;
 
 return [
     'definitions' => [
@@ -35,6 +38,7 @@ return [
         CollectionRepositoryInterface::class => CollectionRepository::class,
         AuthorRepositoryInterface::class => AuthorRepository::class,
         FormatRepositoryInterface::class => FormatRepository::class,
+        AccountRepositoryInterface::class => AccountRepository::class,
 
         // Services
         SearchService::class => SearchService::class,
@@ -45,5 +49,6 @@ return [
         CollectionService::class => CollectionService::class,
         AuthorService::class => AuthorService::class,
         FormatService::class => FormatService::class,
+        AccountService::class => AccountService::class,
     ],
 ];
