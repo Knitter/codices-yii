@@ -15,10 +15,11 @@ $config = [
         ]
     ],
     'user' => [
-        'identityClass' => 'core\components\Identity',
+        // Yii2 identity implemented by a dedicated wrapper around Account
+        'identityClass' => 'Codices\\Security\\CodicesIdentity',
         'enableSession' => true,
-        'enableAutoLogin' => false,
-        'loginUrl' => ['app/login'],
+        'enableAutoLogin' => true,
+        'loginUrl' => ['/app/login'],
     ],
     'errorHandler' => [
         'errorAction' => 'app/error',

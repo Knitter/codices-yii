@@ -62,7 +62,7 @@ use yii\helpers\Url;
                         </li>
                         <li>
                             <a class="dropdown-item" href="<?= Url::to('/item/import') ?>">
-                                <i class="bi bi-tablet me-2"></i> <?= Yii::t('codices', 'Import...') ?>
+                                <i class="bi bi-upload"></i> <?= Yii::t('codices', 'Import...') ?>
                             </a>
                         </li>
                     </ul>
@@ -104,6 +104,14 @@ use yii\helpers\Url;
                                 <i class="bi bi-file-earmark-fill me-2"></i> <?= Yii::t('codices', 'Formats') ?>
                             </a>
                         </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="<?= Url::to('/account/import') ?>">
+                                <i class="bi bi-people me-2"></i> <?= Yii::t('codices', 'Accounts') ?>
+                            </a>
+                        </li>
                     </ul>
                 </li>
             </ul>
@@ -123,27 +131,35 @@ use yii\helpers\Url;
 
             <!-- User Menu -->
             <ul class="navbar-nav">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                       aria-expanded="false">
-                        <i class="bi bi-person-circle me-1"></i> <?= Yii::t('codices', 'Account') ?>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li>
-                            <a class="dropdown-item" href="<?= Url::to('/account/index') ?>">
-                                <i class="bi bi-person-gear me-2"></i> <?= Yii::t('codices', 'Profile') ?>
-                            </a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                <i class="bi bi-box-arrow-right me-2"></i> <?= Yii::t('codices', 'Logout') ?>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+                <?php if (Yii::$app->user->isGuest): ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= Url::to('/app/login') ?>">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> <?= Yii::t('codices', 'Login') ?>
+                        </a>
+                    </li>
+                <?php else: ?>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            <i class="bi bi-person-circle me-1"></i> <?= Yii::t('codices', 'Account') ?>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="<?= Url::to('/profile/view') ?>">
+                                    <i class="bi bi-person-gear me-2"></i> <?= Yii::t('codices', 'Profile') ?>
+                                </a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="<?= Url::to('/app/logout') ?>" data-method="post">
+                                    <i class="bi bi-box-arrow-right me-2"></i> <?= Yii::t('codices', 'Logout') ?>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                <?php endif; ?>
             </ul>
         </div>
     </div>

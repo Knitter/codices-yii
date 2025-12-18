@@ -104,4 +104,6 @@ final class Account extends ActiveRecord {
     public function getItems(): ActiveQuery {
         return $this->hasMany(Item::class, ['ownedById' => 'id']);
     }
+
+    // IdentityInterface implementation moved to Codices\Security\CodicesIdentity
 }

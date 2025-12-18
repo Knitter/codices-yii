@@ -27,6 +27,7 @@ use Codices\Service\CollectionService;
 use Codices\Service\AuthorService;
 use Codices\Service\FormatService;
 use Codices\Service\AccountService;
+use Codices\Service\ImportService;
 
 return [
     'definitions' => [
@@ -50,5 +51,6 @@ return [
         AuthorService::class => AuthorService::class,
         FormatService::class => FormatService::class,
         AccountService::class => AccountService::class,
+        ImportService::class => ImportService::class,
     ],
 ];

@@ -5,11 +5,13 @@ declare(strict_types=1);
 /**
  * @var yii\web\View $this
  * @var string|null $csrf
- * @var array $errors
- * @var string $username
+ * @var \Codices\View\Facade\LoginForm $model
  */
 
-$this->title = Yii::t('codices', 'Codices: Login') ?>;
+use yii\helpers\Html;
+use yii\widgets\ActiveForm;
+
+$this->title = Yii::t('codices', 'Codices: Login');
 ?>
 <div class="container-fluid p-0">
     <div class="row g-0 login-container">
@@ -71,50 +73,47 @@ $this->title = Yii::t('codices', 'Codices: Login') ?>;
                         <p class="text-muted">Sign in to access your library</p>
                     </div>
 
-                    <?php if (!empty($errors ?? [])): ?>
-                        <div class="alert alert-danger" role="alert">
-                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                            <?php foreach ($errors as $error): ?>
-                                <div><?php //= Html::encode($error) ?></div>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
-
-                    <form method="post" action="<?php //= $urlGenerator->generate('account/login') ?>">
-                        <?php //= Html::hiddenInput('_csrf', $csrf) ?>
+                    <?php $form = ActiveForm::begin(['options' => ['novalidate' => true]]); ?>
+                        <input type="hidden" name="_csrf" value="<?= Html::encode($csrf ?? Yii::$app->request->getCsrfToken()) ?>">
 
                         <div class="form-floating mb-3">
-                            <input type="text"
-                                   class="form-control"
-                                   id="username"
-                                   name="username"
-                                   value="<?php //= Html::encode($username ?? '') ?>"
-                                   placeholder="Username"
-                                   required
-                                   autocomplete="username">
+                            <?= Html::activeTextInput($model, 'usernameOrEmail', [
+                                'class' => 'form-control',
+                                'id' => 'username',
+                                'placeholder' => 'Username or Email',
+                                'required' => true,
+                                'autocomplete' => 'username',
+                            ]) ?>
                             <label for="username">
-                                <i class="bi bi-person me-2"></i>Username
+                                <i class="bi bi-person me-2"></i>Username or Email
                             </label>
+                            <?php if ($model->hasErrors('usernameOrEmail')): ?>
+                                <div class="text-danger small mt-1"><?= Html::encode(implode(' ', $model->getErrors('usernameOrEmail'))) ?></div>
+                            <?php endif; ?>
                         </div>
 
                         <div class="form-floating mb-4">
-                            <input type="password"
-                                   class="form-control"
-                                   id="password"
-                                   name="password"
-                                   placeholder="Password"
-                                   required
-                                   autocomplete="current-password">
+                            <?= Html::activePasswordInput($model, 'password', [
+                                'class' => 'form-control',
+                                'id' => 'password',
+                                'placeholder' => 'Password',
+                                'required' => true,
+                                'autocomplete' => 'current-password',
+                            ]) ?>
                             <label for="password">
                                 <i class="bi bi-lock me-2"></i>Password
                             </label>
+                            <?php if ($model->hasErrors('password')): ?>
+                                <div class="text-danger small mt-1"><?= Html::encode(implode(' ', $model->getErrors('password'))) ?></div>
+                            <?php endif; ?>
                         </div>
 
                         <div class="form-check mb-4">
-                            <input class="form-check-input" type="checkbox" id="remember" name="remember">
-                            <label class="form-check-label" for="remember">
-                                Remember me
-                            </label>
+                            <?= Html::activeCheckbox($model, 'rememberMe', [
+                                'class' => 'form-check-input',
+                                'id' => 'remember',
+                                'label' => 'Remember me',
+                            ]) ?>
                         </div>
 
                         <div class="d-grid mb-3">
@@ -130,7 +129,7 @@ $this->title = Yii::t('codices', 'Codices: Login') ?>;
                                 Forgot your password?
                             </a>
                         </div>
-                    </form>
+                    <?php ActiveForm::end(); ?>
 
                     <hr class="my-4">
 

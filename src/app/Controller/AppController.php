@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Codices\Controller;
 
+use Codices\View\Facade\LoginForm;
+use Yii;
 use yii\web\Response;
 
 final class AppController extends CodicesController {
@@ -18,34 +20,26 @@ final class AppController extends CodicesController {
     }
 
     public function login(): Response|string {
-        $this->viewRenderer = $this->viewRenderer->withLayout('@layout/auth');
-        $method = $this->request->getMethod();
-        $errors = [];
-        $username = '';
+        $request = Yii::$app->request;
+        $user = Yii::$app->user;
 
-        if ($method === Method::POST) {
-            $body = $this->request->getParsedBody();
-            $username = $body['username'] ?? '';
-            $password = $body['password'] ?? '';
-
-            if (empty($username) || empty($password)) {
-                $errors[] = 'Username and password are required.';
-            } else {
-                // Find user by username
-                $account = Account::findOne(['username' => $username]);
-
-                if ($account && $account->validatePassword($password)) {
-                    // Login successful - redirect to dashboard
-                    return $this->response->withStatus(302)->withHeader('Location', '/');
-                } else {
-                    $errors[] = 'Invalid username or password.';
-                }
-            }
+        if (!$user->isGuest) {
+            return $this->goHome();
         }
 
-        return $this->render('login', [
-            'errors' => $errors,
-            'username' => $username,
+        $model = new LoginForm();
+        if ($model->load($request->post()) && $model->login()) {
+            return $this->goBack('/');
+        }
+
+        return $this->render('//app/login', [
+            'model' => $model,
+            'csrf' => $request->getCsrfToken(),
         ]);
+    }
+
+    public function logout(): Response {
+        Yii::$app->user->logout();
+        return $this->redirect(['/app/index']);
     }
 }

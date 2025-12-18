@@ -13,8 +13,12 @@ use Codices\Model\Item;
 use Codices\Query\ItemFilter;
 use Codices\Service\ItemService;
 use Codices\Service\SearchService;
+use Codices\Service\ImportService;
+use Codices\View\Facade\ImportUploadForm;
+use Codices\View\Facade\ImportSelectionForm;
 use Yii;
 use yii\web\Response;
+use yii\web\UploadedFile;
 
 final class ItemController extends CodicesController {
 
@@ -23,6 +27,7 @@ final class ItemController extends CodicesController {
         $module,
         private readonly SearchService $searchService,
         private readonly ItemService   $itemService,
+        private readonly ImportService $importService,
         $config = []
     ) {
         parent::__construct($id, $module, $config);
@@ -68,6 +73,93 @@ final class ItemController extends CodicesController {
         $id = (int)Yii::$app->request->get('id');
         $this->itemService->delete($id);
         return $this->redirect(['/book/index']);
+    }
+
+    public function import(): Response|string {
+        $request = Yii::$app->request;
+        $session = Yii::$app->session;
+
+        if ($request->isGet) {
+            $form = new ImportUploadForm();
+            return $this->render('//item/import_upload', [
+                'model' => $form,
+                'csrf' => $request->getCsrfToken(),
+            ]);
+        }
+
+        if ($request->isPost) {
+            $stage = (string)$request->post('stage', 'upload');
+            if ($stage === 'upload') {
+                $form = new ImportUploadForm();
+                $form->format = (string)$request->post('format', ImportUploadForm::FORMAT_GENERIC_CSV);
+                $form->file = UploadedFile::getInstanceByName('file');
+                if ($form->validate()) {
+                    // Save uploaded file
+                    $uploads = Yii::getAlias('@root/runtime/uploads');
+                    if (!is_dir($uploads)) {
+                        @mkdir($uploads, 0777, true);
+                    }
+                    $target = $uploads . DIRECTORY_SEPARATOR . uniqid('import_', true) . '.' . $form->file->extension;
+                    $form->file->saveAs($target, false);
+
+                    // Build preview based on selected format
+                    switch ($form->format) {
+                        case ImportUploadForm::FORMAT_GENERIC_CSV:
+                            $preview = $this->importService->buildPreviewFromGenericCsv($target);
+                            break;
+                        case ImportUploadForm::FORMAT_CALIBRE_CSV:
+                            $preview = $this->importService->buildPreviewFromCalibreCsv($target);
+                            break;
+                        case ImportUploadForm::FORMAT_CODICES_JSON:
+                            $preview = $this->importService->buildPreviewFromCodicesJson($target);
+                            break;
+                        default:
+                            throw new \RuntimeException('Unsupported format');
+                    }
+                    $session->set('import/' . $preview->id, $preview->toArray());
+
+                    return $this->render('//item/import_review', [
+                        'preview' => $preview,
+                        'csrf' => $request->getCsrfToken(),
+                    ]);
+                }
+
+                return $this->render('//item/import_upload', [
+                    'model' => $form,
+                    'csrf' => $request->getCsrfToken(),
+                ]);
+            }
+
+            if ($stage === 'process') {
+                $sel = new ImportSelectionForm();
+                $sel->importId = (string)$request->post('importId', '');
+                $sel->selected = array_map('intval', (array)$request->post('selected', []));
+                if ($sel->validate()) {
+                    $data = $session->get('import/' . $sel->importId);
+                    if ($data === null) {
+                        return $this->asJson(['message' => 'Import session expired'])->setStatusCode(400);
+                    }
+                    $preview = \Codices\Import\ImportPreview::fromArray($data);
+                    $ownerId = 1; // TODO: replace with authenticated user id
+                    $result = $this->importService->importFromPreview($preview, $sel->selected, $ownerId);
+                    $session->remove('import/' . $sel->importId);
+                    Yii::$app->session->setFlash('success', sprintf('Imported %d item(s), skipped %d.', $result->imported, $result->skipped));
+                    if ($result->errors) {
+                        Yii::$app->session->setFlash('warning', 'Some rows failed: ' . implode('; ', $result->errors));
+                    }
+                    return $this->redirect(['/book/index']);
+                }
+
+                // Validation failed; re-render upload
+                $form = new ImportUploadForm();
+                return $this->render('//item/import_upload', [
+                    'model' => $form,
+                    'csrf' => $request->getCsrfToken(),
+                ]);
+            }
+        }
+
+        return $this->asJson(['message' => 'Bad request'])->setStatusCode(400);
     }
 
     private function renderBooksByType(?string $type): Response|string {
