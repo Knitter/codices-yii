@@ -15,7 +15,7 @@ final readonly class AccountFilter {
         public ?string $username = null,
         public ?string $email = null,
         public ?string $name = null,
-        public ?int    $active = null, // 1, 0 or null (all)
+        public ?string $active = null, // yes, no or null (all)
         public string  $sort = 'username',
         public string  $direction = 'asc',
         public int     $page = 1,
@@ -34,15 +34,11 @@ final readonly class AccountFilter {
         $activeParam = $query['active'] ?? null;
         $active = null;
         if ($activeParam !== null && $activeParam !== '') {
-            $active = (int)$activeParam;
-            if ($active !== 0 && $active !== 1) {
-                $active = null;
-            }
+            $active = $activeParam === 'yes' ? 1 : ($activeParam === 'no' ? 0 : null);
         }
 
-        $allowedSort = ['id', 'username', 'email', 'name'];
-        $sort = in_array(($query['sort'] ?? 'username'), $allowedSort, true)
-            ? (string)$query['sort']
+        $sort = in_array(($query['sort'] ?? 'username'), ['id', 'username', 'email', 'name'], true)
+            ? !empty($query['sort']) ? (string)$query['sort'] : 'username'
             : 'username';
 
         $direction = strtolower((string)($query['sort_dir'] ?? ($query['direction'] ?? 'asc')));

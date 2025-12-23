@@ -10,6 +10,10 @@ declare(strict_types=1);
 namespace Codices\Service;
 
 use Codices\Model\Item;
+use Codices\Query\ItemFilter;
+use Codices\Query\ItemSearchResult;
+use Codices\Query\PublisherFilter;
+use Codices\Query\PublisherListResult;
 use Codices\Repository\ItemRepositoryInterface;
 use Codices\View\Facade\BookForm;
 use RuntimeException;
@@ -24,6 +28,14 @@ final readonly class ItemService {
         private ItemRepositoryInterface $items,
         private Connection              $db
     ) {
+    }
+
+    public function list(int $page = 1, int $pageSize = 10, string $sort = 'title', string $direction = 'asc'): array {
+        return $this->items->list($page, $pageSize, $sort, $direction);
+    }
+
+    public function search(ItemFilter $filter): ItemSearchResult {
+        return $this->items->search($filter);
     }
 
     /**

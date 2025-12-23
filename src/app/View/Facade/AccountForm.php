@@ -26,16 +26,12 @@ final class AccountForm extends Model {
     public function rules(): array {
         return [
             [['username', 'email', 'name'], 'required'],
-            [['username', 'email', 'name'], 'string', 'max' => 255],
-            ['email', 'email'],
-            ['active', 'boolean'],
-
-            // Password required on create (id is null)
-            ['password', 'required', 'when' => function () { return $this->id === null; }],
-            // Minimum length when provided
-            ['password', 'string', 'min' => 6],
-            // Confirm password matches when password provided
-            ['confirmPassword', 'compare', 'compareAttribute' => 'password', 'skipOnEmpty' => true],
+            [['username', 'name'], 'string', 'max' => 255],
+            [['email'], 'email'],
+            [['active'], 'boolean'],
+            [['password'], 'required', 'when' => fn() => $this->id === null],
+            [['password'], 'string', 'min' => 12],
+            [['confirmPassword'], 'compare', 'compareAttribute' => 'password', 'skipOnEmpty' => true],
         ];
     }
 
@@ -69,7 +65,6 @@ final class AccountForm extends Model {
         $account->name = $this->name;
         $account->active = $this->active ? 1 : 0;
         if ($this->password !== '') {
-            // Assign plain password; AR will hash on save in beforeSave()
             $account->password = $this->password;
         }
         return $account;

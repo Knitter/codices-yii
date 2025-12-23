@@ -11,6 +11,9 @@ use yii\base\Model;
 
 final class LoginForm extends Model {
 
+    // 30 days
+    private const int DEFAULT_DURATION = (3600 * 24 * 30);
+
     public string $usernameOrEmail = '';
     public string $password = '';
     public bool $rememberMe = true;
@@ -20,16 +23,17 @@ final class LoginForm extends Model {
     public function rules(): array {
         return [
             [['usernameOrEmail', 'password'], 'required'],
-            ['rememberMe', 'boolean'],
-            ['password', 'validateCredentials'],
+            [['rememberMe'], 'boolean'],
+            [['password'], 'validateCredentials'],
         ];
     }
 
     public function attributeLabels(): array {
+        //TODO: Extract to UI/templating layer and avoid the hard dependency on Yii
         return [
-            'usernameOrEmail' => 'Username or Email',
-            'password' => 'Password',
-            'rememberMe' => 'Remember me',
+            'usernameOrEmail' => Yii::t('codices', 'Username or Email'),
+            'password' => Yii::t('codices', 'Password'),
+            'rememberMe' => Yii::t('codices', 'Remember me'),
         ];
     }
 
@@ -37,9 +41,10 @@ final class LoginForm extends Model {
         if ($this->hasErrors()) {
             return;
         }
+
         $acc = $this->resolveAccount();
         if ($acc === null || !$acc->validatePassword($this->password)) {
-            $this->addError('password', 'Invalid username/email or password.');
+            $this->addError('password', Yii::t('codices', 'Invalid username/email or password.'));
         }
     }
 
@@ -47,11 +52,13 @@ final class LoginForm extends Model {
         if (!$this->validate()) {
             return false;
         }
+
         $acc = $this->resolveAccount();
         if ($acc === null) {
             return false;
         }
-        $duration = $this->rememberMe ? 3600 * 24 * 30 : 0; // 30 days
+
+        $duration = $this->rememberMe ? self::DEFAULT_DURATION : 0;
         return Yii::$app->user->login(CodicesIdentity::fromAccount($acc), $duration);
     }
 
@@ -63,15 +70,17 @@ final class LoginForm extends Model {
         if ($this->account !== null) {
             return $this->account;
         }
+
         $u = trim($this->usernameOrEmail);
         if ($u === '') {
             return null;
         }
-        // prefer username match; fallback to email
+
         $acc = Account::find()->where(['username' => $u, 'active' => 1])->one();
         if ($acc === null) {
             $acc = Account::find()->where(['email' => $u, 'active' => 1])->one();
         }
+
         $this->account = $acc instanceof Account ? $acc : null;
         return $this->account;
     }

@@ -18,7 +18,6 @@ use Codices\Repository\FormatRepository;
 use Codices\Repository\FormatRepositoryInterface;
 use Codices\Repository\AccountRepository;
 use Codices\Repository\AccountRepositoryInterface;
-use Codices\Service\SearchService;
 use Codices\Service\ItemService;
 use Codices\Service\GenreService;
 use Codices\Service\PublisherService;
@@ -42,7 +41,6 @@ return [
         AccountRepositoryInterface::class => AccountRepository::class,
 
         // Services
-        SearchService::class => SearchService::class,
         ItemService::class => ItemService::class,
         GenreService::class => GenreService::class,
         PublisherService::class => PublisherService::class,

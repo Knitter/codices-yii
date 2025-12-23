@@ -37,45 +37,44 @@ final class GenreRepository implements GenreRepositoryInterface {
         return (bool)$genre->delete();
     }
 
-    public function listPage(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array {
-        $q = Genre::find();
-
-        $safeSorts = ['name' => 'name', 'id' => 'id'];
-        $sortBy = $safeSorts[$sort] ?? 'name';
-        $sortDirection = strtolower($direction) === 'desc' ? SORT_DESC : SORT_ASC;
-
-        $countQuery = clone $q;
-        $total = (int)$countQuery->select(new Expression('COUNT(*)'))->scalar();
-
-        $offset = max(0, ($page - 1) * $pageSize);
-        $items = $q->orderBy([$sortBy => $sortDirection])
-            ->offset($offset)
-            ->limit($pageSize)
-            ->all();
-
-        return [
-            'items' => $items,
-            'total' => $total,
-            'page' => $page,
-            'pageSize' => $pageSize,
-        ];
-    }
+//    public function listPage(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array {
+//        $q = Genre::find();
+//
+//        $safeSorts = ['name' => 'name', 'id' => 'id'];
+//        $sortBy = $safeSorts[$sort] ?? 'name';
+//        $sortDirection = strtolower($direction) === 'desc' ? SORT_DESC : SORT_ASC;
+//
+//        $countQuery = clone $q;
+//        $total = (int)$countQuery->select(new Expression('COUNT(*)'))->scalar();
+//
+//        $offset = max(0, ($page - 1) * $pageSize);
+//        $items = $q->orderBy([$sortBy => $sortDirection])
+//            ->offset($offset)
+//            ->limit($pageSize)
+//            ->all();
+//
+//        return [
+//            'items' => $items,
+//            'total' => $total,
+//            'page' => $page,
+//            'pageSize' => $pageSize,
+//        ];
+//    }
 
     public function search(GenreFilter $filter): GenreListResult {
-        $allowedSort = ['name' => 'name', 'id' => 'id'];
-        $sortBy = $allowedSort[$filter->sort] ?? 'name';
+        $sort = ['name' => 'name', 'id' => 'id'];
+        $sortBy = $sort[$filter->sort] ?? 'name';
         $sortDirection = strtolower($filter->direction) === 'desc' ? SORT_DESC : SORT_ASC;
+        $offset = max(0, ($filter->page - 1) * $filter->pageSize);
 
-        $q = Genre::find();
-        if ($filter->name !== null) {
-            $q->andWhere(['like', 'name', $filter->name]);
-        }
+        $q = Genre::find()
+            ->andFilterWhere(['like', 'name', $filter->name]);
 
         $countQuery = clone $q;
-        $total = (int)$countQuery->select(new Expression('COUNT(*)'))->scalar();
+        $total = (int)$countQuery->select(new Expression('COUNT(id)'))->scalar();
 
         $items = $q->orderBy([$sortBy => $sortDirection])
-            ->offset(max(0, ($filter->page - 1) * $filter->pageSize))
+            ->offset($offset)
             ->limit($filter->pageSize)
             ->all();
 

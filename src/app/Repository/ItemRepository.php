@@ -42,36 +42,22 @@ final class ItemRepository implements ItemRepositoryInterface {
         $needAuthorJoin = $filter->authorName !== null;
         $needGenreJoin = $filter->genreId !== null;
 
-        $offset = ($filter->page - 1) * $filter->pageSize;
-        $sort = [
-            'title' => 'i.title',
-            'publishYear' => 'i.publishYear',
-            'rating' => 'i.rating',
-            'addedOn' => 'i.addedOn',
-        ];
-
+        $sort = ['title' => 'i.title', 'publishYear' => 'i.publishYear', 'rating' => 'i.rating', 'addedOn' => 'i.addedOn'];
         $sortBy = $sort[$filter->sort] ?? 'i.title';
         $sortDirection = $filter->direction === 'desc' ? SORT_DESC : SORT_ASC;
+        $offset = max(0, ($filter->page - 1) * $filter->pageSize);
 
         $q = Item::find()
             ->alias('i')
             ->andFilterWhere(['like', 'i.title', $filter->title])
             ->andFilterWhere([
                 'i.publisherId' => $filter->publisherId,
-                'i.rating' => $filter->rating
-            ]);
+                'i.rating' => $filter->rating,
+                'i.type' => $filter->type
+            ])
+            ->andFilterWhere(['<=', 'i.publishYear', $filter->yearTo])
+            ->andFilterWhere(['>=', 'i.publishYear', $filter->yearFrom]);
 
-        if ($filter->type !== null) {
-            $q->andWhere(['i.type' => $filter->type]);
-        }
-
-        if ($filter->yearFrom !== null) {
-            $q->andWhere(['>=', 'i.publishYear', $filter->yearFrom]);
-        }
-
-        if ($filter->yearTo !== null) {
-            $q->andWhere(['<=', 'i.publishYear', $filter->yearTo]);
-        }
 
         if ($needAuthorJoin) {
             $q->innerJoin(['ia' => 'item_author'], 'ia.itemId = i.id')
@@ -84,7 +70,7 @@ final class ItemRepository implements ItemRepositoryInterface {
                 ->andWhere(['ig.genreId' => $filter->genreId]);
         }
 
-        // Count (distinct in case of joins)
+        // Count (distinct in the case of joins)
         $countQuery = clone $q;
         $total = (int)$countQuery->select(new Expression('COUNT(DISTINCT i.id)'))->scalar();
 

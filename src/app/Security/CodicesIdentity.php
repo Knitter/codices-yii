@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Codices\Security;
 
 use Codices\Model\Account;
-use Yii;
 use yii\base\NotSupportedException;
 use yii\web\IdentityInterface;
 
-final class CodicesIdentity implements IdentityInterface {
+final readonly class CodicesIdentity implements IdentityInterface {
 
-    public function __construct(private readonly Account $account) {}
+    public function __construct(private Account $account) {
+    }
 
     public static function fromAccount(Account $account): self {
         return new self($account);
@@ -21,7 +21,6 @@ final class CodicesIdentity implements IdentityInterface {
         return $this->account;
     }
 
-    // IdentityInterface
     public static function findIdentity($id): ?IdentityInterface {
         $acc = Account::findOne(['id' => (int)$id, 'active' => 1]);
         return $acc instanceof Account ? new self($acc) : null;
@@ -41,5 +40,17 @@ final class CodicesIdentity implements IdentityInterface {
 
     public function validateAuthKey($authKey): bool {
         return $this->account->authKey === $authKey;
+    }
+
+    public function getUsername(): string {
+        return $this->account->username;
+    }
+
+    public function getEmail(): string {
+        return $this->account->email;
+    }
+
+    public function getName(): string {
+        return $this->account->name;
     }
 }

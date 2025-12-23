@@ -21,10 +21,5 @@ interface FormatRepositoryInterface {
 
     public function delete(Format $format): bool;
 
-    /**
-     * @return array{items: Format[], total: int, page: int, pageSize: int}
-     */
-    public function listPage(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array;
-
     public function search(FormatFilter $filter): FormatListResult;
 }

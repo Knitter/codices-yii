@@ -22,7 +22,7 @@ final readonly class PublisherService {
     }
 
     public function list(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array {
-        return $this->publishers->listPage($page, $pageSize, $sort, $direction);
+        return $this->publishers->list($page, $pageSize, $sort, $direction);
     }
 
     public function search(PublisherFilter $filter): PublisherListResult {

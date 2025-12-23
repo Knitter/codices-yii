@@ -37,44 +37,28 @@ final class CollectionRepository implements CollectionRepositoryInterface {
         return (bool)$collection->delete();
     }
 
-    public function listPage(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array {
-        $allowedSort = ['name' => 'name', 'id' => 'id'];
-        $sortBy = $allowedSort[$sort] ?? 'name';
-        $sortDirection = strtolower($direction) === 'desc' ? SORT_DESC : SORT_ASC;
-
-        $q = Collection::find();
-
-        $countQuery = clone $q;
-        $total = (int)$countQuery->select(new Expression('COUNT(*)'))->scalar();
-
-        $items = $q->orderBy([$sortBy => $sortDirection])
-            ->offset(max(0, ($page - 1) * $pageSize))
-            ->limit($pageSize)
-            ->all();
-
-        return [
-            'items' => $items,
-            'total' => $total,
-            'page' => $page,
-            'pageSize' => $pageSize,
-        ];
-    }
-
+    /**
+     * Searches for collections based on the provided filter criteria.
+     *
+     * @param CollectionFilter $filter The filter criteria including sorting, pagination,
+     *                                  and optional name filtering for the search.
+     * @return CollectionListResult The result of the search, containing the matched items,
+     *                               total count, current page, and page size.
+     */
     public function search(CollectionFilter $filter): CollectionListResult {
         $allowedSort = ['name' => 'name', 'id' => 'id'];
         $sortBy = $allowedSort[$filter->sort] ?? 'name';
         $sortDirection = strtolower($filter->direction) === 'desc' ? SORT_DESC : SORT_ASC;
+        $offset = max(0, ($filter->page - 1) * $filter->pageSize);
 
-        $q = Collection::find();
-        if ($filter->name !== null) {
-            $q->andWhere(['like', 'name', $filter->name]);
-        }
+        $q = Collection::find()
+            ->andFilterWhere(['like', 'name', $filter->name]);
 
         $countQuery = clone $q;
         $total = (int)$countQuery->select(new Expression('COUNT(*)'))->scalar();
 
         $items = $q->orderBy([$sortBy => $sortDirection])
-            ->offset(max(0, ($filter->page - 1) * $filter->pageSize))
+            ->offset($offset)
             ->limit($filter->pageSize)
             ->all();
 

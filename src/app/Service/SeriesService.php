@@ -22,7 +22,7 @@ final readonly class SeriesService {
     }
 
     public function list(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array {
-        return $this->seriesRepo->listPage($page, $pageSize, $sort, $direction);
+        return $this->seriesRepo->list($page, $pageSize, $sort, $direction);
     }
 
     public function search(SeriesFilter $filter): SeriesListResult {

@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Codices\Model;
 
 use Yii;
+use yii\base\Exception;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
@@ -30,20 +31,9 @@ final class Account extends ActiveRecord {
         return 'account';
     }
 
-    //TODO: Move once profile form is implemented
-    //    public function rules(): array {
-    //        return [
-    //            'username' => [['required'], ['string', 'max' => 255], ['unique']],
-    //            'email' => [['required'], ['string', 'max' => 255], ['email']],
-    //            'name' => [['required'], ['string', 'max' => 255]],
-    //            'active' => [['boolean']],
-    //            'password' => [['required'], ['string', 'min' => 6]],
-    //            'createdOn' => [['integer']],
-    //            'updatedOn' => [['integer']],
-    //            'authKey' => [['string', 'max' => 255]],
-    //        ];
-    //    }
-
+    /**
+     * @throws Exception
+     */
     public function beforeSave($insert): bool {
         if (!parent::beforeSave($insert)) {
             return false;
@@ -57,7 +47,6 @@ final class Account extends ActiveRecord {
         }
 
         $this->updatedOn = time();
-        // Hash password if it was changed and is non-empty (plain text provided via form)
         if ($this->isAttributeChanged('password') && $this->password !== '') {
             $this->password = Yii::$app->security->generatePasswordHash($this->password);
         }
@@ -72,6 +61,9 @@ final class Account extends ActiveRecord {
         return Yii::$app->security->validatePassword($password, $this->password);
     }
 
+    /**
+     * @throws Exception
+     */
     public function generateAuthKey(): void {
         $this->authKey = Yii::$app->security->generateRandomString(32);
     }
@@ -104,6 +96,4 @@ final class Account extends ActiveRecord {
     public function getItems(): ActiveQuery {
         return $this->hasMany(Item::class, ['ownedById' => 'id']);
     }
-
-    // IdentityInterface implementation moved to Codices\Security\CodicesIdentity
 }

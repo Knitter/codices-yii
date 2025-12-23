@@ -12,8 +12,7 @@ use yii\helpers\Url;
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
     <div class="container">
         <a class="navbar-brand fw-bold" href="<?= Url::to('/') ?>">
-            <i class="bi bi-book-fill me-2"></i>
-            Codices
+            <img src="/codices-logo-32.png" title="Codices" alt="<?= Yii::t('codices', 'Codices Logo') ?>" class="me-2">
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -108,7 +107,7 @@ use yii\helpers\Url;
                             <hr class="dropdown-divider">
                         </li>
                         <li>
-                            <a class="dropdown-item" href="<?= Url::to('/account/import') ?>">
+                            <a class="dropdown-item" href="<?= Url::to('/account/index') ?>">
                                 <i class="bi bi-people me-2"></i> <?= Yii::t('codices', 'Accounts') ?>
                             </a>
                         </li>
@@ -141,7 +140,7 @@ use yii\helpers\Url;
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                            aria-expanded="false">
-                            <i class="bi bi-person-circle me-1"></i> <?= Yii::t('codices', 'Account') ?>
+                            <i class="bi bi-person-circle me-1"></i> <?= Yii::$app->user->identity->getName() ?>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li>

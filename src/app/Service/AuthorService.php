@@ -22,7 +22,7 @@ final readonly class AuthorService {
     }
 
     public function list(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array {
-        return $this->authors->listPage($page, $pageSize, $sort, $direction);
+        return $this->authors->list($page, $pageSize, $sort, $direction);
     }
 
     public function search(AuthorFilter $filter): AuthorListResult {

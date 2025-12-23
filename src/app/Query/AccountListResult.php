@@ -21,4 +21,8 @@ final readonly class AccountListResult {
         public int   $pageSize,
     ) {
     }
+
+    public function isEmpty(): bool {
+        return empty($this->items);
+    }
 }

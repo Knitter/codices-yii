@@ -1,0 +1,1 @@
+Security-related inquiries and complaints should be registered through the project's issue tracker.

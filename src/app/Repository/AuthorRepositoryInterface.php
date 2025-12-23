@@ -21,10 +21,5 @@ interface AuthorRepositoryInterface {
 
     public function delete(Author $author): bool;
 
-    /**
-     * @return array{items: Author[], total: int, page: int, pageSize: int}
-     */
-    public function listPage(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array;
-
     public function search(AuthorFilter $filter): AuthorListResult;
 }

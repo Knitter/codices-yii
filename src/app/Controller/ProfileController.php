@@ -17,7 +17,7 @@ use yii\web\Response;
 final class ProfileController extends CodicesController {
 
     public function view(): Response|string {
-        $id = 1; // TODO: get from auth identity
+        $id = Yii::$app->user->id;
         $account = Account::findOne(['id' => $id]);
         if ($account === null) {
             return $this->asJson(['message' => 'Not found'])->setStatusCode(404);
@@ -29,7 +29,7 @@ final class ProfileController extends CodicesController {
     }
 
     public function edit(): Response|string {
-        $id = 1; // TODO: get from auth identity
+        $id = Yii::$app->user->id;
         $account = Account::findOne(['id' => $id]);
         if ($account === null) {
             return $this->asJson(['message' => 'Not found'])->setStatusCode(404);
@@ -50,8 +50,7 @@ final class ProfileController extends CodicesController {
         }
 
         return $this->render('edit', [
-            'model' => $form,
-            'csrf' => Yii::$app->request->getCsrfToken(),
+            'model' => $form
         ]);
     }
 }

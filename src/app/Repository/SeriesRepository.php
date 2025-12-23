@@ -37,44 +37,26 @@ final class SeriesRepository implements SeriesRepositoryInterface {
         return (bool)$series->delete();
     }
 
-    public function listPage(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array {
-        $allowedSort = ['name' => 'name', 'id' => 'id'];
-        $sortBy = $allowedSort[$sort] ?? 'name';
-        $sortDirection = strtolower($direction) === 'desc' ? SORT_DESC : SORT_ASC;
-
-        $q = Series::find();
-
-        $countQuery = clone $q;
-        $total = (int)$countQuery->select(new Expression('COUNT(*)'))->scalar();
-
-        $items = $q->orderBy([$sortBy => $sortDirection])
-            ->offset(max(0, ($page - 1) * $pageSize))
-            ->limit($pageSize)
-            ->all();
-
-        return [
-            'items' => $items,
-            'total' => $total,
-            'page' => $page,
-            'pageSize' => $pageSize,
-        ];
-    }
-
+    /**
+     * Searches and retrieves a list of series based on the provided filter criteria.
+     *
+     * @param SeriesFilter $filter The filter criteria containing sorting options, pagination details, and search term.
+     * @return SeriesListResult The result object containing the filtered and sorted list of series, total count, current page, and page size.
+     */
     public function search(SeriesFilter $filter): SeriesListResult {
         $allowedSort = ['name' => 'name', 'id' => 'id'];
         $sortBy = $allowedSort[$filter->sort] ?? 'name';
         $sortDirection = strtolower($filter->direction) === 'desc' ? SORT_DESC : SORT_ASC;
+        $offset = max(0, ($filter->page - 1) * $filter->pageSize);
 
-        $q = Series::find();
-        if ($filter->name !== null) {
-            $q->andWhere(['like', 'name', $filter->name]);
-        }
+        $q = Series::find()
+            ->andFilterWhere(['like', 'name', $filter->name]);
 
         $countQuery = clone $q;
         $total = (int)$countQuery->select(new Expression('COUNT(*)'))->scalar();
 
         $items = $q->orderBy([$sortBy => $sortDirection])
-            ->offset(max(0, ($filter->page - 1) * $filter->pageSize))
+            ->offset($offset)
             ->limit($filter->pageSize)
             ->all();
 

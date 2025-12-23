@@ -37,51 +37,31 @@ final class AuthorRepository implements AuthorRepositoryInterface {
         return (bool)$author->delete();
     }
 
-    public function listPage(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array {
-        $page = max(1, $page);
-        $pageSize = max(1, $pageSize);
-        $offset = ($page - 1) * $pageSize;
-
-        $allowedSort = ['name', 'surname'];
-        $sortBy = in_array($sort, $allowedSort, true) ? $sort : 'name';
-        $dir = strtolower($direction) === 'desc' ? SORT_DESC : SORT_ASC;
-
-        $query = Author::find();
-        $total = (int)$query->count('*');
-
-        $items = $query
-            ->orderBy([$sortBy => $dir])
-            ->offset($offset)
-            ->limit($pageSize)
-            ->all();
-
-        /** @var Author[] $items */
-        return [
-            'items' => $items,
-            'total' => $total,
-            'page' => $page,
-            'pageSize' => $pageSize,
-        ];
-    }
-
+    /**
+     * Searches for authors based on the provided filter criteria. Supports sorting, filtering, and pagination.
+     *
+     * @param AuthorFilter $filter An object containing the filtering criteria, such as name, sorting options,
+     *                             page number, and page size.
+     * @return AuthorListResult Returns an object containing the list of authors that match the criteria,
+     *                          the total count of matching authors, and pagination information.
+     */
     public function search(AuthorFilter $filter): AuthorListResult {
         $allowedSort = ['name' => 'name', 'id' => 'id'];
         $sortBy = $allowedSort[$filter->sort] ?? 'name';
         $sortDirection = strtolower($filter->direction) === 'desc' ? SORT_DESC : SORT_ASC;
+        $offset = max(0, ($filter->page - 1) * $filter->pageSize);
 
-        $q = Author::find();
-        if ($filter->name !== null) {
-            $q->andWhere(['or',
+        $q = Author::find()
+            ->andFilterWhere(['or',
                 ['like', 'name', $filter->name],
                 ['like', 'surname', $filter->name],
             ]);
-        }
 
         $countQuery = clone $q;
         $total = (int)$countQuery->select(new Expression('COUNT(*)'))->scalar();
 
         $items = $q->orderBy([$sortBy => $sortDirection])
-            ->offset(max(0, ($filter->page - 1) * $filter->pageSize))
+            ->offset($offset)
             ->limit($filter->pageSize)
             ->all();
 

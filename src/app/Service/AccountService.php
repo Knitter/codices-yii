@@ -15,6 +15,7 @@ use Codices\Query\AccountListResult;
 use Codices\Repository\AccountRepositoryInterface;
 use Codices\View\Facade\AccountForm;
 use RuntimeException;
+use yii\base\Exception;
 
 final readonly class AccountService {
 
@@ -22,7 +23,7 @@ final readonly class AccountService {
     }
 
     public function list(int $page = 1, int $pageSize = 10, string $sort = 'username', string $direction = 'asc'): array {
-        return $this->accounts->listPage($page, $pageSize, $sort, $direction);
+        return $this->accounts->list($page, $pageSize, $sort, $direction);
     }
 
     public function search(AccountFilter $filter): AccountListResult {
@@ -33,13 +34,16 @@ final readonly class AccountService {
         return $this->accounts->findById($id);
     }
 
+    /**
+     * @throws Exception
+     */
     public function create(AccountForm $form): Account {
         $account = new Account();
         $form->applyToAccount($account);
-        // Ensure auth key exists
         if (empty($account->authKey)) {
             $account->generateAuthKey();
         }
+
         if (!$this->accounts->save($account)) {
             throw new RuntimeException('Failed to save account');
         }
@@ -51,6 +55,7 @@ final readonly class AccountService {
         if ($account === null) {
             throw new RuntimeException('Account not found');
         }
+
         $form->applyToAccount($account);
         if (!$this->accounts->save($account)) {
             throw new RuntimeException('Failed to save account');

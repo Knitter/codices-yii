@@ -15,8 +15,8 @@ final class ImportSelectionForm extends Model {
     public function rules(): array {
         return [
             [['importId'], 'required'],
-            ['importId', 'string', 'min' => 8, 'max' => 64],
-            ['selected', 'each', 'rule' => ['integer']],
+            [['importId'], 'string', 'min' => 8, 'max' => 64],
+            [['selected'], 'each', 'rule' => ['integer']],
         ];
     }
 }

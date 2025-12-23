@@ -12,6 +12,7 @@ namespace Codices\Controller;
 use Codices\Query\AccountFilter;
 use Codices\Service\AccountService;
 use Codices\View\Facade\AccountForm;
+use Codices\View\Model\AccountGridFilter;
 use Yii;
 use yii\data\ArrayDataProvider;
 use yii\web\Response;
@@ -24,53 +25,13 @@ final class AccountController extends CodicesController {
 
     public function index(): Response|string {
         $queryParams = Yii::$app->request->get();
-        $filter = AccountFilter::fromArray($queryParams);
-        $result = $this->accountService->search($filter);
-
-        $dataProvider = new ArrayDataProvider([
-            'allModels' => $result->items,
-            'totalCount' => $result->total,
-            'pagination' => [
-                'pageSize' => $result->pageSize,
-                'page' => $result->page - 1, // zero-based
-                'pageParam' => 'page',
-                'pageSizeParam' => 'per_page',
-            ],
-            'sort' => [
-                'attributes' => [
-                    'id' => [
-                        'asc' => ['id' => SORT_ASC],
-                        'desc' => ['id' => SORT_DESC],
-                        'label' => 'ID',
-                    ],
-                    'username' => [
-                        'asc' => ['username' => SORT_ASC],
-                        'desc' => ['username' => SORT_DESC],
-                        'default' => SORT_ASC,
-                        'label' => 'Username',
-                    ],
-                    'email' => [
-                        'asc' => ['email' => SORT_ASC],
-                        'desc' => ['email' => SORT_DESC],
-                        'label' => 'Email',
-                    ],
-                    'name' => [
-                        'asc' => ['name' => SORT_ASC],
-                        'desc' => ['name' => SORT_DESC],
-                        'label' => 'Name',
-                    ],
-                ],
-                'defaultOrder' => [
-                    $filter->sort => $filter->direction === 'desc' ? SORT_DESC : SORT_ASC,
-                ],
-                'sortParam' => 'sort',
-            ],
-        ]);
+        $filter = new AccountGridFilter();
 
         return $this->render('index', [
-            'dataProvider' => $dataProvider,
+            'provider' => $filter->apply($queryParams, $this->accountService),
             'filter' => $filter,
             'queryParams' => $queryParams,
+            'pageSize' => $filter->pageSize
         ]);
     }
 
@@ -80,6 +41,7 @@ final class AccountController extends CodicesController {
         if ($account === null) {
             return $this->asJson(['message' => 'Not found'])->setStatusCode(404);
         }
+
         return $this->render('view', [
             'account' => $account,
         ]);
@@ -96,6 +58,7 @@ final class AccountController extends CodicesController {
                 return $this->redirect(['/account/index']);
             }
         }
+
         return $this->render('add', [
             'model' => $form,
             'csrf' => Yii::$app->request->getCsrfToken(),
@@ -124,8 +87,7 @@ final class AccountController extends CodicesController {
 
         return $this->render('edit', [
             'model' => $form,
-            'accountId' => $id,
-            'csrf' => Yii::$app->request->getCsrfToken(),
+            'accountId' => $id
         ]);
     }
 

@@ -23,9 +23,8 @@ final class PublisherForm extends Model {
 
     public function rules(): array {
         return [
-            [['name', 'ownedById'], 'required'],
+            [['name'], 'required'],
             [['name'], 'string', 'max' => 255],
-            [['ownedById'], 'integer'],
             [['summary'], 'string'],
             [['website'], 'url'],
         ];
@@ -35,7 +34,6 @@ final class PublisherForm extends Model {
         //TODO: Extract to UI/templating layer and avoid the hard dependency on Yii
         return [
             'id' => Yii::t('codices', 'No.'),
-            'ownedById' => Yii::t('codices', 'Name'),
             'summary' => Yii::t('codices', 'Summary'),
             'website' => Yii::t('codices', 'Website'),
         ];

@@ -37,48 +37,26 @@ final class FormatRepository implements FormatRepositoryInterface {
         return (bool)$format->delete();
     }
 
-    public function listPage(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array {
-        $page = max(1, $page);
-        $pageSize = max(1, $pageSize);
-        $offset = ($page - 1) * $pageSize;
-
-        $allowedSort = ['type', 'name'];
-        $sortBy = in_array($sort, $allowedSort, true) ? $sort : 'name';
-        $dir = strtolower($direction) === 'desc' ? SORT_DESC : SORT_ASC;
-
-        $query = Format::find();
-        $total = (int)$query->count('*');
-
-        $items = $query
-            ->orderBy([$sortBy => $dir, 'name' => SORT_ASC])
-            ->offset($offset)
-            ->limit($pageSize)
-            ->all();
-
-        /** @var Format[] $items */
-        return [
-            'items' => $items,
-            'total' => $total,
-            'page' => $page,
-            'pageSize' => $pageSize,
-        ];
-    }
-
+    /**
+     * Searches and retrieves a paginated list of formats based on the provided filter criteria.
+     *
+     * @param FormatFilter $filter The filter object which defines the search criteria, sorting, and pagination details.
+     * @return FormatListResult A list result object containing the filtered and sorted formats, total count, current page, and page size.
+     */
     public function search(FormatFilter $filter): FormatListResult {
         $allowedSort = ['name' => 'name', 'type' => 'type'];
         $sortBy = $allowedSort[$filter->sort] ?? 'name';
         $sortDirection = strtolower($filter->direction) === 'desc' ? SORT_DESC : SORT_ASC;
+        $offset = max(0, ($filter->page - 1) * $filter->pageSize);
 
-        $q = Format::find();
-        if ($filter->name !== null) {
-            $q->andWhere(['like', 'name', $filter->name]);
-        }
+        $q = Format::find()
+            ->andFilterWhere(['like', 'name', $filter->name]);
 
         $countQuery = clone $q;
         $total = (int)$countQuery->select(new Expression('COUNT(*)'))->scalar();
 
         $items = $q->orderBy([$sortBy => $sortDirection, 'name' => SORT_ASC])
-            ->offset(max(0, ($filter->page - 1) * $filter->pageSize))
+            ->offset($offset)
             ->limit($filter->pageSize)
             ->all();
 

@@ -29,6 +29,7 @@ final class ProfileForm extends Model {
     }
 
     public function attributeLabels(): array {
+        //TODO: Extract to UI/templating layer and avoid the hard dependency on Yii
         return [
             'id' => Yii::t('codices', 'No.'),
             'username' => Yii::t('codices', 'Username'),

@@ -20,9 +20,10 @@ final class AppController extends CodicesController {
     }
 
     public function login(): Response|string {
+        $this->layout = 'auth';
+
         $request = Yii::$app->request;
         $user = Yii::$app->user;
-
         if (!$user->isGuest) {
             return $this->goHome();
         }
@@ -32,14 +33,11 @@ final class AppController extends CodicesController {
             return $this->goBack('/');
         }
 
-        return $this->render('//app/login', [
-            'model' => $model,
-            'csrf' => $request->getCsrfToken(),
-        ]);
+        return $this->render('login', ['login' => $model]);
     }
 
     public function logout(): Response {
         Yii::$app->user->logout();
-        return $this->redirect(['/app/index']);
+        return $this->redirect(['login']);
     }
 }

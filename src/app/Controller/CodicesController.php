@@ -15,6 +15,10 @@ use yii\base\InlineAction;
 use yii\base\InvalidConfigException;
 use yii\web\Controller;
 
+/**
+ * Extends the foundational functionality of the Yii Controller allowing the usage of actions that don't require the
+ * "action" prefix.
+ */
 abstract class CodicesController extends Controller {
 
     /**

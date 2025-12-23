@@ -5,23 +5,25 @@ declare(strict_types=1);
 namespace Codices\Import;
 
 final class ImportPreviewRow {
+
     public function __construct(
-        public int $index,
-        public string $title,
-        public array $authors, // list of author display names
-        public array $genres,  // list of genre names
+        public int     $index,
+        public string  $title,
+        public array   $authors, // list of author display names
+        public array   $genres,  // list of genre names
         public ?string $series,
-        public ?int $orderInSeries,
+        public ?int    $orderInSeries,
         public ?string $publisher,
-        public ?int $year,
+        public ?int    $year,
         public ?string $language,
         public ?string $isbn,
-        public string $itemType, // paper|ebook|audio
+        public string  $itemType, // paper|ebook|audio
         public ?string $formatName,
-        public array $errors = [],
-        public bool $duplicateIsbn = false,
-        public bool $existsInDb = false,
-    ) {}
+        public array   $errors = [],
+        public bool    $duplicateIsbn = false,
+        public bool    $existsInDb = false,
+    ) {
+    }
 
     /** @return array<string, mixed> */
     public function toArray(): array {

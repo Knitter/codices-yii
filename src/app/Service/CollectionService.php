@@ -22,7 +22,7 @@ final readonly class CollectionService {
     }
 
     public function list(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array {
-        return $this->collections->listPage($page, $pageSize, $sort, $direction);
+        return $this->collections->list($page, $pageSize, $sort, $direction);
     }
 
     public function search(CollectionFilter $filter): CollectionListResult {

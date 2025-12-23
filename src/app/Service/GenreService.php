@@ -22,7 +22,7 @@ final readonly class GenreService {
     }
 
     public function list(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array {
-        return $this->genres->listPage($page, $pageSize, $sort, $direction);
+        return $this->genres->list($page, $pageSize, $sort, $direction);
     }
 
     public function search(GenreFilter $filter): GenreListResult {

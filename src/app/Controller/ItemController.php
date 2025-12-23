@@ -12,7 +12,6 @@ namespace Codices\Controller;
 use Codices\Model\Item;
 use Codices\Query\ItemFilter;
 use Codices\Service\ItemService;
-use Codices\Service\SearchService;
 use Codices\Service\ImportService;
 use Codices\View\Facade\ImportUploadForm;
 use Codices\View\Facade\ImportSelectionForm;
@@ -22,13 +21,8 @@ use yii\web\UploadedFile;
 
 final class ItemController extends CodicesController {
 
-    public function __construct(
-        $id,
-        $module,
-        private readonly SearchService $searchService,
-        private readonly ItemService   $itemService,
-        private readonly ImportService $importService,
-        $config = []
+    public function __construct($id, $module, private readonly ItemService $itemService,
+                                private readonly ImportService $importService, $config = []
     ) {
         parent::__construct($id, $module, $config);
     }
@@ -168,7 +162,7 @@ final class ItemController extends CodicesController {
             $queryParams['type'] = $type;
         }
         $filter = ItemFilter::fromArray($queryParams);
-        $result = $this->searchService->searchItems($filter);
+        $result = $this->itemService->search($filter);
 
         $sortOrder = $queryParams['sort'] ?? 'title';
         $sortDirection = $queryParams['sort_dir'] ?? 'asc';
@@ -199,7 +193,7 @@ final class ItemController extends CodicesController {
         ];
 
         // Reuse the existing Book index view, which already renders listings/filters
-        return $this->render('//book/index', [
+        return $this->render('book/index', [
             'paginator' => $paginator,
             'queryParams' => $queryParams,
             'sort' => $sort,

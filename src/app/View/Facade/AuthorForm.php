@@ -37,7 +37,6 @@ final class AuthorForm extends Model {
         //TODO: Extract to UI/templating layer and avoid the hard dependency on Yii
         return [
             'id' => Yii::t('codices', 'No.'),
-            'ownedById' => Yii::t('codices', 'Owned By'),
             'name' => Yii::t('codices', 'Name'),
             'surname' => Yii::t('codices', 'Surname'),
             'biography' => Yii::t('codices', 'Biography'),

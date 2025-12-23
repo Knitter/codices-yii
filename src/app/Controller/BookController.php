@@ -20,7 +20,6 @@ use Codices\Model\Publisher;
 use Codices\Model\Series;
 use Codices\Query\ItemFilter;
 use Codices\Service\ItemService;
-use Codices\Service\SearchService;
 use Codices\View\Facade\BookForm;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -28,15 +27,14 @@ use yii\web\Response;
 
 final class BookController extends CodicesController {
 
-    public function __construct($id, $module, private readonly SearchService $searchService,
-                                private readonly ItemService $itemService, $config = []) {
+    public function __construct($id, $module, private readonly ItemService $itemService, $config = []) {
         parent::__construct($id, $module, $config);
     }
 
     public function index(): Response|string {
         $queryParams = Yii::$app->request->get();
         $filter = ItemFilter::fromArray($queryParams);
-        $result = $this->searchService->searchItems($filter);
+        $result = $this->itemService->search($filter);
 
         $sortOrder = $queryParams['sort'] ?? 'title';
         $sortDirection = $queryParams['sort_dir'] ?? 'asc';

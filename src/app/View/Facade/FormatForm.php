@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Codices\View\Facade;
 
 use Codices\Model\Format;
+use Yii;
 use yii\base\Model;
 
 final class FormatForm extends Model {
@@ -20,19 +21,17 @@ final class FormatForm extends Model {
 
     public function rules(): array {
         return [
-            [['type', 'name', 'ownedById'], 'required'],
+            [['type', 'name'], 'required'],
             [['type', 'name'], 'string', 'max' => 255],
-            [['ownedById'], 'integer'],
-            ['type', 'in', 'range' => array_keys(Format::getFormatTypes())],
+            [['type'], 'in', 'range' => array_keys(Format::getFormatTypes())],
         ];
     }
 
     public function attributeLabels(): array {
         //TODO: Extract to UI/templating layer and avoid the hard dependency on Yii
         return [
-            'ownedById' => 'Owned By',
-            'type' => 'Type',
-            'name' => 'Name',
+            'type' => Yii::t('codices', 'Type'),
+            'name' => Yii::t('codices', 'Name'),
         ];
     }
 

@@ -37,44 +37,29 @@ final class PublisherRepository implements PublisherRepositoryInterface {
         return (bool)$publisher->delete();
     }
 
-    public function listPage(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array {
-        $allowedSort = ['name' => 'name', 'id' => 'id'];
-        $sortBy = $allowedSort[$sort] ?? 'name';
-        $sortDirection = strtolower($direction) === 'desc' ? SORT_DESC : SORT_ASC;
-
-        $q = Publisher::find();
-
-        $countQuery = clone $q;
-        $total = (int)$countQuery->select(new Expression('COUNT(*)'))->scalar();
-
-        $items = $q->orderBy([$sortBy => $sortDirection])
-            ->offset(max(0, ($page - 1) * $pageSize))
-            ->limit($pageSize)
-            ->all();
-
-        return [
-            'items' => $items,
-            'total' => $total,
-            'page' => $page,
-            'pageSize' => $pageSize,
-        ];
-    }
-
+    /**
+     * Searches for publishers based on the provided filter criteria, applies sorting,
+     * pagination, and retrieves a list of matching publisher records along with the total count.
+     *
+     * @param PublisherFilter $filter The filter containing search criteria, sorting preferences,
+     *                                 and pagination details.
+     * @return PublisherListResult A result object containing the list of publishers,
+     *                              total count of matched records, current page, and page size.
+     */
     public function search(PublisherFilter $filter): PublisherListResult {
         $allowedSort = ['name' => 'name', 'id' => 'id'];
         $sortBy = $allowedSort[$filter->sort] ?? 'name';
         $sortDirection = strtolower($filter->direction) === 'desc' ? SORT_DESC : SORT_ASC;
+        $offset = max(0, ($filter->page - 1) * $filter->pageSize);
 
-        $q = Publisher::find();
-        if ($filter->name !== null) {
-            $q->andWhere(['like', 'name', $filter->name]);
-        }
+        $q = Publisher::find()
+            ->andFilterWhere(['like', 'name', $filter->name]);
 
         $countQuery = clone $q;
-        $total = (int)$countQuery->select(new Expression('COUNT(*)'))->scalar();
+        $total = (int)$countQuery->select(new Expression('COUNT(id)'))->scalar();
 
         $items = $q->orderBy([$sortBy => $sortDirection])
-            ->offset(max(0, ($filter->page - 1) * $filter->pageSize))
+            ->offset($offset)
             ->limit($filter->pageSize)
             ->all();
 

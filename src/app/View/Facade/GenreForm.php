@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Codices\View\Facade;
 
 use Codices\Model\Genre;
+use Yii;
 use yii\base\Model;
 
 final class GenreForm extends Model {
@@ -20,7 +21,7 @@ final class GenreForm extends Model {
 
     public function rules(): array {
         return [
-            [['name', 'ownedById'], 'required'],
+            [['name'], 'required'],
             [['name'], 'string', 'max' => 255],
         ];
     }
@@ -28,9 +29,8 @@ final class GenreForm extends Model {
     public function attributeLabels(): array {
         //TODO: Extract to UI/templating layer and avoid the hard dependency on Yii
         return [
-            'id' => 'No.',
-            'name' => 'Name',
-            'ownedById' => 'Owned By',
+            'id' => Yii::t('codices', 'No.'),
+            'name' => Yii::t('codices', 'Name'),
         ];
     }
 
@@ -43,7 +43,7 @@ final class GenreForm extends Model {
     public function applyToGenre(Genre $genre): Genre {
         $genre->ownedById = $this->ownedById;
         $genre->name = $this->name;
-        
+
         return $genre;
     }
 }

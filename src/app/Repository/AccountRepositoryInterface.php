@@ -21,10 +21,5 @@ interface AccountRepositoryInterface {
 
     public function delete(Account $account): bool;
 
-    /**
-     * @return array{items: Account[], total: int, page: int, pageSize: int}
-     */
-    public function listPage(int $page = 1, int $pageSize = 10, string $sort = 'username', string $direction = 'asc'): array;
-
     public function search(AccountFilter $filter): AccountListResult;
 }

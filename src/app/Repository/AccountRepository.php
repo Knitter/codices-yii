@@ -37,53 +37,29 @@ final class AccountRepository implements AccountRepositoryInterface {
         return (bool)$account->delete();
     }
 
-    public function listPage(int $page = 1, int $pageSize = 10, string $sort = 'username', string $direction = 'asc'): array {
-        $allowedSort = ['id' => 'id', 'username' => 'username', 'email' => 'email', 'name' => 'name'];
-        $sortBy = $allowedSort[$sort] ?? 'username';
-        $sortDirection = strtolower($direction) === 'desc' ? SORT_DESC : SORT_ASC;
-
-        $q = Account::find();
-
-        $countQuery = clone $q;
-        $total = (int)$countQuery->select(new Expression('COUNT(*)'))->scalar();
-
-        $items = $q->orderBy([$sortBy => $sortDirection])
-            ->offset(max(0, ($page - 1) * $pageSize))
-            ->limit($pageSize)
-            ->all();
-
-        return [
-            'items' => $items,
-            'total' => $total,
-            'page' => $page,
-            'pageSize' => $pageSize,
-        ];
-    }
-
+    /**
+     * Searches accounts based on the criteria specified in the provided filter.
+     *
+     * @param AccountFilter $filter The criteria for filtering, sorting, and pagination.
+     * @return AccountListResult A result object containing the filtered and paginated account list along with the total count.
+     */
     public function search(AccountFilter $filter): AccountListResult {
         $allowedSort = ['id' => 'id', 'username' => 'username', 'email' => 'email', 'name' => 'name'];
         $sortBy = $allowedSort[$filter->sort] ?? 'username';
         $sortDirection = strtolower($filter->direction) === 'desc' ? SORT_DESC : SORT_ASC;
+        $offset = max(0, ($filter->page - 1) * $filter->pageSize);
 
-        $q = Account::find();
-        if ($filter->username !== null) {
-            $q->andWhere(['like', 'username', $filter->username]);
-        }
-        if ($filter->email !== null) {
-            $q->andWhere(['like', 'email', $filter->email]);
-        }
-        if ($filter->name !== null) {
-            $q->andWhere(['like', 'name', $filter->name]);
-        }
-        if ($filter->active !== null) {
-            $q->andWhere(['active' => $filter->active]);
-        }
+        $q = Account::find()
+            ->andFilterWhere(['like', 'username', $filter->username])
+            ->andFilterWhere(['like', 'email', $filter->email])
+            ->andFilterWhere(['like', 'name', $filter->name])
+            ->andFilterWhere(['active' => $filter->active]);
 
         $countQuery = clone $q;
-        $total = (int)$countQuery->select(new Expression('COUNT(*)'))->scalar();
+        $total = (int)$countQuery->select(new Expression('COUNT(id)'))->scalar();
 
         $items = $q->orderBy([$sortBy => $sortDirection])
-            ->offset(max(0, ($filter->page - 1) * $filter->pageSize))
+            ->offset($offset)
             ->limit($filter->pageSize)
             ->all();
 
