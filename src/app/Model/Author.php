@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace Codices\Model;
 
-
 use yii\base\InvalidConfigException;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;

@@ -37,6 +37,30 @@ final class AuthorRepository implements AuthorRepositoryInterface {
         return (bool)$author->delete();
     }
 
+    public function list(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array {
+        $q = Author::find();
+
+        $safeSorts = ['name' => 'name', 'id' => 'id'];
+        $sortBy = $safeSorts[$sort] ?? 'name';
+        $sortDirection = strtolower($direction) === 'desc' ? SORT_DESC : SORT_ASC;
+
+        $countQuery = clone $q;
+        $total = (int)$countQuery->select(new Expression('COUNT(*)'))->scalar();
+
+        $offset = max(0, ($page - 1) * $pageSize);
+        $items = $q->orderBy([$sortBy => $sortDirection])
+            ->offset($offset)
+            ->limit($pageSize)
+            ->all();
+
+        return [
+            'items' => $items,
+            'total' => $total,
+            'page' => $page,
+            'pageSize' => $pageSize,
+        ];
+    }
+
     /**
      * Searches for authors based on the provided filter criteria. Supports sorting, filtering, and pagination.
      *

@@ -37,9 +37,8 @@ final readonly class AccountFilter {
             $active = $activeParam === 'yes' ? 1 : ($activeParam === 'no' ? 0 : null);
         }
 
-        $sort = in_array(($query['sort'] ?? 'username'), ['id', 'username', 'email', 'name'], true)
-            ? !empty($query['sort']) ? (string)$query['sort'] : 'username'
-            : 'username';
+        $sort = (string)($query['sort'] ?? 'username');
+        $sort = in_array($sort, ['id', 'username', 'email', 'name'], true) ? $sort : 'username';
 
         $direction = strtolower((string)($query['sort_dir'] ?? ($query['direction'] ?? 'asc')));
         $direction = $direction === 'desc' ? 'desc' : 'asc';

@@ -39,7 +39,7 @@ use yii\helpers\Url;
             <div class="col-md-6">
                 <small class="text-muted">
                     &copy; <?= date('Y') ?> Codices.
-                    <?= Yii::t('codices', 'Built with {icon} using Yii3 & Bootstrap 5.', ['icon' => '<i class="bi bi-heart-fill text-danger"></i>']) ?>
+                    <?= Yii::t('codices', 'Built with {icon} using Yii2 & Bootstrap 5.', ['icon' => '<i class="bi bi-heart-fill text-danger"></i>']) ?>
                 </small>
             </div>
             <div class="col-md-6 text-md-end">

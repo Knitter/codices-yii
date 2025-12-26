@@ -26,9 +26,8 @@ final readonly class FormatFilter {
     public static function fromArray(array $query): self {
         $name = self::nullIfEmpty($query['name'] ?? null);
 
-        $sort = in_array(($query['sort'] ?? 'name'), ['name', 'type'], true)
-            ? (string)$query['sort']
-            : 'name';
+        $sort = (string)($query['sort'] ?? 'name');
+        $sort = in_array($sort, ['name', 'id'], true) ? $sort : 'name';
 
         $direction = strtolower((string)($query['sort_dir'] ?? ($query['direction'] ?? 'asc')));
         $direction = $direction === 'desc' ? 'desc' : 'asc';

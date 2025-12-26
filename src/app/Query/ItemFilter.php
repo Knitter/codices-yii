@@ -47,9 +47,9 @@ final readonly class ItemFilter {
         if ($type !== null && !in_array($type, $allowedTypes, true)) {
             $type = null;
         }
-        $sort = in_array(($query['sort'] ?? 'title'), ['title', 'publishYear', 'rating', 'addedOn'], true)
-            ? $query['sort']
-            : 'title';
+
+        $sort = (string)($query['sort'] ?? 'title');
+        $sort = in_array($sort, ['title', 'publishYear', 'rating', 'addedOn'], true) ? $sort : 'title';
 
         $direction = strtolower((string)($query['sort_dir'] ?? ($query['direction'] ?? 'asc')));
         $direction = $direction === 'desc' ? 'desc' : 'asc';
