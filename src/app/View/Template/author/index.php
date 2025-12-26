@@ -3,16 +3,14 @@
 declare(strict_types=1);
 
 /**
- * @var \yii\web\View $this
- * @var \yii\data\ArrayDataProvider $dataProvider
- * @var \Codices\Query\AuthorFilter $filter
- * @var array $queryParams
+ * @var yii\web\View $this
+ * @var yii\data\ArrayDataProvider $dataProvider
+ * @var \Codices\View\Model\AuthorSearch $searchModel
  */
 
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\widgets\ActiveForm;
 
 $this->title = Yii::t('codices', 'Authors');
 ?>
@@ -27,53 +25,11 @@ $this->title = Yii::t('codices', 'Authors');
     </a>
 </div>
 
-<div class="card border-0 shadow-sm mb-3">
-    <div class="card-body">
-        <?php $form = ActiveForm::begin([
-            'method' => 'get',
-            'action' => ['author/index'],
-            'options' => ['class' => 'row g-2 align-items-end'],
-        ]); ?>
-        <div class="col-md-4">
-            <label class="form-label fw-semibold">Name</label>
-            <input type="text" name="name" value="<?= Html::encode($filter->name ?? '') ?>" class="form-control"
-                   placeholder="e.g., Ursula">
-        </div>
-        <div class="col-md-2">
-            <label class="form-label fw-semibold">Per page</label>
-            <select name="per_page" class="form-select">
-                <?php foreach ([10, 20, 50, 100] as $ps): ?>
-                    <option value="<?= $ps ?>" <?= $filter->pageSize === $ps ? 'selected' : '' ?>><?= $ps ?></option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-        <div class="col-md-2">
-            <label class="form-label fw-semibold">Sort</label>
-            <select name="sort" class="form-select">
-                <option value="name" <?= $filter->sort === 'name' ? 'selected' : '' ?>>Name</option>
-                <option value="id" <?= $filter->sort === 'id' ? 'selected' : '' ?>>ID</option>
-            </select>
-        </div>
-        <div class="col-md-2">
-            <label class="form-label fw-semibold">Direction</label>
-            <select name="sort_dir" class="form-select">
-                <option value="asc" <?= $filter->direction === 'asc' ? 'selected' : '' ?>>Asc</option>
-                <option value="desc" <?= $filter->direction === 'desc' ? 'selected' : '' ?>>Desc</option>
-            </select>
-        </div>
-        <div class="col-md-2 text-end">
-            <button type="submit" class="btn btn-outline-secondary">
-                <i class="bi bi-search me-1"></i> Search
-            </button>
-        </div>
-        <?php ActiveForm::end(); ?>
-    </div>
-</div>
-
 <div class="card border-0 shadow-sm">
     <div class="card-body p-0">
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
+            'filterModel' => $searchModel,
             'tableOptions' => ['class' => 'table table-hover align-middle mb-0'],
             'layout' => "{items}\n<div class=\"p-3\">{pager}</div>",
             'columns' => [

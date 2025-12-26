@@ -68,6 +68,7 @@ final class GenreRepository implements GenreRepositoryInterface {
         $offset = max(0, ($filter->page - 1) * $filter->pageSize);
 
         $q = Genre::find()
+            ->andFilterWhere(['id' => $filter->id])
             ->andFilterWhere(['like', 'name', $filter->name]);
 
         $countQuery = clone $q;

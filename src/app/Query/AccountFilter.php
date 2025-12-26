@@ -20,6 +20,7 @@ final readonly class AccountFilter {
         public string  $direction = 'asc',
         public int     $page = 1,
         public int     $pageSize = 25,
+        public ?int    $id = null,
     ) {
     }
 
@@ -27,6 +28,7 @@ final readonly class AccountFilter {
      * @param array<string, mixed> $query
      */
     public static function fromArray(array $query): self {
+        $id = (isset($query['id']) && $query['id'] !== '') ? (int)$query['id'] : null;
         $username = self::nullIfEmpty($query['username'] ?? null);
         $email = self::nullIfEmpty($query['email'] ?? null);
         $name = self::nullIfEmpty($query['name'] ?? null);
@@ -46,7 +48,7 @@ final readonly class AccountFilter {
         $page = max(1, (int)($query['page'] ?? 1));
         $pageSize = max(1, min(100, (int)($query['per_page'] ?? ($query['pageSize'] ?? 25))));
 
-        return new self($username, $email, $name, $active, $sort, $direction, $page, $pageSize);
+        return new self($username, $email, $name, $active, $sort, $direction, $page, $pageSize, $id);
     }
 
     private static function nullIfEmpty(?string $value): ?string {

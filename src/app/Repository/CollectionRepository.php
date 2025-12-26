@@ -52,6 +52,7 @@ final class CollectionRepository implements CollectionRepositoryInterface {
         $offset = max(0, ($filter->page - 1) * $filter->pageSize);
 
         $q = Collection::find()
+            ->andFilterWhere(['id' => $filter->id])
             ->andFilterWhere(['like', 'name', $filter->name]);
 
         $countQuery = clone $q;

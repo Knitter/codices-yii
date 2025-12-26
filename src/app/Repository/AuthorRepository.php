@@ -76,6 +76,7 @@ final class AuthorRepository implements AuthorRepositoryInterface {
         $offset = max(0, ($filter->page - 1) * $filter->pageSize);
 
         $q = Author::find()
+            ->andFilterWhere(['id' => $filter->id])
             ->andFilterWhere(['or',
                 ['like', 'name', $filter->name],
                 ['like', 'surname', $filter->name],

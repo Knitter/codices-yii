@@ -11,9 +11,8 @@ namespace Codices\Controller;
 
 use Codices\Service\CollectionService;
 use Codices\View\Facade\CollectionForm;
-use Codices\Query\CollectionFilter;
+use Codices\View\Model\CollectionSearch;
 use Yii;
-use yii\data\ArrayDataProvider;
 use yii\web\Response;
 
 final class CollectionController extends CodicesController {
@@ -23,44 +22,12 @@ final class CollectionController extends CodicesController {
     }
 
     public function index(): Response|string {
-        $queryParams = Yii::$app->request->get();
-        $filter = CollectionFilter::fromArray($queryParams);
-        $result = $this->collectionService->search($filter);
-
-        $dataProvider = new ArrayDataProvider([
-            'allModels' => $result->items,
-            'totalCount' => $result->total,
-            'pagination' => [
-                'pageSize' => $result->pageSize,
-                'page' => $result->page - 1,
-                'pageParam' => 'page',
-                'pageSizeParam' => 'per_page',
-            ],
-            'sort' => [
-                'attributes' => [
-                    'name' => [
-                        'asc' => ['name' => SORT_ASC],
-                        'desc' => ['name' => SORT_DESC],
-                        'default' => SORT_ASC,
-                        'label' => 'Name',
-                    ],
-                    'id' => [
-                        'asc' => ['id' => SORT_ASC],
-                        'desc' => ['id' => SORT_DESC],
-                        'label' => 'ID',
-                    ],
-                ],
-                'defaultOrder' => [
-                    $filter->sort => $filter->direction === 'desc' ? SORT_DESC : SORT_ASC,
-                ],
-                'sortParam' => 'sort',
-            ],
-        ]);
+        $searchModel = new CollectionSearch();
+        $dataProvider = $searchModel->search($this->collectionService, Yii::$app->request->get());
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
-            'filter' => $filter,
-            'queryParams' => $queryParams,
+            'searchModel' => $searchModel,
         ]);
     }
 

@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 /**
  * @var yii\web\View $this
- * @var yii\data\ArrayDataProvider $provider
- * @var Codices\View\Model\AccountGridFilter $gridFilter
- * @var array $queryParams
- * @var int $pageSize
+ * @var yii\data\ArrayDataProvider $dataProvider
+ * @var \Codices\View\Model\AccountSearch $searchModel
  */
 
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\widgets\ActiveForm;
 
 $this->title = Yii::t('codices', 'Accounts');
 $yesString = Yii::t('codices', 'Yes');
@@ -31,26 +28,11 @@ $noString = Yii::t('codices', 'No');
     </a>
 </div>
 
-<div class="card border-0 shadow-sm mb-3">
-    <div class="card-body">
-        <div class="row row g-2 align-items-end">
-            <div class="col-md-1">
-                <label class="form-label fw-semibold">Per page</label>
-                <select name="per_page" class="form-select">
-                    <?php foreach ([10, 20, 50, 100] as $ps) { ?>
-                        <option value="<?= $ps ?>" <?= $pageSize === $ps ? 'selected' : '' ?>><?= $ps ?></option>
-                    <?php } ?>
-                </select>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div class="card border-0 shadow-sm">
     <div class="card-body p-0">
         <?= GridView::widget([
-            'dataProvider' => $provider,
-            'filterModel' => $gridFilter,
+            'dataProvider' => $dataProvider,
+            'filterModel' => $searchModel,
             'tableOptions' => ['class' => 'table table-hover align-middle mb-0'],
             'layout' => "{items}\n<div class=\"p-3\">{pager}</div>",
             'columns' => [

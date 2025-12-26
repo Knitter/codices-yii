@@ -12,6 +12,7 @@ namespace Codices\Query;
 final readonly class FormatFilter {
 
     public function __construct(
+        public ?string $type = null,
         public ?string $name = null,
         public string  $sort = 'name',
         public string  $direction = 'asc',
@@ -24,10 +25,11 @@ final readonly class FormatFilter {
      * @param array<string, mixed> $query
      */
     public static function fromArray(array $query): self {
+        $type = self::nullIfEmpty($query['type'] ?? null);
         $name = self::nullIfEmpty($query['name'] ?? null);
 
         $sort = (string)($query['sort'] ?? 'name');
-        $sort = in_array($sort, ['name', 'id'], true) ? $sort : 'name';
+        $sort = in_array($sort, ['name', 'type'], true) ? $sort : 'name';
 
         $direction = strtolower((string)($query['sort_dir'] ?? ($query['direction'] ?? 'asc')));
         $direction = $direction === 'desc' ? 'desc' : 'asc';
@@ -35,7 +37,7 @@ final readonly class FormatFilter {
         $page = max(1, (int)($query['page'] ?? 1));
         $pageSize = max(1, min(100, (int)($query['per_page'] ?? ($query['pageSize'] ?? 20))));
 
-        return new self($name, $sort, $direction, $page, $pageSize);
+        return new self($type, $name, $sort, $direction, $page, $pageSize);
     }
 
     private static function nullIfEmpty(?string $value): ?string {

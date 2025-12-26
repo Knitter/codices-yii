@@ -11,9 +11,8 @@ namespace Codices\Controller;
 
 use Codices\Service\AuthorService;
 use Codices\View\Facade\AuthorForm;
-use Codices\Query\AuthorFilter;
+use Codices\View\Model\AuthorSearch;
 use Yii;
-use yii\data\ArrayDataProvider;
 use yii\web\Response;
 
 final class AuthorController extends CodicesController {
@@ -23,44 +22,12 @@ final class AuthorController extends CodicesController {
     }
 
     public function index(): Response|string {
-        $queryParams = Yii::$app->request->get();
-        $filter = AuthorFilter::fromArray($queryParams);
-        $result = $this->authorService->search($filter);
-
-        $dataProvider = new ArrayDataProvider([
-            'allModels' => $result->items,
-            'totalCount' => $result->total,
-            'pagination' => [
-                'pageSize' => $result->pageSize,
-                'page' => $result->page - 1,
-                'pageParam' => 'page',
-                'pageSizeParam' => 'per_page',
-            ],
-            'sort' => [
-                'attributes' => [
-                    'name' => [
-                        'asc' => ['name' => SORT_ASC],
-                        'desc' => ['name' => SORT_DESC],
-                        'default' => SORT_ASC,
-                        'label' => 'Name',
-                    ],
-                    'id' => [
-                        'asc' => ['id' => SORT_ASC],
-                        'desc' => ['id' => SORT_DESC],
-                        'label' => 'ID',
-                    ],
-                ],
-                'defaultOrder' => [
-                    $filter->sort => $filter->direction === 'desc' ? SORT_DESC : SORT_ASC,
-                ],
-                'sortParam' => 'sort',
-            ],
-        ]);
+        $searchModel = new AuthorSearch();
+        $dataProvider = $searchModel->search($this->authorService, Yii::$app->request->get());
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
-            'filter' => $filter,
-            'queryParams' => $queryParams,
+            'searchModel' => $searchModel,
         ]);
     }
 

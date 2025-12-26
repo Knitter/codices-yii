@@ -53,6 +53,7 @@ final class PublisherRepository implements PublisherRepositoryInterface {
         $offset = max(0, ($filter->page - 1) * $filter->pageSize);
 
         $q = Publisher::find()
+            ->andFilterWhere(['id' => $filter->id])
             ->andFilterWhere(['like', 'name', $filter->name]);
 
         $countQuery = clone $q;

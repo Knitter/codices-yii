@@ -9,12 +9,10 @@ declare(strict_types=1);
 
 namespace Codices\Controller;
 
-use Codices\Query\AccountFilter;
 use Codices\Service\AccountService;
 use Codices\View\Facade\AccountForm;
-use Codices\View\Model\AccountGridFilter;
+use Codices\View\Model\AccountSearch;
 use Yii;
-use yii\data\ArrayDataProvider;
 use yii\web\Response;
 
 final class AccountController extends CodicesController {
@@ -24,14 +22,12 @@ final class AccountController extends CodicesController {
     }
 
     public function index(): Response|string {
-        $queryParams = Yii::$app->request->get();
-        $filter = new AccountGridFilter();
+        $searchModel = new AccountSearch();
+        $dataProvider = $searchModel->search($this->accountService, Yii::$app->request->get());
 
         return $this->render('index', [
-            'provider' => $filter->apply($queryParams, $this->accountService),
-            'filter' => $filter,
-            'queryParams' => $queryParams,
-            'pageSize' => $filter->pageSize
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
         ]);
     }
 

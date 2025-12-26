@@ -50,6 +50,7 @@ final class FormatRepository implements FormatRepositoryInterface {
         $offset = max(0, ($filter->page - 1) * $filter->pageSize);
 
         $q = Format::find()
+            ->andFilterWhere(['type' => $filter->type])
             ->andFilterWhere(['like', 'name', $filter->name]);
 
         $countQuery = clone $q;

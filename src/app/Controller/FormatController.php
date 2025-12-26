@@ -12,9 +12,8 @@ namespace Codices\Controller;
 use Codices\Model\Format;
 use Codices\Service\FormatService;
 use Codices\View\Facade\FormatForm;
-use Codices\Query\FormatFilter;
+use Codices\View\Model\FormatSearch;
 use Yii;
-use yii\data\ArrayDataProvider;
 use yii\web\Response;
 
 final class FormatController extends CodicesController {
@@ -24,44 +23,12 @@ final class FormatController extends CodicesController {
     }
 
     public function index(): Response|string {
-        $queryParams = Yii::$app->request->get();
-        $filter = FormatFilter::fromArray($queryParams);
-        $result = $this->formatService->search($filter);
-
-        $dataProvider = new ArrayDataProvider([
-            'allModels' => $result->items,
-            'totalCount' => $result->total,
-            'pagination' => [
-                'pageSize' => $result->pageSize,
-                'page' => $result->page - 1,
-                'pageParam' => 'page',
-                'pageSizeParam' => 'per_page',
-            ],
-            'sort' => [
-                'attributes' => [
-                    'name' => [
-                        'asc' => ['name' => SORT_ASC],
-                        'desc' => ['name' => SORT_DESC],
-                        'default' => SORT_ASC,
-                        'label' => 'Name',
-                    ],
-                    'type' => [
-                        'asc' => ['type' => SORT_ASC],
-                        'desc' => ['type' => SORT_DESC],
-                        'label' => 'Type',
-                    ],
-                ],
-                'defaultOrder' => [
-                    $filter->sort => $filter->direction === 'desc' ? SORT_DESC : SORT_ASC,
-                ],
-                'sortParam' => 'sort',
-            ],
-        ]);
+        $searchModel = new FormatSearch();
+        $dataProvider = $searchModel->search($this->formatService, Yii::$app->request->get());
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
-            'filter' => $filter,
-            'queryParams' => $queryParams,
+            'searchModel' => $searchModel,
             'formatTypes' => Format::getFormatTypes(),
         ]);
     }

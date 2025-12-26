@@ -50,6 +50,7 @@ final class SeriesRepository implements SeriesRepositoryInterface {
         $offset = max(0, ($filter->page - 1) * $filter->pageSize);
 
         $q = Series::find()
+            ->andFilterWhere(['id' => $filter->id])
             ->andFilterWhere(['like', 'name', $filter->name]);
 
         $countQuery = clone $q;

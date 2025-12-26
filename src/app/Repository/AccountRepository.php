@@ -50,6 +50,7 @@ final class AccountRepository implements AccountRepositoryInterface {
         $offset = max(0, ($filter->page - 1) * $filter->pageSize);
 
         $q = Account::find()
+            ->andFilterWhere(['id' => $filter->id])
             ->andFilterWhere(['like', 'username', $filter->username])
             ->andFilterWhere(['like', 'email', $filter->email])
             ->andFilterWhere(['like', 'name', $filter->name])

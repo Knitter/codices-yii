@@ -12,6 +12,7 @@ namespace Codices\Query;
 final readonly class PublisherFilter {
 
     public function __construct(
+        public ?int    $id = null,
         public ?string $name = null,
         public string  $sort = 'name',
         public string  $direction = 'asc', // asc|desc
@@ -26,6 +27,7 @@ final readonly class PublisherFilter {
      * @param array<string, mixed> $query
      */
     public static function fromArray(array $query): self {
+        $id = (isset($query['id']) && $query['id'] !== '') ? (int)$query['id'] : null;
         $name = self::nullIfEmpty($query['name'] ?? ($query['q'] ?? null));
 
         $sort = (string)($query['sort'] ?? 'name');
@@ -37,7 +39,7 @@ final readonly class PublisherFilter {
         $page = max(1, (int)($query['page'] ?? 1));
         $pageSize = max(1, min(100, (int)($query['per_page'] ?? ($query['pageSize'] ?? 20))));
 
-        return new self($name, $sort, $direction, $page, $pageSize);
+        return new self($id, $name, $sort, $direction, $page, $pageSize);
     }
 
     //TODO: Extract helpers to a shared utility if needed
