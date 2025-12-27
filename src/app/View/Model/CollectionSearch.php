@@ -13,6 +13,7 @@ use Codices\Query\CollectionFilter;
 use Codices\Service\CollectionService;
 use yii\base\Model;
 use yii\data\ArrayDataProvider;
+use yii\data\DataProviderInterface;
 
 /**
  * CollectionSearch represents the model behind the search form of `Codices\Model\Collection`.
@@ -36,10 +37,13 @@ final class CollectionSearch extends Model {
      *
      * @param CollectionService $service
      * @param array<string, mixed> $params
-     * @return ArrayDataProvider
+     * @return DataProviderInterface
      */
-    public function search(CollectionService $service, array $params): ArrayDataProvider {
-        $this->load($params);
+    public function search(CollectionService $service, array $params): DataProviderInterface {
+        if (!$this->load($params)) {
+            //TODO: Return sensible default
+        }
+
         $filter = CollectionFilter::fromArray($params);
 
         // If attributes are provided via the search model (GridView filter), use them

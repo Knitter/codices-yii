@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Codices\Controller;
 
 use Codices\Service\AuthorService;
-use Codices\View\Facade\AuthorForm;
+use Codices\View\Facade\Author;
 use Codices\View\Model\AuthorSearch;
 use Yii;
 use yii\web\Response;
@@ -44,7 +44,7 @@ final class AuthorController extends CodicesController {
     }
 
     public function add(): Response|string {
-        $form = new AuthorForm();
+        $form = new Author();
         $request = Yii::$app->request;
         if ($request->isPost) {
             $form->setAttributes($request->post());
@@ -68,7 +68,7 @@ final class AuthorController extends CodicesController {
             return $this->asJson(['message' => 'Not found'])->setStatusCode(404);
         }
 
-        $form = new AuthorForm();
+        $form = new Author();
         $form->loadFromAuthor($author);
 
         $request = Yii::$app->request;

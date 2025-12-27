@@ -37,30 +37,6 @@ final class GenreRepository implements GenreRepositoryInterface {
         return (bool)$genre->delete();
     }
 
-//    public function listPage(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array {
-//        $q = Genre::find();
-//
-//        $safeSorts = ['name' => 'name', 'id' => 'id'];
-//        $sortBy = $safeSorts[$sort] ?? 'name';
-//        $sortDirection = strtolower($direction) === 'desc' ? SORT_DESC : SORT_ASC;
-//
-//        $countQuery = clone $q;
-//        $total = (int)$countQuery->select(new Expression('COUNT(*)'))->scalar();
-//
-//        $offset = max(0, ($page - 1) * $pageSize);
-//        $items = $q->orderBy([$sortBy => $sortDirection])
-//            ->offset($offset)
-//            ->limit($pageSize)
-//            ->all();
-//
-//        return [
-//            'items' => $items,
-//            'total' => $total,
-//            'page' => $page,
-//            'pageSize' => $pageSize,
-//        ];
-//    }
-
     public function search(GenreFilter $filter): GenreListResult {
         $sort = ['name' => 'name', 'id' => 'id'];
         $sortBy = $sort[$filter->sort] ?? 'name';

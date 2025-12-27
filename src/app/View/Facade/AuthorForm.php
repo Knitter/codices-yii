@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace Codices\View\Facade;
 
 use Codices\Model\Author;
-use Yii;
 use yii\base\Model;
 
 final class AuthorForm extends Model {
@@ -34,15 +33,7 @@ final class AuthorForm extends Model {
     }
 
     public function attributeLabels(): array {
-        //TODO: Extract to UI/templating layer and avoid the hard dependency on Yii
-        return [
-            'id' => Yii::t('codices', 'No.'),
-            'name' => Yii::t('codices', 'Name'),
-            'surname' => Yii::t('codices', 'Surname'),
-            'biography' => Yii::t('codices', 'Biography'),
-            'website' => Yii::t('codices', 'Website'),
-            'photo' => Yii::t('codices', 'Photo'),
-        ];
+        return \Codices\View\Helper\Author::attributeLabels();
     }
 
     public function loadFromAuthor(Author $author): void {

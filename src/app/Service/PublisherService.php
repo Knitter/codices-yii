@@ -21,10 +21,6 @@ final readonly class PublisherService {
     public function __construct(private PublisherRepositoryInterface $publishers) {
     }
 
-    public function list(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array {
-        return $this->publishers->list($page, $pageSize, $sort, $direction);
-    }
-
     public function search(PublisherFilter $filter): PublisherListResult {
         return $this->publishers->search($filter);
     }

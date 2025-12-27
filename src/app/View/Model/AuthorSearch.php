@@ -13,6 +13,7 @@ use Codices\Query\AuthorFilter;
 use Codices\Service\AuthorService;
 use yii\base\Model;
 use yii\data\ArrayDataProvider;
+use yii\data\DataProviderInterface;
 
 /**
  * AuthorSearch represents the model behind the search form of `Codices\Model\Author`.
@@ -36,10 +37,13 @@ final class AuthorSearch extends Model {
      *
      * @param AuthorService $service
      * @param array<string, mixed> $params
-     * @return ArrayDataProvider
+     * @return DataProviderInterface
      */
-    public function search(AuthorService $service, array $params): ArrayDataProvider {
-        $this->load($params);
+    public function search(AuthorService $service, array $params): DataProviderInterface {
+        if (!$this->load($params)) {
+            //TODO: Return sensible default
+        }
+
         $filter = AuthorFilter::fromArray($params);
 
         // If attributes are provided via the search model (GridView filter), use them

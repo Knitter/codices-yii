@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * @var \yii\web\View $this
- * @var \Codices\View\Facade\AuthorForm $model
+ * @var \Codices\View\Facade\Author $model
  * @var int $authorId
  * @var string $csrf
  */

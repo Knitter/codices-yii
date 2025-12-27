@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace Codices\View\Facade;
 
 use Codices\Model\Series;
-use Yii;
 use yii\base\Model;
 
 final class SeriesForm extends Model {
@@ -32,14 +31,7 @@ final class SeriesForm extends Model {
     }
 
     public function attributeLabels(): array {
-        //TODO: Extract to UI/templating layer and avoid the hard dependency on Yii
-        return [
-            'id' => Yii::t('codices', 'No.'),
-            'name' => Yii::t('codices', 'Name'),
-            'bookCount' => Yii::t('codices', 'Book Count'),
-            'ownedCount' => Yii::t('codices', 'Owned Count'),
-            'completed' => Yii::t('codices', 'Completed'),
-        ];
+        return \Codices\View\Helper\Series::attributeLabels();
     }
 
     public function loadFromSeries(Series $series): void {

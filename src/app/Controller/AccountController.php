@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Codices\Controller;
 
 use Codices\Service\AccountService;
-use Codices\View\Facade\AccountForm;
+use Codices\View\Facade\Account;
 use Codices\View\Model\AccountSearch;
 use Yii;
 use yii\web\Response;
@@ -44,7 +44,7 @@ final class AccountController extends CodicesController {
     }
 
     public function add(): Response|string {
-        $form = new AccountForm();
+        $form = new Account();
         $request = Yii::$app->request;
         if ($request->isPost) {
             $form->setAttributes($request->post());
@@ -68,7 +68,7 @@ final class AccountController extends CodicesController {
             return $this->asJson(['message' => 'Not found'])->setStatusCode(404);
         }
 
-        $form = new AccountForm();
+        $form = new Account();
         $form->loadFromAccount($account);
 
         $request = Yii::$app->request;

@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace Codices\View\Facade;
 
 use Codices\Model\Item;
-use Yii;
 use yii\base\Model;
 
 final class BookForm extends Model {
@@ -82,43 +81,7 @@ final class BookForm extends Model {
     }
 
     public function attributeLabels(): array {
-        //TODO: Extract to UI/templating layer and avoid the hard dependency on Yii
-        return [
-            'title' => Yii::t('codices', 'Title'),
-            'subtitle' => Yii::t('codices', 'Subtitle'),
-            'originalTitle' => Yii::t('codices', 'Original Title'),
-            'plot' => Yii::t('codices', 'Plot'),
-            'isbn' => Yii::t('codices', 'ISBN'),
-            'format' => Yii::t('codices', 'Format'),
-            'pageCount' => Yii::t('codices', 'Pages'),
-            'publishDate' => Yii::t('codices', 'Publish Date'),
-            'publishYear' => Yii::t('codices', 'Publish Year'),
-            'language' => Yii::t('codices', 'Language'),
-            'edition' => Yii::t('codices', 'Edition'),
-            'volume' => Yii::t('codices', 'Volume'),
-            'rating' => Yii::t('codices', 'Rating'),
-            'url' => Yii::t('codices', 'URL'),
-            'review' => Yii::t('codices', 'Review'),
-            'publisherId' => Yii::t('codices', 'Publisher'),
-            'seriesId' => Yii::t('codices', 'Series'),
-            'collectionId' => Yii::t('codices', 'Collection'),
-            'orderInSeries' => Yii::t('codices', 'Order in Series'),
-            'copies' => Yii::t('codices', 'Copies'),
-            'translated' => Yii::t('codices', 'Translated'),
-            'read' => Yii::t('codices', 'Read'),
-            'type' => Yii::t('codices', 'Type'),
-            'authors' => Yii::t('codices', 'Authors'),
-            'genres' => Yii::t('codices', 'Genres'),
-            'cover' => Yii::t('codices', 'Cover'),
-            'filename' => Yii::t('codices', 'Filename'),
-            'fileLocation' => Yii::t('codices', 'File Location'),
-            'narrator' => Yii::t('codices', 'Narrator'),
-            'bitrate' => Yii::t('codices', 'Bitrate'),
-            'boughtFrom' => Yii::t('codices', 'Bought From'),
-            'duration' => Yii::t('codices', 'Duration'),
-            'sizeBytes' => Yii::t('codices', 'Size'),
-            'duplicatesId' => Yii::t('codices', 'Duplicates')
-        ];
+        return \Codices\View\Helper\Item::attributeLabels();
     }
 
     public function loadFromItem(Item $item): void {

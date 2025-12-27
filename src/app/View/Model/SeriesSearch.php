@@ -13,6 +13,7 @@ use Codices\Query\SeriesFilter;
 use Codices\Service\SeriesService;
 use yii\base\Model;
 use yii\data\ArrayDataProvider;
+use yii\data\DataProviderInterface;
 
 /**
  * SeriesSearch represents the model behind the search form of `Codices\Model\Series`.
@@ -32,16 +33,16 @@ final class SeriesSearch extends Model {
     }
 
     /**
-     * Creates data provider instance with a search query applied
-     *
      * @param SeriesService $service
      * @param array<string, mixed> $params
-     * @return ArrayDataProvider
+     * @return DataProviderInterface
      */
-    public function search(SeriesService $service, array $params): ArrayDataProvider {
-        $this->load($params);
-        $filter = SeriesFilter::fromArray($params);
+    public function search(SeriesService $service, array $params): DataProviderInterface {
+        if (!$this->load($params)) {
+            //TODO: Return sensible default
+        }
 
+        $filter = SeriesFilter::fromArray($params);
         // If attributes are provided via the search model (GridView filter), use them
         if (($this->name !== null && $this->name !== '') || ($this->id !== null && $this->id !== '')) {
             $filter = new SeriesFilter(

@@ -21,10 +21,6 @@ final readonly class GenreService {
     public function __construct(private GenreRepositoryInterface $genres) {
     }
 
-    public function list(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array {
-        return $this->genres->list($page, $pageSize, $sort, $direction);
-    }
-
     public function search(GenreFilter $filter): GenreListResult {
         return $this->genres->search($filter);
     }

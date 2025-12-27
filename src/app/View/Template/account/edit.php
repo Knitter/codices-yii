@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * @var \yii\web\View $this
- * @var \Codices\View\Facade\AccountForm $model
+ * @var \Codices\View\Facade\Account $model
  * @var int $accountId
  * @var string $csrf
  */

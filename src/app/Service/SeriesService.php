@@ -21,10 +21,6 @@ final readonly class SeriesService {
     public function __construct(private SeriesRepositoryInterface $seriesRepo) {
     }
 
-    public function list(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array {
-        return $this->seriesRepo->list($page, $pageSize, $sort, $direction);
-    }
-
     public function search(SeriesFilter $filter): SeriesListResult {
         return $this->seriesRepo->search($filter);
     }

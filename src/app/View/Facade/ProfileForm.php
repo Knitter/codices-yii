@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace Codices\View\Facade;
 
 use Codices\Model\Account;
-use Yii;
 use yii\base\Model;
 
 final class ProfileForm extends Model {
@@ -29,13 +28,7 @@ final class ProfileForm extends Model {
     }
 
     public function attributeLabels(): array {
-        //TODO: Extract to UI/templating layer and avoid the hard dependency on Yii
-        return [
-            'id' => Yii::t('codices', 'No.'),
-            'username' => Yii::t('codices', 'Username'),
-            'email' => Yii::t('codices', 'Email'),
-            'name' => Yii::t('codices', 'Name'),
-        ];
+        return \Codices\View\Helper\Account::attributeLabels();
     }
 
     public function loadFromAccount(Account $account): void {

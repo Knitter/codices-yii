@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace Codices\View\Facade;
 
 use Codices\Model\Genre;
-use Yii;
 use yii\base\Model;
 
 final class GenreForm extends Model {
@@ -27,11 +26,7 @@ final class GenreForm extends Model {
     }
 
     public function attributeLabels(): array {
-        //TODO: Extract to UI/templating layer and avoid the hard dependency on Yii
-        return [
-            'id' => Yii::t('codices', 'No.'),
-            'name' => Yii::t('codices', 'Name'),
-        ];
+        return \Codices\View\Helper\Genre::attributeLabels();
     }
 
     public function loadFromGenre(Genre $genre): void {

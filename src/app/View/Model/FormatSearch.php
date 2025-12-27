@@ -13,6 +13,7 @@ use Codices\Query\FormatFilter;
 use Codices\Service\FormatService;
 use yii\base\Model;
 use yii\data\ArrayDataProvider;
+use yii\data\DataProviderInterface;
 
 /**
  * FormatSearch represents the model behind the search form of `Codices\Model\Format`.
@@ -35,10 +36,13 @@ final class FormatSearch extends Model {
      *
      * @param FormatService $service
      * @param array<string, mixed> $params
-     * @return ArrayDataProvider
+     * @return DataProviderInterface
      */
-    public function search(FormatService $service, array $params): ArrayDataProvider {
-        $this->load($params);
+    public function search(FormatService $service, array $params): DataProviderInterface {
+        if (!$this->load($params)) {
+            //TODO: Return sensible default
+        }
+
         $filter = FormatFilter::fromArray($params);
 
         // If attributes are provided via the search model (GridView filter), use them

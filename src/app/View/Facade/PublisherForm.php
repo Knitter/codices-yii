@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace Codices\View\Facade;
 
 use Codices\Model\Publisher;
-use Yii;
 use yii\base\Model;
 
 final class PublisherForm extends Model {
@@ -31,12 +30,7 @@ final class PublisherForm extends Model {
     }
 
     public function attributeLabels(): array {
-        //TODO: Extract to UI/templating layer and avoid the hard dependency on Yii
-        return [
-            'id' => Yii::t('codices', 'No.'),
-            'summary' => Yii::t('codices', 'Summary'),
-            'website' => Yii::t('codices', 'Website'),
-        ];
+        return \Codices\View\Helper\Publisher::attributeLabels();
     }
 
     public function loadFromPublisher(Publisher $publisher): void {

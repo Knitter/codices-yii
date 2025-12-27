@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace Codices\View\Facade;
 
 use Codices\Model\Format;
-use Yii;
 use yii\base\Model;
 
 final class FormatForm extends Model {
@@ -28,11 +27,7 @@ final class FormatForm extends Model {
     }
 
     public function attributeLabels(): array {
-        //TODO: Extract to UI/templating layer and avoid the hard dependency on Yii
-        return [
-            'type' => Yii::t('codices', 'Type'),
-            'name' => Yii::t('codices', 'Name'),
-        ];
+        return \Codices\View\Helper\Format::attributeLabels();
     }
 
     public function loadFromFormat(Format $format): void {

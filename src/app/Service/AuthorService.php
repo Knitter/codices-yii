@@ -13,16 +13,11 @@ use Codices\Model\Author;
 use Codices\Repository\AuthorRepositoryInterface;
 use Codices\Query\AuthorFilter;
 use Codices\Query\AuthorListResult;
-use Codices\View\Facade\AuthorForm;
 use RuntimeException;
 
 final readonly class AuthorService {
 
     public function __construct(private AuthorRepositoryInterface $authors) {
-    }
-
-    public function list(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array {
-        return $this->authors->list($page, $pageSize, $sort, $direction);
     }
 
     public function search(AuthorFilter $filter): AuthorListResult {
@@ -33,7 +28,7 @@ final readonly class AuthorService {
         return $this->authors->findById($id);
     }
 
-    public function create(AuthorForm $form, int $ownerId): Author {
+    public function create(Author $form, int $ownerId): Author {
         $author = new Author();
         $author->ownedById = $ownerId;
         $form->applyToAuthor($author);
@@ -43,7 +38,7 @@ final readonly class AuthorService {
         return $author;
     }
 
-    public function update(int $id, AuthorForm $form): Author {
+    public function update(int $id, Author $form): Author {
         $author = $this->authors->findById($id);
         if ($author === null) {
             throw new RuntimeException('Author not found');

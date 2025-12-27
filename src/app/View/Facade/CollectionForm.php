@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace Codices\View\Facade;
 
 use Codices\Model\Collection;
-use Yii;
 use yii\base\Model;
 
 final class CollectionForm extends Model {
@@ -32,14 +31,7 @@ final class CollectionForm extends Model {
     }
 
     public function attributeLabels(): array {
-        //TODO: Extract to UI/templating layer and avoid the hard dependency on Yii
-        return [
-            'id' => Yii::t('codices', 'No.'),
-            'name' => Yii::t('codices', 'Name'),
-            'publishDate' => Yii::t('codices', 'Publish Date'),
-            'publishYear' => Yii::t('codices', 'Publish Year'),
-            'description' => Yii::t('codices', 'Description'),
-        ];
+        return \Codices\View\Helper\Collection::attributeLabels();
     }
 
     public function loadFromCollection(Collection $collection): void {

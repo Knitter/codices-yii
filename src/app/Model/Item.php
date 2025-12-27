@@ -121,14 +121,6 @@ final class Item extends ActiveRecord {
         return $this->hasMany(ItemGenre::class, ['itemId' => 'id']);
     }
 
-    public static function getTypes(): array {
-        return [
-            self::TYPE_PAPER => 'Paper Book',
-            self::TYPE_EBOOK => 'E-Book',
-            self::TYPE_AUDIO => 'Audiobook'
-        ];
-    }
-
     public function isPaper(): bool {
         return $this->type === self::TYPE_PAPER;
     }

@@ -13,6 +13,7 @@ use Codices\Query\PublisherFilter;
 use Codices\Service\PublisherService;
 use yii\base\Model;
 use yii\data\ArrayDataProvider;
+use yii\data\DataProviderInterface;
 
 /**
  * PublisherSearch represents the model behind the search form of `Codices\Model\Publisher`.
@@ -36,10 +37,13 @@ final class PublisherSearch extends Model {
      *
      * @param PublisherService $service
      * @param array<string, mixed> $params
-     * @return ArrayDataProvider
+     * @return DataProviderInterface
      */
-    public function search(PublisherService $service, array $params): ArrayDataProvider {
-        $this->load($params);
+    public function search(PublisherService $service, array $params): DataProviderInterface {
+        if (!$this->load($params)) {
+            //TODO: Return sensible default
+        }
+
         $filter = PublisherFilter::fromArray($params);
 
         // If attributes are provided via the search model (GridView filter), use them

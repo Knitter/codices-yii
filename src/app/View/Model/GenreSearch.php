@@ -13,6 +13,7 @@ use Codices\Query\GenreFilter;
 use Codices\Service\GenreService;
 use yii\base\Model;
 use yii\data\ArrayDataProvider;
+use yii\data\DataProviderInterface;
 
 /**
  * GenreSearch represents the model behind the search form of `Codices\Model\Genre`.
@@ -36,10 +37,13 @@ final class GenreSearch extends Model {
      *
      * @param GenreService $service
      * @param array<string, mixed> $params
-     * @return ArrayDataProvider
+     * @return DataProviderInterface
      */
-    public function search(GenreService $service, array $params): ArrayDataProvider {
-        $this->load($params);
+    public function search(GenreService $service, array $params): DataProviderInterface {
+        if (!$this->load($params)) {
+            //TODO: Return sensible default
+        }
+
         $filter = GenreFilter::fromArray($params);
 
         // If attributes are provided via the search model (GridView filter), use them

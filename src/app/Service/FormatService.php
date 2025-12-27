@@ -21,10 +21,6 @@ final readonly class FormatService {
     public function __construct(private FormatRepositoryInterface $formats) {
     }
 
-    public function list(int $page = 1, int $pageSize = 10, string $sort = 'name', string $direction = 'asc'): array {
-        return $this->formats->list($page, $pageSize, $sort, $direction);
-    }
-
     public function search(FormatFilter $filter): FormatListResult {
         return $this->formats->search($filter);
     }

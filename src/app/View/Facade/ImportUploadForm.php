@@ -9,8 +9,11 @@ use yii\web\UploadedFile;
 
 final class ImportUploadForm extends Model {
 
+    //TODO: Move to helper
     public const string FORMAT_GENERIC_CSV = 'generic-csv';
+    //TODO: Move to helper
     public const string FORMAT_CODICES_JSON = 'codices-json';
+    //TODO: Move to helper
     public const string FORMAT_CALIBRE_CSV = 'calibre-csv';
 
     public string $format = self::FORMAT_GENERIC_CSV;
